@@ -5,31 +5,98 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Thi Trắc Nghiệm: Kiến Thức Đấu Thầu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        body { background-color: #f8f9fa; }
-        .quiz-container { max-width: 800px; margin: 50px auto; background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .question { margin-bottom: 20px; font-weight: bold; }
-        .option-label { display: block; margin-bottom: 10px; cursor: pointer; padding: 10px; border: 1px solid #dee2e6; border-radius: 5px; transition: background-color 0.2s; }
-        .option-label:hover { background-color: #e9ecef; }
-        input[type="radio"] { margin-right: 10px; }
-        #result { display: none; margin-top: 20px; }
+        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .header-top { background: #0d6efd; color: white; padding: 15px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .timer-box { font-size: 1.25rem; font-weight: bold; background: #dc3545; padding: 5px 15px; border-radius: 20px; display: inline-block; }
+        
+        .question-card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); min-height: 400px; display: none; animation: fadeIn 0.3s; }
+        .question-card.active { display: block; }
+        .question-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: #2c3e50; }
+        
+        .option-label { display: block; margin-bottom: 12px; cursor: pointer; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; transition: all 0.2s; font-size: 1.05rem; }
+        .option-label:hover { background-color: #f8f9fa; border-color: #0d6efd; }
+        .option-label.selected { background-color: #e9f2ff; border-color: #0d6efd; font-weight: 500; }
+        input[type="radio"] { display: none; } /* Ẩn radio mặc định để dùng custom UI */
+        
+        /* Sơ đồ câu hỏi bên phải */
+        .palette-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .q-btn { width: 40px; height: 40px; margin: 5px; border-radius: 5px; font-weight: bold; border: 1px solid #dee2e6; background: white; transition: 0.2s; }
+        .q-btn.answered { background-color: #198754; color: white; border-color: #198754; }
+        .q-btn.current { border: 2px solid #0d6efd; background-color: #e9f2ff; color: #0d6efd; }
+        .q-btn.answered.current { background-color: #198754; color: white; border: 2px solid #0a58ca; }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        #result-screen { display: none; }
     </style>
 </head>
 <body>
 
-<div class="container quiz-container">
-    <h2 class="text-center text-primary mb-4">Bài Thi Trắc Nghiệm Đấu Thầu</h2>
-    <div id="quiz-body">
+<div class="header-top sticky-top">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h4 class="m-0"><i class="bi bi-journal-text me-2"></i>Kỳ Thi: Kiến Thức Đấu Thầu</h4>
+        <div class="timer-box" id="timer-display">
+            <i class="bi bi-clock-history me-1"></i> <span id="time">00:00</span>
         </div>
-    <div class="text-center mt-4">
-        <button id="submit-btn" class="btn btn-success btn-lg" onclick="calculateScore()">Nộp Bài</button>
     </div>
-    
-    <div id="result" class="alert alert-info text-center fs-4"></div>
+</div>
+
+<div class="container mt-4" id="exam-screen">
+    <div class="row">
+        <div class="col-lg-8 col-md-7 mb-4">
+            <div class="progress mb-3" style="height: 10px;">
+                <div id="progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+            </div>
+            
+            <div id="quiz-body">
+                </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-outline-secondary px-4" id="btn-prev" onclick="changeQuestion(-1)">
+                    <i class="bi bi-chevron-left"></i> Câu trước
+                </button>
+                <button class="btn btn-primary px-4" id="btn-next" onclick="changeQuestion(1)">
+                    Câu tiếp <i class="bi bi-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-5">
+            <div class="palette-card sticky-top" style="top: 80px;">
+                <h6 class="text-center mb-3">Sơ Đồ Câu Hỏi</h6>
+                <div class="d-flex flex-wrap justify-content-center" id="question-palette">
+                    </div>
+                <hr>
+                <div class="d-flex justify-content-between mb-2" style="font-size: 0.85rem;">
+                    <span><span class="badge bg-success border" style="width:15px;height:15px;display:inline-block"></span> Đã làm</span>
+                    <span><span class="badge bg-white border text-dark" style="width:15px;height:15px;display:inline-block"></span> Chưa làm</span>
+                </div>
+                <button id="submit-btn" class="btn btn-danger w-100 mt-3 fw-bold" onclick="confirmSubmit()">
+                    <i class="bi bi-send-check"></i> NỘP BÀI THI
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-5" id="result-screen">
+    <div class="row justify-content-center">
+        <div class="col-md-6 text-center bg-white p-5 border-radius-10 shadow-sm" style="border-radius: 15px;">
+            <i class="bi bi-trophy-fill text-warning" style="font-size: 4rem;"></i>
+            <h2 class="mt-3 text-primary">Hoàn Thành Bài Thi!</h2>
+            <div class="fs-4 mt-3 mb-4" id="result-text"></div>
+            <button class="btn btn-outline-primary" onclick="location.reload()">Thi Lại</button>
+        </div>
+    </div>
 </div>
 
 <script>
-    // Bộ câu hỏi về Đấu thầu (Có thể mở rộng thêm)
+    // --- CẤU HÌNH BÀI THI ---
+    const TOTAL_MINUTES = 3; // Cài đặt thời gian làm bài (Phút)
+    
+    // Bộ câu hỏi
     const questions = [
         {
             question: "Câu 1: Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?",
@@ -45,79 +112,7 @@
             question: "Câu 3: Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?",
             options: ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"],
             answer: 0
-        }
-    ];
-
-    // Hàm trộn mảng (Fisher-Yates Shuffle) để đảo câu hỏi và đáp án
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-    let currentQuizData = [];
-
-    // Hàm khởi tạo bài thi
-    function loadQuiz() {
-        // Sao chép và trộn câu hỏi
-        currentQuizData = JSON.parse(JSON.stringify(questions));
-        shuffleArray(currentQuizData);
-
-        const quizBody = document.getElementById('quiz-body');
-        quizBody.innerHTML = '';
-
-        currentQuizData.forEach((q, index) => {
-            // Lưu lại đáp án đúng trước khi trộn options
-            const correctAnswerText = q.options[q.answer];
-            
-            // Trộn các lựa chọn
-            shuffleArray(q.options);
-            
-            // Cập nhật lại index của đáp án đúng sau khi trộn
-            q.newAnswerIndex = q.options.indexOf(correctAnswerText);
-
-            let questionHTML = `<div class="mb-4">
-                <div class="question">${index + 1}. ${q.question.split(': ')[1] || q.question}</div>`;
-            
-            q.options.forEach((opt, optIndex) => {
-                questionHTML += `
-                    <label class="option-label">
-                        <input type="radio" name="question${index}" value="${optIndex}">
-                        ${String.fromCharCode(65 + optIndex)}. ${opt}
-                    </label>
-                `;
-            });
-            questionHTML += `</div>`;
-            quizBody.innerHTML += questionHTML;
-        });
-    }
-
-    // Hàm tính điểm
-    function calculateScore() {
-        let score = 0;
-        let total = currentQuizData.length;
-
-        currentQuizData.forEach((q, index) => {
-            const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
-            if (selectedOption) {
-                const answerValue = parseInt(selectedOption.value);
-                if (answerValue === q.newAnswerIndex) {
-                    score++;
-                }
-            }
-        });
-
-        const resultDiv = document.getElementById('result');
-        resultDiv.style.display = 'block';
-        resultDiv.innerHTML = `Bạn đã trả lời đúng <strong>${score} / ${total}</strong> câu hỏi.`;
-        
-        // Vô hiệu hóa nút nộp bài sau khi nhấn
-        document.getElementById('submit-btn').disabled = true;
-    }
-
-    // Tải câu hỏi khi trang vừa load xong
-    window.onload = loadQuiz;
-</script>
-</body>
-</html>
+        },
+        // Thêm 2 câu hỏi giả định để thấy rõ tính năng phân trang
+        {
+            question: "Câu 4: Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá
