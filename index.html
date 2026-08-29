@@ -115,4 +115,182 @@
         },
         // Thêm 2 câu hỏi giả định để thấy rõ tính năng phân trang
         {
-            question: "Câu 4: Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá
+            question: "Câu 4: Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá bao nhiêu?",
+            options: ["1 tỷ đồng", "3 tỷ đồng", "5 tỷ đồng", "10 tỷ đồng"],
+            answer: 2
+        },
+        {
+            question: "Câu 5: Trong đấu thầu, thuật ngữ 'Bảo lãnh thực hiện hợp đồng' có nghĩa vụ gì?",
+            options: ["Đảm bảo nhà thầu không bỏ trốn", "Đảm bảo nhà thầu ký hợp đồng", "Đảm bảo trách nhiệm thực hiện hợp đồng đã ký", "Đảm bảo chất lượng thiết kế"],
+            answer: 2
+        }
+    ];
+
+    let currentQuizData = [];
+    let currentIndex = 0;
+    let timeRemaining = TOTAL_MINUTES * 60;
+    let timerInterval;
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    // Khởi tạo bài thi
+    function loadQuiz() {
+        currentQuizData = JSON.parse(JSON.stringify(questions));
+        shuffleArray(currentQuizData);
+
+        const quizBody = document.getElementById('quiz-body');
+        const palette = document.getElementById('question-palette');
+        quizBody.innerHTML = '';
+        palette.innerHTML = '';
+
+        currentQuizData.forEach((q, index) => {
+            const correctAnswerText = q.options[q.answer];
+            shuffleArray(q.options);
+            q.newAnswerIndex = q.options.indexOf(correctAnswerText);
+
+            // 1. Tạo HTML cho câu hỏi (Mặc định ẩn)
+            let questionHTML = `<div class="question-card" id="q-card-${index}">
+                <div class="question-title">Câu ${index + 1}: ${q.question.split(': ')[1] || q.question}</div>`;
+            
+            q.options.forEach((opt, optIndex) => {
+                questionHTML += `
+                    <label class="option-label" id="label-q${index}-opt${optIndex}">
+                        <input type="radio" name="question${index}" value="${optIndex}" onchange="selectAnswer(${index}, ${optIndex})">
+                        <strong>${String.fromCharCode(65 + optIndex)}.</strong> ${opt}
+                    </label>
+                `;
+            });
+            questionHTML += `</div>`;
+            quizBody.innerHTML += questionHTML;
+
+            // 2. Tạo nút trên sơ đồ (Palette)
+            palette.innerHTML += `<button class="q-btn" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
+        });
+
+        startTimer();
+        updateUI();
+    }
+
+    // Xử lý khi thí sinh chọn đáp án
+    function selectAnswer(qIndex, optIndex) {
+        // Đổi màu nền của lựa chọn hiện tại
+        const labels = document.querySelectorAll(`#q-card-${qIndex} .option-label`);
+        labels.forEach(lbl => lbl.classList.remove('selected'));
+        document.getElementById(`label-q${qIndex}-opt${optIndex}`).classList.add('selected');
+
+        // Đánh dấu đã trả lời trên sơ đồ
+        document.getElementById(`btn-palette-${qIndex}`).classList.add('answered');
+    }
+
+    // Chuyển câu hỏi (Trước/Sau)
+    function changeQuestion(step) {
+        let newIndex = currentIndex + step;
+        if (newIndex >= 0 && newIndex < currentQuizData.length) {
+            goToQuestion(newIndex);
+        }
+    }
+
+    // Đi đến câu hỏi cụ thể
+    function goToQuestion(index) {
+        currentIndex = index;
+        updateUI();
+    }
+
+    // Cập nhật giao diện (Phân trang, Sơ đồ, Nút bấm)
+    function updateUI() {
+        let total = currentQuizData.length;
+
+        // Ẩn tất cả, hiện câu hiện tại
+        document.querySelectorAll('.question-card').forEach(card => card.classList.remove('active'));
+        document.getElementById(`q-card-${currentIndex}`).classList.add('active');
+
+        // Cập nhật trạng thái nút sơ đồ
+        document.querySelectorAll('.q-btn').forEach(btn => btn.classList.remove('current'));
+        document.getElementById(`btn-palette-${currentIndex}`).classList.add('current');
+
+        // Ẩn/hiện nút Trước/Sau
+        document.getElementById('btn-prev').disabled = (currentIndex === 0);
+        document.getElementById('btn-next').style.display = (currentIndex === total - 1) ? 'none' : 'block';
+
+        // Cập nhật thanh tiến trình
+        let progress = ((currentIndex + 1) / total) * 100;
+        document.getElementById('progress-bar').style.width = progress + '%';
+    }
+
+    // Xử lý đồng hồ đếm ngược
+    function startTimer() {
+        const timeDisplay = document.getElementById('time');
+        
+        timerInterval = setInterval(() => {
+            timeRemaining--;
+            
+            let minutes = Math.floor(timeRemaining / 60);
+            let seconds = timeRemaining % 60;
+            
+            timeDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+
+            // Sắp hết giờ nhấp nháy đỏ
+            if(timeRemaining <= 60) {
+                document.getElementById('timer-display').style.animation = "fadeIn 1s infinite alternate";
+            }
+
+            if (timeRemaining <= 0) {
+                clearInterval(timerInterval);
+                alert("Hết giờ làm bài! Hệ thống tự động nộp bài.");
+                calculateScore();
+            }
+        }, 1000);
+    }
+
+    // Xác nhận nộp bài
+    function confirmSubmit() {
+        if (confirm("Bạn có chắc chắn muốn nộp bài ngay bây giờ?")) {
+            calculateScore();
+        }
+    }
+
+    // Tính điểm và hiển thị kết quả
+    function calculateScore() {
+        clearInterval(timerInterval);
+        
+        let score = 0;
+        let total = currentQuizData.length;
+
+        currentQuizData.forEach((q, index) => {
+            const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
+            if (selectedOption) {
+                const answerValue = parseInt(selectedOption.value);
+                if (answerValue === q.newAnswerIndex) {
+                    score++;
+                }
+            }
+        });
+
+        // Ẩn màn hình thi, hiện màn hình kết quả
+        document.getElementById('exam-screen').style.display = 'none';
+        document.querySelector('.header-top').style.display = 'none';
+        
+        const resultScreen = document.getElementById('result-screen');
+        resultScreen.style.display = 'block';
+        
+        // Đánh giá kết quả
+        let gradeText = score === total ? "<span class='text-success'>Xuất sắc!</span>" : 
+                        score >= total/2 ? "<span class='text-primary'>Đạt yêu cầu.</span>" : 
+                        "<span class='text-danger'>Cần ôn tập thêm.</span>";
+
+        document.getElementById('result-text').innerHTML = `
+            Bạn trả lời đúng <strong>${score} / ${total}</strong> câu hỏi.<br>
+            <div class="mt-2">${gradeText}</div>
+        `;
+    }
+
+    // Khởi động khi tải trang
+    window.onload = loadQuiz;
+</script>
+</body>
+</html>
