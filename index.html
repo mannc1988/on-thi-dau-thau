@@ -3,17 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ thống Khảo thí BIDV</title>
+    <title>Ôn Luyện Khảo Thí BIDV</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
         /* --- BỘ MÀU THƯƠNG HIỆU BIDV --- */
         :root {
-            --bidv-green: #0F6C5D;       /* Xanh ngọc lục bảo */
+            --bidv-green: #0F6C5D;       
             --bidv-green-hover: #0c594c;
-            --bidv-yellow: #F4B313;      /* Vàng mai */
+            --bidv-yellow: #F4B313;      
             --bidv-yellow-hover: #e0a310;
-            --bidv-light-green: #e9f2f0; /* Nền xanh nhạt */
             --bg-color: #f4f6f9;
         }
 
@@ -21,22 +20,25 @@
         
         /* Header */
         .header-top { background: var(--bidv-green); color: white; padding: 15px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-bottom: 4px solid var(--bidv-yellow); }
-        .brand-logo { font-family: 'Arial Black', sans-serif; font-weight: 900; letter-spacing: 2px; color: white; font-size: 1.6rem; margin: 0; display: flex; align-items: center;}
+        .brand-logo { font-family: 'Arial Black', sans-serif; font-weight: 900; letter-spacing: 1px; color: white; font-size: 1.5rem; margin: 0; display: flex; align-items: center;}
         .brand-logo span { color: var(--bidv-yellow); margin-right: 10px; }
         
-        /* Timer */
-        .timer-box { font-size: 1.25rem; font-weight: bold; background: var(--bidv-yellow); color: #000; padding: 6px 18px; border-radius: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center;}
+        .mode-badge { font-size: 1rem; font-weight: bold; background: var(--bidv-yellow); color: #000; padding: 6px 18px; border-radius: 25px; display: flex; align-items: center;}
         
         /* Cards */
         .question-card, .palette-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .question-card { min-height: 400px; display: none; animation: fadeIn 0.3s; border-top: 5px solid var(--bidv-green); }
+        .question-card { min-height: 420px; display: none; animation: fadeIn 0.3s; border-top: 5px solid var(--bidv-green); }
         .question-card.active { display: block; }
         .question-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 25px; color: var(--bidv-green); }
         
         /* Options */
         .option-label { display: block; margin-bottom: 12px; cursor: pointer; padding: 16px; border: 1px solid #dce1e6; border-radius: 8px; transition: all 0.2s ease; font-size: 1.05rem; }
-        .option-label:hover { background-color: #f8f9fa; border-color: var(--bidv-green); }
-        .option-label.selected { background-color: var(--bidv-light-green); border-color: var(--bidv-green); font-weight: 600; color: var(--bidv-green); box-shadow: 0 2px 5px rgba(15, 108, 93, 0.1); }
+        .option-label:hover:not(.disabled) { background-color: #f8f9fa; border-color: var(--bidv-green); }
+        
+        /* Trạng thái đáp án (Ôn luyện) */
+        .option-label.correct { background-color: #d1e7dd; border-color: #198754; color: #0f5132; font-weight: bold; box-shadow: 0 2px 5px rgba(25, 135, 84, 0.2); }
+        .option-label.incorrect { background-color: #f8d7da; border-color: #dc3545; color: #842029; text-decoration: line-through; opacity: 0.8;}
+        .option-label.disabled { cursor: not-allowed; }
         input[type="radio"] { display: none; }
         
         /* Buttons */
@@ -47,11 +49,10 @@
         
         /* Sơ đồ câu hỏi */
         .q-btn { width: 42px; height: 42px; margin: 6px; border-radius: 8px; font-weight: bold; border: 1px solid #dce1e6; background: white; transition: 0.2s; color: #555;}
-        .q-btn.answered { background-color: var(--bidv-green); color: white; border-color: var(--bidv-green); }
-        .q-btn.current { border: 2px solid var(--bidv-yellow); background-color: #fffaf0; color: #000; box-shadow: 0 0 8px rgba(244, 179, 19, 0.4); }
-        .q-btn.answered.current { background-color: var(--bidv-green); color: white; border: 2px solid var(--bidv-yellow); }
+        .q-btn.current { border: 2px solid var(--bidv-yellow); box-shadow: 0 0 8px rgba(244, 179, 19, 0.5); transform: scale(1.1);}
+        .q-btn.is-correct { background-color: #198754; color: white; border-color: #198754; }
+        .q-btn.is-incorrect { background-color: #dc3545; color: white; border-color: #dc3545; }
 
-        /* Progress bar */
         .progress { background-color: #e9ecef; border-radius: 10px; }
         .progress-bar { background-color: var(--bidv-green); }
 
@@ -61,33 +62,27 @@
 </head>
 <body>
 
-<!-- Header BIDV -->
 <div class="header-top sticky-top">
     <div class="container d-flex justify-content-between align-items-center">
         <h1 class="brand-logo"><span>BIDV</span> HỆ THỐNG KHẢO THÍ</h1>
-        <div class="timer-box" id="timer-display">
-            <i class="bi bi-alarm-fill me-2"></i> <span id="time">00:00</span>
+        <div class="mode-badge">
+            <i class="bi bi-book-half me-2"></i> CHẾ ĐỘ ÔN LUYỆN
         </div>
     </div>
 </div>
 
-<!-- Main Content -->
 <div class="container mt-4" id="exam-screen">
     <div class="row">
-        <!-- Khu vực câu hỏi -->
         <div class="col-lg-8 col-md-7 mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fw-bold" style="color: var(--bidv-green);">Tiến độ làm bài</span>
+                <span class="fw-bold" style="color: var(--bidv-green);">Tiến độ ôn tập</span>
             </div>
             <div class="progress mb-4" style="height: 12px;">
                 <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%; transition: width 0.4s ease;"></div>
             </div>
             
-            <div id="quiz-body">
-                <!-- Câu hỏi sẽ render tại đây -->
-            </div>
+            <div id="quiz-body"></div>
 
-            <!-- Nút điều hướng -->
             <div class="d-flex justify-content-between mt-4">
                 <button class="btn btn-outline-secondary px-4 py-2" id="btn-prev" onclick="changeQuestion(-1)">
                     <i class="bi bi-arrow-left-circle me-1"></i> Câu trước
@@ -98,46 +93,41 @@
             </div>
         </div>
 
-        <!-- Khu vực điều khiển & Sơ đồ câu hỏi -->
         <div class="col-lg-4 col-md-5">
             <div class="palette-card sticky-top" style="top: 100px;">
                 <h5 class="text-center mb-4 fw-bold" style="color: var(--bidv-green);">DANH SÁCH CÂU HỎI</h5>
-                <div class="d-flex flex-wrap justify-content-center" id="question-palette">
-                    <!-- Nút sơ đồ sẽ render tại đây -->
-                </div>
+                <div class="d-flex flex-wrap justify-content-center" id="question-palette"></div>
                 <hr class="my-4">
-                <div class="d-flex justify-content-between mb-4" style="font-size: 0.9rem;">
-                    <span><span class="badge" style="background-color: var(--bidv-green); width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Đã làm</span>
-                    <span><span class="badge border" style="background-color: white; color: #000; width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Chưa làm</span>
+                
+                <div class="d-flex flex-column gap-2 mb-4" style="font-size: 0.9rem;">
+                    <div><span class="badge bg-success" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Trả lời Đúng</div>
+                    <div><span class="badge bg-danger" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Trả lời Sai</div>
+                    <div><span class="badge border bg-white" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Chưa làm</div>
                 </div>
-                <button id="submit-btn" class="btn btn-bidv-yellow w-100 py-3 text-uppercase" onclick="confirmSubmit()">
-                    <i class="bi bi-send-check-fill me-2"></i> Nộp Bài Thi
+
+                <button id="submit-btn" class="btn btn-bidv-yellow w-100 py-3 text-uppercase" onclick="finishPractice()">
+                    <i class="bi bi-flag-fill me-2"></i> Kết Thúc Ôn Tập
                 </button>
             </div>
         </div>
     </div>
 </div>
 
-<!-- Màn hình kết quả -->
 <div class="container mt-5" id="result-screen">
     <div class="row justify-content-center">
         <div class="col-md-7 text-center bg-white p-5 shadow-sm" style="border-radius: 20px; border-top: 8px solid var(--bidv-green);">
             <div class="brand-logo justify-content-center mb-4 text-dark"><span>BIDV</span></div>
-            <i class="bi bi-award-fill text-warning mb-3" style="font-size: 5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));"></i>
-            <h2 class="fw-bold" style="color: var(--bidv-green);">Hoàn Thành Bài Thi!</h2>
+            <i class="bi bi-bookmark-check-fill text-success mb-3" style="font-size: 5rem;"></i>
+            <h2 class="fw-bold" style="color: var(--bidv-green);">Hoàn Thành Lượt Ôn Tập!</h2>
             <div class="fs-4 mt-4 mb-4" id="result-text"></div>
             <button class="btn btn-bidv px-5 py-2 mt-3" onclick="location.reload()">
-                <i class="bi bi-arrow-counterclockwise me-1"></i> Làm lại bài thi
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Ôn tập lại
             </button>
         </div>
     </div>
 </div>
 
 <script>
-    // --- CẤU HÌNH BÀI THI ---
-    const TOTAL_MINUTES = 5; 
-    
-    // Bộ câu hỏi (Bạn có thể thêm tùy ý)
     const questions = [
         {
             question: "Câu 1: Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?",
@@ -168,8 +158,6 @@
 
     let currentQuizData = [];
     let currentIndex = 0;
-    let timeRemaining = TOTAL_MINUTES * 60;
-    let timerInterval;
 
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
@@ -191,33 +179,63 @@
             const correctAnswerText = q.options[q.answer];
             shuffleArray(q.options);
             q.newAnswerIndex = q.options.indexOf(correctAnswerText);
+            q.userAnswer = null; // Trạng thái chưa trả lời
 
             let questionHTML = `<div class="question-card" id="q-card-${index}">
                 <div class="question-title">Câu ${index + 1}: ${q.question.split(': ')[1] || q.question}</div>`;
             
             q.options.forEach((opt, optIndex) => {
                 questionHTML += `
-                    <label class="option-label" id="label-q${index}-opt${optIndex}">
-                        <input type="radio" name="question${index}" value="${optIndex}" onchange="selectAnswer(${index}, ${optIndex})">
+                    <label class="option-label" id="label-q${index}-opt${optIndex}" onclick="selectAnswer(${index}, ${optIndex})">
                         <strong>${String.fromCharCode(65 + optIndex)}.</strong> ${opt}
                     </label>
                 `;
             });
-            questionHTML += `</div>`;
-            quizBody.innerHTML += questionHTML;
 
+            // Khu vực hiển thị giải thích / đáp án
+            questionHTML += `<div id="feedback-${index}" class="mt-4 p-3 rounded" style="display: none; font-size: 1.1rem;"></div>`;
+            questionHTML += `</div>`;
+            
+            quizBody.innerHTML += questionHTML;
             palette.innerHTML += `<button class="q-btn shadow-sm" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
         });
 
-        startTimer();
         updateUI();
     }
 
     function selectAnswer(qIndex, optIndex) {
+        // Khóa không cho chọn lại nếu đã trả lời
+        if (currentQuizData[qIndex].userAnswer !== null) return;
+        
+        currentQuizData[qIndex].userAnswer = optIndex;
+        const isCorrect = (optIndex === currentQuizData[qIndex].newAnswerIndex);
+        
+        // Đổi màu các đáp án
         const labels = document.querySelectorAll(`#q-card-${qIndex} .option-label`);
-        labels.forEach(lbl => lbl.classList.remove('selected'));
-        document.getElementById(`label-q${qIndex}-opt${optIndex}`).classList.add('selected');
-        document.getElementById(`btn-palette-${qIndex}`).classList.add('answered');
+        labels.forEach((lbl, idx) => {
+            lbl.classList.add('disabled'); // Khóa hiệu ứng hover
+            
+            if (idx === currentQuizData[qIndex].newAnswerIndex) {
+                lbl.classList.add('correct'); // Đáp án đúng luôn hiện màu xanh
+            } else if (idx === optIndex && !isCorrect) {
+                lbl.classList.add('incorrect'); // Đáp án sai mà người dùng chọn hiện màu đỏ
+            }
+        });
+
+        // Đổi màu sơ đồ câu hỏi
+        const paletteBtn = document.getElementById(`btn-palette-${qIndex}`);
+        paletteBtn.classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
+
+        // Hiển thị khung phản hồi
+        const feedback = document.getElementById(`feedback-${qIndex}`);
+        feedback.style.display = 'block';
+        if (isCorrect) {
+            feedback.className = 'mt-4 p-3 rounded bg-success text-white fw-bold';
+            feedback.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> Tuyệt vời! Bạn đã chọn đúng.';
+        } else {
+            feedback.className = 'mt-4 p-3 rounded bg-danger text-white fw-bold';
+            feedback.innerHTML = `<i class="bi bi-x-circle-fill me-2"></i> Rất tiếc, chưa chính xác!<br><span class="fw-normal fs-6">Đáp án đúng là: <strong>${String.fromCharCode(65 + currentQuizData[qIndex].newAnswerIndex)}</strong></span>`;
+        }
     }
 
     function changeQuestion(step) {
@@ -248,52 +266,24 @@
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
-    function startTimer() {
-        const timeDisplay = document.getElementById('time');
-        
-        timerInterval = setInterval(() => {
-            timeRemaining--;
-            
-            let minutes = Math.floor(timeRemaining / 60);
-            let seconds = timeRemaining % 60;
-            
-            timeDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-
-            if(timeRemaining <= 60) {
-                document.getElementById('timer-display').style.backgroundColor = "#dc3545";
-                document.getElementById('timer-display').style.color = "#fff";
-                document.getElementById('timer-display').style.animation = "fadeIn 1s infinite alternate";
-            }
-
-            if (timeRemaining <= 0) {
-                clearInterval(timerInterval);
-                alert("Hết giờ làm bài! Hệ thống tự động nộp bài.");
-                calculateScore();
-            }
-        }, 1000);
-    }
-
-    function confirmSubmit() {
-        if (confirm("Bạn có chắc chắn muốn nộp bài? Hãy kiểm tra lại các câu chưa làm (ô màu trắng).")) {
-            calculateScore();
-        }
-    }
-
-    function calculateScore() {
-        clearInterval(timerInterval);
-        
+    function finishPractice() {
         let score = 0;
         let total = currentQuizData.length;
+        let unattempted = 0;
 
-        currentQuizData.forEach((q, index) => {
-            const selectedOption = document.querySelector(`input[name="question${index}"]:checked`);
-            if (selectedOption) {
-                const answerValue = parseInt(selectedOption.value);
-                if (answerValue === q.newAnswerIndex) {
-                    score++;
-                }
+        currentQuizData.forEach(q => {
+            if (q.userAnswer === null) {
+                unattempted++;
+            } else if (q.userAnswer === q.newAnswerIndex) {
+                score++;
             }
         });
+
+        if (unattempted > 0) {
+            if (!confirm(`Bạn còn ${unattempted} câu chưa xem. Bạn vẫn muốn kết thúc ôn tập?`)) {
+                return;
+            }
+        }
 
         document.getElementById('exam-screen').style.display = 'none';
         document.querySelector('.header-top').style.display = 'none';
@@ -301,15 +291,9 @@
         const resultScreen = document.getElementById('result-screen');
         resultScreen.style.display = 'block';
         
-        let percent = (score / total) * 100;
-        let gradeText = percent >= 80 ? "<span class='text-success fw-bold'>Xuất sắc! Bạn đã vượt qua bài kiểm tra.</span>" : 
-                        percent >= 50 ? "<span class='text-primary fw-bold'>Đạt yêu cầu.</span>" : 
-                        "<span class='text-danger fw-bold'>Chưa đạt. Cần ôn tập thêm nghiệp vụ.</span>";
-
         document.getElementById('result-text').innerHTML = `
-            Kết quả của bạn:<br> 
-            <span style="font-size: 3rem; color: var(--bidv-green); font-weight: 900;">${score} / ${total}</span><br>
-            <div class="mt-3 fs-5">${gradeText}</div>
+            Số câu trả lời đúng:<br> 
+            <span style="font-size: 3rem; color: var(--bidv-green); font-weight: 900;">${score} / ${total}</span>
         `;
     }
 
