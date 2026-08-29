@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ôn Luyện Trắc Nghiệm Đấu Thầu</title>
+    <title>Ôn Luyện Trắc Nghiệm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
@@ -19,7 +19,7 @@
         /* Header */
         .header-top { background: linear-gradient(135deg, var(--primary-color), #4cc9f0); color: white; padding: 18px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .brand-logo { font-weight: 700; font-size: 1.5rem; margin: 0; display: flex; align-items: center; }
-        .mode-badge { font-size: 0.95rem; font-weight: 600; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); color: white; padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); }
+        .mode-badge { font-size: 0.95rem; font-weight: 600; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); color: white; padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; gap: 10px;}
         
         /* Cards */
         .custom-card { background: white; padding: 30px; border-radius: 16px; box-shadow: var(--card-shadow); border: none; }
@@ -29,16 +29,15 @@
         
         /* Options */
         .option-label { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; padding: 16px 20px; border: 2px solid #edf2f7; border-radius: 12px; transition: all 0.2s ease; font-size: 1.05rem; background: #fff; }
-        .option-label:hover:not(.disabled) { border-color: var(--primary-color); background-color: #f8faff; transform: translateY(-2px); }
+        .option-label:hover { border-color: var(--primary-color); background-color: #f8faff; transform: translateY(-2px); }
         .option-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #edf2f7; margin-right: 15px; font-weight: bold; color: #4a5568; transition: 0.2s;}
-        .option-label:hover:not(.disabled) .option-icon { background: var(--primary-color); color: white; }
+        .option-label:hover .option-icon { background: var(--primary-color); color: white; }
         
-        /* Answer States */
-        .option-label.correct { background-color: #f0fdf4; border-color: #22c55e; color: #166534; pointer-events: none; }
+        /* Answer States (Bỏ khóa pointer-events để cho phép chọn lại) */
+        .option-label.correct { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
         .option-label.correct .option-icon { background: #22c55e; color: white; }
-        .option-label.incorrect { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; pointer-events: none; opacity: 0.8;}
+        .option-label.incorrect { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; opacity: 0.8;}
         .option-label.incorrect .option-icon { background: #ef4444; color: white; }
-        .option-label.disabled { cursor: not-allowed; pointer-events: none; }
         input[type="radio"] { display: none; }
         
         /* Palette Grid */
@@ -66,7 +65,12 @@
             <i class="bi bi-laptop me-3 fs-3"></i> Nền Tảng Ôn Luyện
         </h1>
         <div class="mode-badge">
-            <i class="bi bi-lightbulb-fill text-warning me-1"></i> Chế độ học tập
+            <span><i class="bi bi-lightbulb-fill text-warning me-1"></i> Học tập</span>
+            <!-- Nút Import JSON ẩn input file bên dưới -->
+            <input type="file" id="jsonFileInput" accept=".json" class="d-none" onchange="importJSON(event)">
+            <button class="btn btn-sm btn-light text-primary fw-bold ms-2" onclick="document.getElementById('jsonFileInput').click()">
+                <i class="bi bi-upload"></i> Import JSON
+            </button>
         </div>
     </div>
 </div>
@@ -120,27 +124,27 @@
                 <i class="bi bi-trophy-fill text-warning" style="font-size: 5rem; filter: drop-shadow(0 4px 6px rgba(255, 193, 7, 0.4));"></i>
             </div>
             <h2 class="fw-bold mb-3" style="color: var(--primary-color);">Báo Cáo Kết Quả!</h2>
-            <p class="text-muted fs-5 mb-4">Bạn đã hoàn thành phiên ôn tập nghiệp vụ Đấu thầu</p>
+            <p class="text-muted fs-5 mb-4">Bạn đã hoàn thành phiên ôn tập</p>
             <div class="p-4 bg-light rounded-4 mb-4" id="result-text"></div>
             <button class="btn btn-primary-custom px-5 py-3 fs-5" onclick="location.reload()">
-                <i class="bi bi-arrow-repeat me-2"></i> Ôn tập lại từ đầu
+                <i class="bi bi-arrow-repeat me-2"></i> Trở về trang chủ
             </button>
         </div>
     </div>
 </div>
 
 <script>
-    const questions = [
+    // Dùng 'let' để có thể cập nhật bộ câu hỏi mới từ file JSON
+    let questions = [
         { question: "Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?", options: ["Đấu thầu rộng rãi", "Đấu thầu hạn chế", "Chỉ định thầu", "Chào hàng cạnh tranh"], answer: 0 },
         { question: "Thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là bao nhiêu ngày?", options: ["10 ngày", "15 ngày", "20 ngày", "30 ngày"], answer: 2 },
-        { question: "Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?", options: ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"], answer: 0 },
-        { question: "Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá bao nhiêu?", options: ["1 tỷ đồng", "3 tỷ đồng", "5 tỷ đồng", "10 tỷ đồng"], answer: 2 },
-        { question: "Trong đấu thầu, thuật ngữ 'Bảo lãnh thực hiện hợp đồng' có nghĩa vụ gì?", options: ["Đảm bảo nhà thầu không bỏ trốn", "Đảm bảo nhà thầu ký hợp đồng", "Đảm bảo trách nhiệm thực hiện hợp đồng đã ký", "Đảm bảo chất lượng thiết kế"], answer: 2 }
+        { question: "Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?", options: ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"], answer: 0 }
     ];
 
     let currentQuizData = [];
     let currentIndex = 0;
 
+    // Hàm trộn mảng
     function shuffleArray(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -148,6 +152,34 @@
         }
     }
 
+    // Đọc file JSON từ người dùng upload
+    function importJSON(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const importedData = JSON.parse(e.target.result);
+                // Kiểm tra sơ bộ cấu trúc JSON
+                if (Array.isArray(importedData) && importedData.length > 0 && importedData[0].question !== undefined) {
+                    questions = importedData;
+                    currentIndex = 0;
+                    loadQuiz();
+                    alert(`Đã import thành công ${questions.length} câu hỏi!`);
+                } else {
+                    alert("Định dạng JSON không hợp lệ! Vui lòng kiểm tra lại cấu trúc file.");
+                }
+            } catch (error) {
+                alert("Lỗi đọc file JSON! File có thể bị hỏng hoặc sai cú pháp.");
+            }
+            // Reset input file để có thể import lại cùng 1 file nếu cần
+            document.getElementById('jsonFileInput').value = "";
+        };
+        reader.readAsText(file);
+    }
+
+    // Tải bộ câu hỏi lên UI
     function loadQuiz() {
         currentQuizData = JSON.parse(JSON.stringify(questions));
         shuffleArray(currentQuizData);
@@ -188,24 +220,30 @@
         updateUI();
     }
 
+    // Cập nhật đáp án (cho phép chọn đè)
     function selectAnswer(qIndex, optIndex) {
-        if (currentQuizData[qIndex].userAnswer !== null) return;
-        
         currentQuizData[qIndex].userAnswer = optIndex;
         const isCorrect = (optIndex === currentQuizData[qIndex].newAnswerIndex);
         
+        // Reset CSS cho tất cả lựa chọn của câu hỏi này (Xóa class cũ)
         const labels = document.querySelectorAll(`#q-card-${qIndex} .option-label`);
         labels.forEach((lbl, idx) => {
-            lbl.classList.add('disabled'); 
+            lbl.classList.remove('correct', 'incorrect'); 
+            
+            // Render lại màu sắc theo lựa chọn mới nhất
             if (idx === currentQuizData[qIndex].newAnswerIndex) {
-                lbl.classList.add('correct'); 
+                lbl.classList.add('correct'); // Đáp án đúng luôn xanh
             } else if (idx === optIndex && !isCorrect) {
-                lbl.classList.add('incorrect'); 
+                lbl.classList.add('incorrect'); // Đáp án sai người dùng vừa chọn
             }
         });
 
-        document.getElementById(`btn-palette-${qIndex}`).classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
+        // Cập nhật sơ đồ (Xóa trạng thái cũ và gán trạng thái mới)
+        const paletteBtn = document.getElementById(`btn-palette-${qIndex}`);
+        paletteBtn.classList.remove('is-correct', 'is-incorrect');
+        paletteBtn.classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
 
+        // Cập nhật khung phản hồi
         const feedback = document.getElementById(`feedback-${qIndex}`);
         feedback.style.display = 'block';
         if (isCorrect) {
@@ -217,6 +255,7 @@
         }
     }
 
+    // Điều hướng câu hỏi
     function changeQuestion(step) {
         let newIndex = currentIndex + step;
         if (newIndex >= 0 && newIndex < currentQuizData.length) goToQuestion(newIndex);
@@ -243,6 +282,7 @@
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
+    // Nộp bài
     function finishPractice() {
         let score = 0;
         let total = currentQuizData.length;
@@ -256,7 +296,6 @@
         if (unattempted > 0 && !confirm(`Bạn còn ${unattempted} câu chưa xem. Chắc chắn muốn kết thúc?`)) return;
 
         document.getElementById('exam-screen').style.display = 'none';
-        document.querySelector('.header-top').style.display = 'none';
         
         const resultScreen = document.getElementById('result-screen');
         resultScreen.style.display = 'block';
