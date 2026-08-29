@@ -3,63 +3,58 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ôn Luyện Khảo Thí BIDV</title>
+    <title>Ôn Luyện Trắc Nghiệm Đấu Thầu</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        /* --- BỘ MÀU THƯƠNG HIỆU BIDV --- */
         :root {
-            --bidv-green: #0F6C5D;       
-            --bidv-green-hover: #0c594c;
-            --bidv-yellow: #F4B313;      
-            --bidv-yellow-hover: #e0a310;
-            --bg-color: #f4f6f9;
+            --primary-color: #4361ee;
+            --primary-hover: #3a53d0;
+            --bg-color: #f8f9fa;
+            --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
         }
 
-        body { background-color: var(--bg-color); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         
         /* Header */
-        .header-top { background: var(--bidv-green); color: white; padding: 15px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-bottom: 4px solid var(--bidv-yellow); }
-        .brand-logo { font-family: 'Arial', sans-serif; font-weight: 800; color: white; font-size: 1.4rem; margin: 0; display: flex; align-items: center;}
-        
-        /* Box chứa logo để luôn nổi bật trên nền xanh */
-        .logo-box { background: white; padding: 5px 12px; border-radius: 8px; margin-right: 15px; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
-        .logo-box img { height: 35px; width: auto; object-fit: contain; }
-        
-        .mode-badge { font-size: 1rem; font-weight: bold; background: var(--bidv-yellow); color: #000; padding: 6px 18px; border-radius: 25px; display: flex; align-items: center;}
+        .header-top { background: linear-gradient(135deg, var(--primary-color), #4cc9f0); color: white; padding: 18px 0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .brand-logo { font-weight: 700; font-size: 1.5rem; margin: 0; display: flex; align-items: center; }
+        .mode-badge { font-size: 0.95rem; font-weight: 600; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); color: white; padding: 6px 16px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); }
         
         /* Cards */
-        .question-card, .palette-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .question-card { min-height: 420px; display: none; animation: fadeIn 0.3s; border-top: 5px solid var(--bidv-green); }
+        .custom-card { background: white; padding: 30px; border-radius: 16px; box-shadow: var(--card-shadow); border: none; }
+        .question-card { min-height: 420px; display: none; animation: fadeIn 0.4s ease-out; }
         .question-card.active { display: block; }
-        .question-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 25px; color: var(--bidv-green); }
+        .question-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 25px; color: #2b2b2b; line-height: 1.5; }
         
         /* Options */
-        .option-label { display: block; margin-bottom: 12px; cursor: pointer; padding: 16px; border: 1px solid #dce1e6; border-radius: 8px; transition: all 0.2s ease; font-size: 1.05rem; }
-        .option-label:hover:not(.disabled) { background-color: #f8f9fa; border-color: var(--bidv-green); }
+        .option-label { display: flex; align-items: center; margin-bottom: 12px; cursor: pointer; padding: 16px 20px; border: 2px solid #edf2f7; border-radius: 12px; transition: all 0.2s ease; font-size: 1.05rem; background: #fff; }
+        .option-label:hover:not(.disabled) { border-color: var(--primary-color); background-color: #f8faff; transform: translateY(-2px); }
+        .option-icon { display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%; background: #edf2f7; margin-right: 15px; font-weight: bold; color: #4a5568; transition: 0.2s;}
+        .option-label:hover:not(.disabled) .option-icon { background: var(--primary-color); color: white; }
         
-        /* Trạng thái đáp án */
-        .option-label.correct { background-color: #d1e7dd; border-color: #198754; color: #0f5132; font-weight: bold; box-shadow: 0 2px 5px rgba(25, 135, 84, 0.2); }
-        .option-label.incorrect { background-color: #f8d7da; border-color: #dc3545; color: #842029; text-decoration: line-through; opacity: 0.8;}
-        .option-label.disabled { cursor: not-allowed; }
+        /* Answer States */
+        .option-label.correct { background-color: #f0fdf4; border-color: #22c55e; color: #166534; pointer-events: none; }
+        .option-label.correct .option-icon { background: #22c55e; color: white; }
+        .option-label.incorrect { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; pointer-events: none; opacity: 0.8;}
+        .option-label.incorrect .option-icon { background: #ef4444; color: white; }
+        .option-label.disabled { cursor: not-allowed; pointer-events: none; }
         input[type="radio"] { display: none; }
         
-        /* Buttons */
-        .btn-bidv { background-color: var(--bidv-green); color: white; border: none; font-weight: 500; }
-        .btn-bidv:hover { background-color: var(--bidv-green-hover); color: white; }
-        .btn-bidv-yellow { background-color: var(--bidv-yellow); color: #000; border: none; font-weight: bold; }
-        .btn-bidv-yellow:hover { background-color: var(--bidv-yellow-hover); color: #000; }
+        /* Palette Grid */
+        .q-btn { width: 44px; height: 44px; margin: 6px; border-radius: 10px; font-weight: 600; border: 2px solid #edf2f7; background: white; transition: 0.2s; color: #4a5568;}
+        .q-btn:hover { border-color: var(--primary-color); color: var(--primary-color); }
+        .q-btn.current { border-color: var(--primary-color); background-color: #f8faff; color: var(--primary-color); box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2); }
+        .q-btn.is-correct { background-color: #22c55e; color: white; border-color: #22c55e; }
+        .q-btn.is-incorrect { background-color: #ef4444; color: white; border-color: #ef4444; }
+
+        /* Utilities */
+        .progress { background-color: #edf2f7; border-radius: 10px; box-shadow: inset 0 1px 2px rgba(0,0,0,0.05); }
+        .progress-bar { background: linear-gradient(90deg, var(--primary-color), #4cc9f0); }
+        .btn-primary-custom { background-color: var(--primary-color); color: white; border: none; font-weight: 500; border-radius: 8px; }
+        .btn-primary-custom:hover { background-color: var(--primary-hover); color: white; }
         
-        /* Sơ đồ câu hỏi */
-        .q-btn { width: 42px; height: 42px; margin: 6px; border-radius: 8px; font-weight: bold; border: 1px solid #dce1e6; background: white; transition: 0.2s; color: #555;}
-        .q-btn.current { border: 2px solid var(--bidv-yellow); box-shadow: 0 0 8px rgba(244, 179, 19, 0.5); transform: scale(1.1);}
-        .q-btn.is-correct { background-color: #198754; color: white; border-color: #198754; }
-        .q-btn.is-incorrect { background-color: #dc3545; color: white; border-color: #dc3545; }
-
-        .progress { background-color: #e9ecef; border-radius: 10px; }
-        .progress-bar { background-color: var(--bidv-green); }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #result-screen { display: none; }
     </style>
 </head>
@@ -68,15 +63,10 @@
 <div class="header-top sticky-top">
     <div class="container d-flex justify-content-between align-items-center">
         <h1 class="brand-logo">
-            <!-- Thẻ chứa Logo -->
-            <div class="logo-box">
-                <!-- Tạm sử dụng link ảnh online dự phòng, hệ thống sẽ tự dùng logo-bidv.png nếu bạn upload lên GitHub -->
-                <img src="logo-bidv.png" onerror="this.src='https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-BIDV-2022.png'" alt="BIDV Logo">
-            </div>
-            HỆ THỐNG KHẢO THÍ
+            <i class="bi bi-laptop me-3 fs-3"></i> Nền Tảng Ôn Luyện
         </h1>
         <div class="mode-badge">
-            <i class="bi bi-book-half me-2"></i> CHẾ ĐỘ ÔN LUYỆN
+            <i class="bi bi-lightbulb-fill text-warning me-1"></i> Chế độ học tập
         </div>
     </div>
 </div>
@@ -85,38 +75,38 @@
     <div class="row">
         <div class="col-lg-8 col-md-7 mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fw-bold" style="color: var(--bidv-green);">Tiến độ ôn tập</span>
+                <span class="fw-semibold text-secondary"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
             </div>
-            <div class="progress mb-4" style="height: 12px;">
+            <div class="progress mb-4" style="height: 10px;">
                 <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%; transition: width 0.4s ease;"></div>
             </div>
             
             <div id="quiz-body"></div>
 
             <div class="d-flex justify-content-between mt-4">
-                <button class="btn btn-outline-secondary px-4 py-2" id="btn-prev" onclick="changeQuestion(-1)">
-                    <i class="bi bi-arrow-left-circle me-1"></i> Câu trước
+                <button class="btn btn-light border px-4 py-2" id="btn-prev" onclick="changeQuestion(-1)">
+                    <i class="bi bi-arrow-left me-2"></i> Câu trước
                 </button>
-                <button class="btn btn-bidv px-4 py-2" id="btn-next" onclick="changeQuestion(1)">
-                    Câu tiếp theo <i class="bi bi-arrow-right-circle ms-1"></i>
+                <button class="btn btn-primary-custom px-4 py-2" id="btn-next" onclick="changeQuestion(1)">
+                    Câu tiếp theo <i class="bi bi-arrow-right ms-2"></i>
                 </button>
             </div>
         </div>
 
         <div class="col-lg-4 col-md-5">
-            <div class="palette-card sticky-top" style="top: 100px;">
-                <h5 class="text-center mb-4 fw-bold" style="color: var(--bidv-green);">DANH SÁCH CÂU HỎI</h5>
+            <div class="custom-card sticky-top" style="top: 100px;">
+                <h5 class="mb-4 fw-bold text-center"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Sơ Đồ Câu Hỏi</h5>
                 <div class="d-flex flex-wrap justify-content-center" id="question-palette"></div>
-                <hr class="my-4">
+                <hr class="my-4 text-muted">
                 
-                <div class="d-flex flex-column gap-2 mb-4" style="font-size: 0.9rem;">
-                    <div><span class="badge bg-success" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Trả lời Đúng</div>
-                    <div><span class="badge bg-danger" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Trả lời Sai</div>
-                    <div><span class="badge border bg-white" style="width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Chưa làm</div>
+                <div class="d-flex flex-column gap-3 mb-4 text-secondary" style="font-size: 0.9rem; font-weight: 500;">
+                    <div class="d-flex align-items-center"><span class="badge bg-success me-2" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;"><i class="bi bi-check-lg"></i></span> Trả lời đúng</div>
+                    <div class="d-flex align-items-center"><span class="badge bg-danger me-2" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;"><i class="bi bi-x-lg"></i></span> Trả lời sai</div>
+                    <div class="d-flex align-items-center"><span class="badge bg-light border text-dark me-2" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">-</span> Chưa làm</div>
                 </div>
 
-                <button id="submit-btn" class="btn btn-bidv-yellow w-100 py-3 text-uppercase" onclick="finishPractice()">
-                    <i class="bi bi-flag-fill me-2"></i> Kết Thúc Ôn Tập
+                <button id="submit-btn" class="btn btn-dark w-100 py-3 fw-bold" onclick="finishPractice()">
+                    <i class="bi bi-flag-fill me-2"></i> Hoàn Thành
                 </button>
             </div>
         </div>
@@ -125,16 +115,15 @@
 
 <div class="container mt-5" id="result-screen">
     <div class="row justify-content-center">
-        <div class="col-md-7 text-center bg-white p-5 shadow-sm" style="border-radius: 20px; border-top: 8px solid var(--bidv-green);">
-            <div class="logo-box mb-4" style="margin-right: 0; padding: 10px 20px;">
-                <img src="logo-bidv.png" onerror="this.src='https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-BIDV-2022.png'" alt="BIDV Logo" style="height: 50px;">
+        <div class="col-md-7 text-center custom-card p-5">
+            <div class="mb-4">
+                <i class="bi bi-trophy-fill text-warning" style="font-size: 5rem; filter: drop-shadow(0 4px 6px rgba(255, 193, 7, 0.4));"></i>
             </div>
-            <br>
-            <i class="bi bi-bookmark-check-fill text-success mb-3" style="font-size: 5rem;"></i>
-            <h2 class="fw-bold" style="color: var(--bidv-green);">Hoàn Thành Lượt Ôn Tập!</h2>
-            <div class="fs-4 mt-4 mb-4" id="result-text"></div>
-            <button class="btn btn-bidv px-5 py-2 mt-3" onclick="location.reload()">
-                <i class="bi bi-arrow-counterclockwise me-1"></i> Ôn tập lại
+            <h2 class="fw-bold mb-3" style="color: var(--primary-color);">Báo Cáo Kết Quả!</h2>
+            <p class="text-muted fs-5 mb-4">Bạn đã hoàn thành phiên ôn tập nghiệp vụ Đấu thầu</p>
+            <div class="p-4 bg-light rounded-4 mb-4" id="result-text"></div>
+            <button class="btn btn-primary-custom px-5 py-3 fs-5" onclick="location.reload()">
+                <i class="bi bi-arrow-repeat me-2"></i> Ôn tập lại từ đầu
             </button>
         </div>
     </div>
@@ -142,11 +131,11 @@
 
 <script>
     const questions = [
-        { question: "Câu 1: Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?", options: ["Đấu thầu rộng rãi", "Đấu thầu hạn chế", "Chỉ định thầu", "Chào hàng cạnh tranh"], answer: 0 },
-        { question: "Câu 2: Thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là bao nhiêu ngày?", options: ["10 ngày", "15 ngày", "20 ngày", "30 ngày"], answer: 2 },
-        { question: "Câu 3: Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?", options: ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"], answer: 0 },
-        { question: "Câu 4: Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá bao nhiêu?", options: ["1 tỷ đồng", "3 tỷ đồng", "5 tỷ đồng", "10 tỷ đồng"], answer: 2 },
-        { question: "Câu 5: Trong đấu thầu, thuật ngữ 'Bảo lãnh thực hiện hợp đồng' có nghĩa vụ gì?", options: ["Đảm bảo nhà thầu không bỏ trốn", "Đảm bảo nhà thầu ký hợp đồng", "Đảm bảo trách nhiệm thực hiện hợp đồng đã ký", "Đảm bảo chất lượng thiết kế"], answer: 2 }
+        { question: "Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?", options: ["Đấu thầu rộng rãi", "Đấu thầu hạn chế", "Chỉ định thầu", "Chào hàng cạnh tranh"], answer: 0 },
+        { question: "Thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là bao nhiêu ngày?", options: ["10 ngày", "15 ngày", "20 ngày", "30 ngày"], answer: 2 },
+        { question: "Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?", options: ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"], answer: 0 },
+        { question: "Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá bao nhiêu?", options: ["1 tỷ đồng", "3 tỷ đồng", "5 tỷ đồng", "10 tỷ đồng"], answer: 2 },
+        { question: "Trong đấu thầu, thuật ngữ 'Bảo lãnh thực hiện hợp đồng' có nghĩa vụ gì?", options: ["Đảm bảo nhà thầu không bỏ trốn", "Đảm bảo nhà thầu ký hợp đồng", "Đảm bảo trách nhiệm thực hiện hợp đồng đã ký", "Đảm bảo chất lượng thiết kế"], answer: 2 }
     ];
 
     let currentQuizData = [];
@@ -174,20 +163,26 @@
             q.newAnswerIndex = q.options.indexOf(correctAnswerText);
             q.userAnswer = null; 
 
-            let questionHTML = `<div class="question-card" id="q-card-${index}">
-                <div class="question-title">Câu ${index + 1}: ${q.question.split(': ')[1] || q.question}</div>`;
+            let questionHTML = `<div class="custom-card question-card" id="q-card-${index}">
+                <div class="d-flex align-items-center mb-3">
+                    <span class="badge bg-primary text-white me-2 px-3 py-2 fs-6 rounded-pill">Câu ${index + 1}</span>
+                </div>
+                <div class="question-title">${q.question}</div>
+                <div class="options-container">`;
             
             q.options.forEach((opt, optIndex) => {
+                const char = String.fromCharCode(65 + optIndex);
                 questionHTML += `
                     <label class="option-label" id="label-q${index}-opt${optIndex}" onclick="selectAnswer(${index}, ${optIndex})">
-                        <strong>${String.fromCharCode(65 + optIndex)}.</strong> ${opt}
+                        <div class="option-icon">${char}</div>
+                        <div class="option-text">${opt}</div>
                     </label>
                 `;
             });
 
-            questionHTML += `<div id="feedback-${index}" class="mt-4 p-3 rounded" style="display: none; font-size: 1.1rem;"></div></div>`;
+            questionHTML += `</div><div id="feedback-${index}" class="mt-4 p-4 rounded-3 border-0 shadow-sm" style="display: none; font-size: 1.05rem; transition: 0.3s;"></div></div>`;
             quizBody.innerHTML += questionHTML;
-            palette.innerHTML += `<button class="q-btn shadow-sm" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
+            palette.innerHTML += `<button class="q-btn" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
         });
 
         updateUI();
@@ -214,11 +209,11 @@
         const feedback = document.getElementById(`feedback-${qIndex}`);
         feedback.style.display = 'block';
         if (isCorrect) {
-            feedback.className = 'mt-4 p-3 rounded bg-success text-white fw-bold';
-            feedback.innerHTML = '<i class="bi bi-check-circle-fill me-2"></i> Tuyệt vời! Bạn đã chọn đúng.';
+            feedback.className = 'mt-4 p-3 rounded-3 bg-success text-white shadow-sm d-flex align-items-center';
+            feedback.innerHTML = '<i class="bi bi-check-circle-fill fs-4 me-3"></i> <div><strong>Chính xác!</strong> Bạn đã nắm vững kiến thức này.</div>';
         } else {
-            feedback.className = 'mt-4 p-3 rounded bg-danger text-white fw-bold';
-            feedback.innerHTML = `<i class="bi bi-x-circle-fill me-2"></i> Rất tiếc, chưa chính xác!<br><span class="fw-normal fs-6">Đáp án đúng là: <strong>${String.fromCharCode(65 + currentQuizData[qIndex].newAnswerIndex)}</strong></span>`;
+            feedback.className = 'mt-4 p-3 rounded-3 bg-danger text-white shadow-sm d-flex align-items-center';
+            feedback.innerHTML = `<i class="bi bi-x-circle-fill fs-4 me-3"></i> <div><strong>Chưa chính xác!</strong><br><span class="opacity-75">Đáp án đúng là: </span> <strong>${String.fromCharCode(65 + currentQuizData[qIndex].newAnswerIndex)}</strong></div>`;
         }
     }
 
@@ -242,7 +237,7 @@
         document.getElementById(`btn-palette-${currentIndex}`).classList.add('current');
 
         document.getElementById('btn-prev').disabled = (currentIndex === 0);
-        document.getElementById('btn-next').style.display = (currentIndex === total - 1) ? 'none' : 'block';
+        document.getElementById('btn-next').style.display = (currentIndex === total - 1) ? 'none' : 'inline-block';
 
         let progress = ((currentIndex + 1) / total) * 100;
         document.getElementById('progress-bar').style.width = progress + '%';
@@ -258,7 +253,7 @@
             else if (q.userAnswer === q.newAnswerIndex) score++;
         });
 
-        if (unattempted > 0 && !confirm(`Bạn còn ${unattempted} câu chưa xem. Bạn vẫn muốn kết thúc ôn tập?`)) return;
+        if (unattempted > 0 && !confirm(`Bạn còn ${unattempted} câu chưa xem. Chắc chắn muốn kết thúc?`)) return;
 
         document.getElementById('exam-screen').style.display = 'none';
         document.querySelector('.header-top').style.display = 'none';
@@ -266,7 +261,19 @@
         const resultScreen = document.getElementById('result-screen');
         resultScreen.style.display = 'block';
         
-        document.getElementById('result-text').innerHTML = `Số câu trả lời đúng:<br> <span style="font-size: 3rem; color: var(--bidv-green); font-weight: 900;">${score} / ${total}</span>`;
+        let percent = Math.round((score / total) * 100);
+        document.getElementById('result-text').innerHTML = `
+            <div class="row text-center">
+                <div class="col-6 border-end">
+                    <div class="text-muted mb-1">Số câu đúng</div>
+                    <h3 class="fw-bold text-success m-0">${score} / ${total}</h3>
+                </div>
+                <div class="col-6">
+                    <div class="text-muted mb-1">Tỷ lệ chính xác</div>
+                    <h3 class="fw-bold text-primary m-0">${percent}%</h3>
+                </div>
+            </div>
+        `;
     }
 
     window.onload = loadQuiz;
