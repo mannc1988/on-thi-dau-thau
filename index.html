@@ -3,100 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thi Trắc Nghiệm: Kiến Thức Đấu Thầu</title>
+    <title>Hệ thống Khảo thí BIDV</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        body { background-color: #f4f6f9; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .header-top { background: #0d6efd; color: white; padding: 15px 0; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
-        .timer-box { font-size: 1.25rem; font-weight: bold; background: #dc3545; padding: 5px 15px; border-radius: 20px; display: inline-block; }
-        
-        .question-card { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); min-height: 400px; display: none; animation: fadeIn 0.3s; }
-        .question-card.active { display: block; }
-        .question-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 20px; color: #2c3e50; }
-        
-        .option-label { display: block; margin-bottom: 12px; cursor: pointer; padding: 15px; border: 1px solid #e0e0e0; border-radius: 8px; transition: all 0.2s; font-size: 1.05rem; }
-        .option-label:hover { background-color: #f8f9fa; border-color: #0d6efd; }
-        .option-label.selected { background-color: #e9f2ff; border-color: #0d6efd; font-weight: 500; }
-        input[type="radio"] { display: none; } /* Ẩn radio mặc định để dùng custom UI */
-        
-        /* Sơ đồ câu hỏi bên phải */
-        .palette-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
-        .q-btn { width: 40px; height: 40px; margin: 5px; border-radius: 5px; font-weight: bold; border: 1px solid #dee2e6; background: white; transition: 0.2s; }
-        .q-btn.answered { background-color: #198754; color: white; border-color: #198754; }
-        .q-btn.current { border: 2px solid #0d6efd; background-color: #e9f2ff; color: #0d6efd; }
-        .q-btn.answered.current { background-color: #198754; color: white; border: 2px solid #0a58ca; }
+        /* --- BỘ MÀU THƯƠNG HIỆU BIDV --- */
+        :root {
+            --bidv-green: #0F6C5D;       /* Xanh ngọc lục bảo */
+            --bidv-green-hover: #0c594c;
+            --bidv-yellow: #F4B313;      /* Vàng mai */
+            --bidv-yellow-hover: #e0a310;
+            --bidv-light-green: #e9f2f0; /* Nền xanh nhạt */
+            --bg-color: #f4f6f9;
+        }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        body { background-color: var(--bg-color); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
+        /* Header */
+        .header-top { background: var(--bidv-green); color: white; padding: 15px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-bottom: 4px solid var(--bidv-yellow); }
+        .brand-logo { font-family: 'Arial Black', sans-serif; font-weight: 900; letter-spacing: 2px; color: white; font-size: 1.6rem; margin: 0; display: flex; align-items: center;}
+        .brand-logo span { color: var(--bidv-yellow); margin-right: 10px; }
+        
+        /* Timer */
+        .timer-box { font-size: 1.25rem; font-weight: bold; background: var(--bidv-yellow); color: #000; padding: 6px 18px; border-radius: 25px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); display: flex; align-items: center;}
+        
+        /* Cards */
+        .question-card, .palette-card { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+        .question-card { min-height: 400px; display: none; animation: fadeIn 0.3s; border-top: 5px solid var(--bidv-green); }
+        .question-card.active { display: block; }
+        .question-title { font-size: 1.25rem; font-weight: 600; margin-bottom: 25px; color: var(--bidv-green); }
+        
+        /* Options */
+        .option-label { display: block; margin-bottom: 12px; cursor: pointer; padding: 16px; border: 1px solid #dce1e6; border-radius: 8px; transition: all 0.2s ease; font-size: 1.05rem; }
+        .option-label:hover { background-color: #f8f9fa; border-color: var(--bidv-green); }
+        .option-label.selected { background-color: var(--bidv-light-green); border-color: var(--bidv-green); font-weight: 600; color: var(--bidv-green); box-shadow: 0 2px 5px rgba(15, 108, 93, 0.1); }
+        input[type="radio"] { display: none; }
+        
+        /* Buttons */
+        .btn-bidv { background-color: var(--bidv-green); color: white; border: none; font-weight: 500; }
+        .btn-bidv:hover { background-color: var(--bidv-green-hover); color: white; }
+        .btn-bidv-yellow { background-color: var(--bidv-yellow); color: #000; border: none; font-weight: bold; }
+        .btn-bidv-yellow:hover { background-color: var(--bidv-yellow-hover); color: #000; }
+        
+        /* Sơ đồ câu hỏi */
+        .q-btn { width: 42px; height: 42px; margin: 6px; border-radius: 8px; font-weight: bold; border: 1px solid #dce1e6; background: white; transition: 0.2s; color: #555;}
+        .q-btn.answered { background-color: var(--bidv-green); color: white; border-color: var(--bidv-green); }
+        .q-btn.current { border: 2px solid var(--bidv-yellow); background-color: #fffaf0; color: #000; box-shadow: 0 0 8px rgba(244, 179, 19, 0.4); }
+        .q-btn.answered.current { background-color: var(--bidv-green); color: white; border: 2px solid var(--bidv-yellow); }
+
+        /* Progress bar */
+        .progress { background-color: #e9ecef; border-radius: 10px; }
+        .progress-bar { background-color: var(--bidv-green); }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
         #result-screen { display: none; }
     </style>
 </head>
 <body>
 
+<!-- Header BIDV -->
 <div class="header-top sticky-top">
     <div class="container d-flex justify-content-between align-items-center">
-        <h4 class="m-0"><i class="bi bi-journal-text me-2"></i>Kỳ Thi: Kiến Thức Đấu Thầu</h4>
+        <h1 class="brand-logo"><span>BIDV</span> HỆ THỐNG KHẢO THÍ</h1>
         <div class="timer-box" id="timer-display">
-            <i class="bi bi-clock-history me-1"></i> <span id="time">00:00</span>
+            <i class="bi bi-alarm-fill me-2"></i> <span id="time">00:00</span>
         </div>
     </div>
 </div>
 
+<!-- Main Content -->
 <div class="container mt-4" id="exam-screen">
     <div class="row">
+        <!-- Khu vực câu hỏi -->
         <div class="col-lg-8 col-md-7 mb-4">
-            <div class="progress mb-3" style="height: 10px;">
-                <div id="progress-bar" class="progress-bar bg-success" role="progressbar" style="width: 0%;"></div>
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="fw-bold" style="color: var(--bidv-green);">Tiến độ làm bài</span>
+            </div>
+            <div class="progress mb-4" style="height: 12px;">
+                <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%; transition: width 0.4s ease;"></div>
             </div>
             
             <div id="quiz-body">
-                </div>
+                <!-- Câu hỏi sẽ render tại đây -->
+            </div>
 
+            <!-- Nút điều hướng -->
             <div class="d-flex justify-content-between mt-4">
-                <button class="btn btn-outline-secondary px-4" id="btn-prev" onclick="changeQuestion(-1)">
-                    <i class="bi bi-chevron-left"></i> Câu trước
+                <button class="btn btn-outline-secondary px-4 py-2" id="btn-prev" onclick="changeQuestion(-1)">
+                    <i class="bi bi-arrow-left-circle me-1"></i> Câu trước
                 </button>
-                <button class="btn btn-primary px-4" id="btn-next" onclick="changeQuestion(1)">
-                    Câu tiếp <i class="bi bi-chevron-right"></i>
+                <button class="btn btn-bidv px-4 py-2" id="btn-next" onclick="changeQuestion(1)">
+                    Câu tiếp theo <i class="bi bi-arrow-right-circle ms-1"></i>
                 </button>
             </div>
         </div>
 
+        <!-- Khu vực điều khiển & Sơ đồ câu hỏi -->
         <div class="col-lg-4 col-md-5">
-            <div class="palette-card sticky-top" style="top: 80px;">
-                <h6 class="text-center mb-3">Sơ Đồ Câu Hỏi</h6>
+            <div class="palette-card sticky-top" style="top: 100px;">
+                <h5 class="text-center mb-4 fw-bold" style="color: var(--bidv-green);">DANH SÁCH CÂU HỎI</h5>
                 <div class="d-flex flex-wrap justify-content-center" id="question-palette">
-                    </div>
-                <hr>
-                <div class="d-flex justify-content-between mb-2" style="font-size: 0.85rem;">
-                    <span><span class="badge bg-success border" style="width:15px;height:15px;display:inline-block"></span> Đã làm</span>
-                    <span><span class="badge bg-white border text-dark" style="width:15px;height:15px;display:inline-block"></span> Chưa làm</span>
+                    <!-- Nút sơ đồ sẽ render tại đây -->
                 </div>
-                <button id="submit-btn" class="btn btn-danger w-100 mt-3 fw-bold" onclick="confirmSubmit()">
-                    <i class="bi bi-send-check"></i> NỘP BÀI THI
+                <hr class="my-4">
+                <div class="d-flex justify-content-between mb-4" style="font-size: 0.9rem;">
+                    <span><span class="badge" style="background-color: var(--bidv-green); width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Đã làm</span>
+                    <span><span class="badge border" style="background-color: white; color: #000; width:18px;height:18px;display:inline-block;vertical-align:middle;"></span> Chưa làm</span>
+                </div>
+                <button id="submit-btn" class="btn btn-bidv-yellow w-100 py-3 text-uppercase" onclick="confirmSubmit()">
+                    <i class="bi bi-send-check-fill me-2"></i> Nộp Bài Thi
                 </button>
             </div>
         </div>
     </div>
 </div>
 
+<!-- Màn hình kết quả -->
 <div class="container mt-5" id="result-screen">
     <div class="row justify-content-center">
-        <div class="col-md-6 text-center bg-white p-5 border-radius-10 shadow-sm" style="border-radius: 15px;">
-            <i class="bi bi-trophy-fill text-warning" style="font-size: 4rem;"></i>
-            <h2 class="mt-3 text-primary">Hoàn Thành Bài Thi!</h2>
-            <div class="fs-4 mt-3 mb-4" id="result-text"></div>
-            <button class="btn btn-outline-primary" onclick="location.reload()">Thi Lại</button>
+        <div class="col-md-7 text-center bg-white p-5 shadow-sm" style="border-radius: 20px; border-top: 8px solid var(--bidv-green);">
+            <div class="brand-logo justify-content-center mb-4 text-dark"><span>BIDV</span></div>
+            <i class="bi bi-award-fill text-warning mb-3" style="font-size: 5rem; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1));"></i>
+            <h2 class="fw-bold" style="color: var(--bidv-green);">Hoàn Thành Bài Thi!</h2>
+            <div class="fs-4 mt-4 mb-4" id="result-text"></div>
+            <button class="btn btn-bidv px-5 py-2 mt-3" onclick="location.reload()">
+                <i class="bi bi-arrow-counterclockwise me-1"></i> Làm lại bài thi
+            </button>
         </div>
     </div>
 </div>
 
 <script>
     // --- CẤU HÌNH BÀI THI ---
-    const TOTAL_MINUTES = 3; // Cài đặt thời gian làm bài (Phút)
+    const TOTAL_MINUTES = 5; 
     
-    // Bộ câu hỏi
+    // Bộ câu hỏi (Bạn có thể thêm tùy ý)
     const questions = [
         {
             question: "Câu 1: Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?",
@@ -113,7 +154,6 @@
             options: ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"],
             answer: 0
         },
-        // Thêm 2 câu hỏi giả định để thấy rõ tính năng phân trang
         {
             question: "Câu 4: Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá bao nhiêu?",
             options: ["1 tỷ đồng", "3 tỷ đồng", "5 tỷ đồng", "10 tỷ đồng"],
@@ -138,7 +178,6 @@
         }
     }
 
-    // Khởi tạo bài thi
     function loadQuiz() {
         currentQuizData = JSON.parse(JSON.stringify(questions));
         shuffleArray(currentQuizData);
@@ -153,7 +192,6 @@
             shuffleArray(q.options);
             q.newAnswerIndex = q.options.indexOf(correctAnswerText);
 
-            // 1. Tạo HTML cho câu hỏi (Mặc định ẩn)
             let questionHTML = `<div class="question-card" id="q-card-${index}">
                 <div class="question-title">Câu ${index + 1}: ${q.question.split(': ')[1] || q.question}</div>`;
             
@@ -168,26 +206,20 @@
             questionHTML += `</div>`;
             quizBody.innerHTML += questionHTML;
 
-            // 2. Tạo nút trên sơ đồ (Palette)
-            palette.innerHTML += `<button class="q-btn" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
+            palette.innerHTML += `<button class="q-btn shadow-sm" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
         });
 
         startTimer();
         updateUI();
     }
 
-    // Xử lý khi thí sinh chọn đáp án
     function selectAnswer(qIndex, optIndex) {
-        // Đổi màu nền của lựa chọn hiện tại
         const labels = document.querySelectorAll(`#q-card-${qIndex} .option-label`);
         labels.forEach(lbl => lbl.classList.remove('selected'));
         document.getElementById(`label-q${qIndex}-opt${optIndex}`).classList.add('selected');
-
-        // Đánh dấu đã trả lời trên sơ đồ
         document.getElementById(`btn-palette-${qIndex}`).classList.add('answered');
     }
 
-    // Chuyển câu hỏi (Trước/Sau)
     function changeQuestion(step) {
         let newIndex = currentIndex + step;
         if (newIndex >= 0 && newIndex < currentQuizData.length) {
@@ -195,34 +227,27 @@
         }
     }
 
-    // Đi đến câu hỏi cụ thể
     function goToQuestion(index) {
         currentIndex = index;
         updateUI();
     }
 
-    // Cập nhật giao diện (Phân trang, Sơ đồ, Nút bấm)
     function updateUI() {
         let total = currentQuizData.length;
 
-        // Ẩn tất cả, hiện câu hiện tại
         document.querySelectorAll('.question-card').forEach(card => card.classList.remove('active'));
         document.getElementById(`q-card-${currentIndex}`).classList.add('active');
 
-        // Cập nhật trạng thái nút sơ đồ
         document.querySelectorAll('.q-btn').forEach(btn => btn.classList.remove('current'));
         document.getElementById(`btn-palette-${currentIndex}`).classList.add('current');
 
-        // Ẩn/hiện nút Trước/Sau
         document.getElementById('btn-prev').disabled = (currentIndex === 0);
         document.getElementById('btn-next').style.display = (currentIndex === total - 1) ? 'none' : 'block';
 
-        // Cập nhật thanh tiến trình
         let progress = ((currentIndex + 1) / total) * 100;
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
-    // Xử lý đồng hồ đếm ngược
     function startTimer() {
         const timeDisplay = document.getElementById('time');
         
@@ -234,8 +259,9 @@
             
             timeDisplay.innerText = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
 
-            // Sắp hết giờ nhấp nháy đỏ
             if(timeRemaining <= 60) {
+                document.getElementById('timer-display').style.backgroundColor = "#dc3545";
+                document.getElementById('timer-display').style.color = "#fff";
                 document.getElementById('timer-display').style.animation = "fadeIn 1s infinite alternate";
             }
 
@@ -247,14 +273,12 @@
         }, 1000);
     }
 
-    // Xác nhận nộp bài
     function confirmSubmit() {
-        if (confirm("Bạn có chắc chắn muốn nộp bài ngay bây giờ?")) {
+        if (confirm("Bạn có chắc chắn muốn nộp bài? Hãy kiểm tra lại các câu chưa làm (ô màu trắng).")) {
             calculateScore();
         }
     }
 
-    // Tính điểm và hiển thị kết quả
     function calculateScore() {
         clearInterval(timerInterval);
         
@@ -271,25 +295,24 @@
             }
         });
 
-        // Ẩn màn hình thi, hiện màn hình kết quả
         document.getElementById('exam-screen').style.display = 'none';
         document.querySelector('.header-top').style.display = 'none';
         
         const resultScreen = document.getElementById('result-screen');
         resultScreen.style.display = 'block';
         
-        // Đánh giá kết quả
-        let gradeText = score === total ? "<span class='text-success'>Xuất sắc!</span>" : 
-                        score >= total/2 ? "<span class='text-primary'>Đạt yêu cầu.</span>" : 
-                        "<span class='text-danger'>Cần ôn tập thêm.</span>";
+        let percent = (score / total) * 100;
+        let gradeText = percent >= 80 ? "<span class='text-success fw-bold'>Xuất sắc! Bạn đã vượt qua bài kiểm tra.</span>" : 
+                        percent >= 50 ? "<span class='text-primary fw-bold'>Đạt yêu cầu.</span>" : 
+                        "<span class='text-danger fw-bold'>Chưa đạt. Cần ôn tập thêm nghiệp vụ.</span>";
 
         document.getElementById('result-text').innerHTML = `
-            Bạn trả lời đúng <strong>${score} / ${total}</strong> câu hỏi.<br>
-            <div class="mt-2">${gradeText}</div>
+            Kết quả của bạn:<br> 
+            <span style="font-size: 3rem; color: var(--bidv-green); font-weight: 900;">${score} / ${total}</span><br>
+            <div class="mt-3 fs-5">${gradeText}</div>
         `;
     }
 
-    // Khởi động khi tải trang
     window.onload = loadQuiz;
 </script>
 </body>
