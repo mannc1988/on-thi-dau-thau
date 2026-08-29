@@ -20,8 +20,11 @@
         
         /* Header */
         .header-top { background: var(--bidv-green); color: white; padding: 15px 0; box-shadow: 0 4px 10px rgba(0,0,0,0.15); border-bottom: 4px solid var(--bidv-yellow); }
-        .brand-logo { font-family: 'Arial Black', sans-serif; font-weight: 900; letter-spacing: 1px; color: white; font-size: 1.5rem; margin: 0; display: flex; align-items: center;}
-        .brand-logo span { color: var(--bidv-yellow); margin-right: 10px; }
+        .brand-logo { font-family: 'Arial', sans-serif; font-weight: 800; color: white; font-size: 1.4rem; margin: 0; display: flex; align-items: center;}
+        
+        /* Box chứa logo để luôn nổi bật trên nền xanh */
+        .logo-box { background: white; padding: 5px 12px; border-radius: 8px; margin-right: 15px; display: inline-flex; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.1);}
+        .logo-box img { height: 35px; width: auto; object-fit: contain; }
         
         .mode-badge { font-size: 1rem; font-weight: bold; background: var(--bidv-yellow); color: #000; padding: 6px 18px; border-radius: 25px; display: flex; align-items: center;}
         
@@ -35,7 +38,7 @@
         .option-label { display: block; margin-bottom: 12px; cursor: pointer; padding: 16px; border: 1px solid #dce1e6; border-radius: 8px; transition: all 0.2s ease; font-size: 1.05rem; }
         .option-label:hover:not(.disabled) { background-color: #f8f9fa; border-color: var(--bidv-green); }
         
-        /* Trạng thái đáp án (Ôn luyện) */
+        /* Trạng thái đáp án */
         .option-label.correct { background-color: #d1e7dd; border-color: #198754; color: #0f5132; font-weight: bold; box-shadow: 0 2px 5px rgba(25, 135, 84, 0.2); }
         .option-label.incorrect { background-color: #f8d7da; border-color: #dc3545; color: #842029; text-decoration: line-through; opacity: 0.8;}
         .option-label.disabled { cursor: not-allowed; }
@@ -64,7 +67,14 @@
 
 <div class="header-top sticky-top">
     <div class="container d-flex justify-content-between align-items-center">
-        <h1 class="brand-logo"><span>BIDV</span> HỆ THỐNG KHẢO THÍ</h1>
+        <h1 class="brand-logo">
+            <!-- Thẻ chứa Logo -->
+            <div class="logo-box">
+                <!-- Tạm sử dụng link ảnh online dự phòng, hệ thống sẽ tự dùng logo-bidv.png nếu bạn upload lên GitHub -->
+                <img src="logo-bidv.png" onerror="this.src='https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-BIDV-2022.png'" alt="BIDV Logo">
+            </div>
+            HỆ THỐNG KHẢO THÍ
+        </h1>
         <div class="mode-badge">
             <i class="bi bi-book-half me-2"></i> CHẾ ĐỘ ÔN LUYỆN
         </div>
@@ -116,7 +126,10 @@
 <div class="container mt-5" id="result-screen">
     <div class="row justify-content-center">
         <div class="col-md-7 text-center bg-white p-5 shadow-sm" style="border-radius: 20px; border-top: 8px solid var(--bidv-green);">
-            <div class="brand-logo justify-content-center mb-4 text-dark"><span>BIDV</span></div>
+            <div class="logo-box mb-4" style="margin-right: 0; padding: 10px 20px;">
+                <img src="logo-bidv.png" onerror="this.src='https://cdn.haitrieu.com/wp-content/uploads/2022/01/Logo-BIDV-2022.png'" alt="BIDV Logo" style="height: 50px;">
+            </div>
+            <br>
             <i class="bi bi-bookmark-check-fill text-success mb-3" style="font-size: 5rem;"></i>
             <h2 class="fw-bold" style="color: var(--bidv-green);">Hoàn Thành Lượt Ôn Tập!</h2>
             <div class="fs-4 mt-4 mb-4" id="result-text"></div>
@@ -129,31 +142,11 @@
 
 <script>
     const questions = [
-        {
-            question: "Câu 1: Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?",
-            options: ["Đấu thầu rộng rãi", "Đấu thầu hạn chế", "Chỉ định thầu", "Chào hàng cạnh tranh"],
-            answer: 0
-        },
-        {
-            question: "Câu 2: Thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là bao nhiêu ngày?",
-            options: ["10 ngày", "15 ngày", "20 ngày", "30 ngày"],
-            answer: 2
-        },
-        {
-            question: "Câu 3: Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?",
-            options: ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"],
-            answer: 0
-        },
-        {
-            question: "Câu 4: Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá bao nhiêu?",
-            options: ["1 tỷ đồng", "3 tỷ đồng", "5 tỷ đồng", "10 tỷ đồng"],
-            answer: 2
-        },
-        {
-            question: "Câu 5: Trong đấu thầu, thuật ngữ 'Bảo lãnh thực hiện hợp đồng' có nghĩa vụ gì?",
-            options: ["Đảm bảo nhà thầu không bỏ trốn", "Đảm bảo nhà thầu ký hợp đồng", "Đảm bảo trách nhiệm thực hiện hợp đồng đã ký", "Đảm bảo chất lượng thiết kế"],
-            answer: 2
-        }
+        { question: "Câu 1: Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?", options: ["Đấu thầu rộng rãi", "Đấu thầu hạn chế", "Chỉ định thầu", "Chào hàng cạnh tranh"], answer: 0 },
+        { question: "Câu 2: Thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là bao nhiêu ngày?", options: ["10 ngày", "15 ngày", "20 ngày", "30 ngày"], answer: 2 },
+        { question: "Câu 3: Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?", options: ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"], answer: 0 },
+        { question: "Câu 4: Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá bao nhiêu?", options: ["1 tỷ đồng", "3 tỷ đồng", "5 tỷ đồng", "10 tỷ đồng"], answer: 2 },
+        { question: "Câu 5: Trong đấu thầu, thuật ngữ 'Bảo lãnh thực hiện hợp đồng' có nghĩa vụ gì?", options: ["Đảm bảo nhà thầu không bỏ trốn", "Đảm bảo nhà thầu ký hợp đồng", "Đảm bảo trách nhiệm thực hiện hợp đồng đã ký", "Đảm bảo chất lượng thiết kế"], answer: 2 }
     ];
 
     let currentQuizData = [];
@@ -179,7 +172,7 @@
             const correctAnswerText = q.options[q.answer];
             shuffleArray(q.options);
             q.newAnswerIndex = q.options.indexOf(correctAnswerText);
-            q.userAnswer = null; // Trạng thái chưa trả lời
+            q.userAnswer = null; 
 
             let questionHTML = `<div class="question-card" id="q-card-${index}">
                 <div class="question-title">Câu ${index + 1}: ${q.question.split(': ')[1] || q.question}</div>`;
@@ -192,10 +185,7 @@
                 `;
             });
 
-            // Khu vực hiển thị giải thích / đáp án
-            questionHTML += `<div id="feedback-${index}" class="mt-4 p-3 rounded" style="display: none; font-size: 1.1rem;"></div>`;
-            questionHTML += `</div>`;
-            
+            questionHTML += `<div id="feedback-${index}" class="mt-4 p-3 rounded" style="display: none; font-size: 1.1rem;"></div></div>`;
             quizBody.innerHTML += questionHTML;
             palette.innerHTML += `<button class="q-btn shadow-sm" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
         });
@@ -204,29 +194,23 @@
     }
 
     function selectAnswer(qIndex, optIndex) {
-        // Khóa không cho chọn lại nếu đã trả lời
         if (currentQuizData[qIndex].userAnswer !== null) return;
         
         currentQuizData[qIndex].userAnswer = optIndex;
         const isCorrect = (optIndex === currentQuizData[qIndex].newAnswerIndex);
         
-        // Đổi màu các đáp án
         const labels = document.querySelectorAll(`#q-card-${qIndex} .option-label`);
         labels.forEach((lbl, idx) => {
-            lbl.classList.add('disabled'); // Khóa hiệu ứng hover
-            
+            lbl.classList.add('disabled'); 
             if (idx === currentQuizData[qIndex].newAnswerIndex) {
-                lbl.classList.add('correct'); // Đáp án đúng luôn hiện màu xanh
+                lbl.classList.add('correct'); 
             } else if (idx === optIndex && !isCorrect) {
-                lbl.classList.add('incorrect'); // Đáp án sai mà người dùng chọn hiện màu đỏ
+                lbl.classList.add('incorrect'); 
             }
         });
 
-        // Đổi màu sơ đồ câu hỏi
-        const paletteBtn = document.getElementById(`btn-palette-${qIndex}`);
-        paletteBtn.classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
+        document.getElementById(`btn-palette-${qIndex}`).classList.add(isCorrect ? 'is-correct' : 'is-incorrect');
 
-        // Hiển thị khung phản hồi
         const feedback = document.getElementById(`feedback-${qIndex}`);
         feedback.style.display = 'block';
         if (isCorrect) {
@@ -240,9 +224,7 @@
 
     function changeQuestion(step) {
         let newIndex = currentIndex + step;
-        if (newIndex >= 0 && newIndex < currentQuizData.length) {
-            goToQuestion(newIndex);
-        }
+        if (newIndex >= 0 && newIndex < currentQuizData.length) goToQuestion(newIndex);
     }
 
     function goToQuestion(index) {
@@ -272,18 +254,11 @@
         let unattempted = 0;
 
         currentQuizData.forEach(q => {
-            if (q.userAnswer === null) {
-                unattempted++;
-            } else if (q.userAnswer === q.newAnswerIndex) {
-                score++;
-            }
+            if (q.userAnswer === null) unattempted++;
+            else if (q.userAnswer === q.newAnswerIndex) score++;
         });
 
-        if (unattempted > 0) {
-            if (!confirm(`Bạn còn ${unattempted} câu chưa xem. Bạn vẫn muốn kết thúc ôn tập?`)) {
-                return;
-            }
-        }
+        if (unattempted > 0 && !confirm(`Bạn còn ${unattempted} câu chưa xem. Bạn vẫn muốn kết thúc ôn tập?`)) return;
 
         document.getElementById('exam-screen').style.display = 'none';
         document.querySelector('.header-top').style.display = 'none';
@@ -291,10 +266,7 @@
         const resultScreen = document.getElementById('result-screen');
         resultScreen.style.display = 'block';
         
-        document.getElementById('result-text').innerHTML = `
-            Số câu trả lời đúng:<br> 
-            <span style="font-size: 3rem; color: var(--bidv-green); font-weight: 900;">${score} / ${total}</span>
-        `;
+        document.getElementById('result-text').innerHTML = `Số câu trả lời đúng:<br> <span style="font-size: 3rem; color: var(--bidv-green); font-weight: 900;">${score} / ${total}</span>`;
     }
 
     window.onload = loadQuiz;
