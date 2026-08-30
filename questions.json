@@ -20,7 +20,7 @@
   {
     "question": "Theo quy định pháp luật về đấu thầu, gói thầu nào là gói thầu cung cấp dịch vụ tư vấn?",
     "options": ["Thiết kế và cung cấp hệ thống xử lý nước thải", "Gói thầu lập nhiệm vụ quy hoạch vùng", "Gói thầu quảng cáo trên nền tảng xã hội và phát sóng trên VTV", "Gói thầu mua phần mềm kế toán MISA"],
-    "answer": 3,
+    "answer": 1,
     "explanation": "Gói thầu lập nhiệm vụ quy hoạch vùng là dịch vụ tư vấn (theo Khoản 4 Điều 4 Luật Đấu thầu: lập quy hoạch là dịch vụ tư vấn). A là gói thầu hỗn hợp (thiết kế và cung cấp hàng hóa). C là dịch vụ phi tư vấn (quảng cáo). D là mua sắm hàng hóa (phần mềm thương mại)."
   },
   {
