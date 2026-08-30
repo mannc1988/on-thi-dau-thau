@@ -1,15 +1,15 @@
 [
   {
-    "question": "Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?",
-    "options": ["Đấu thầu rộng rãi", "Đấu thầu hạn chế", "Chỉ định thầu", "Chào hàng cạnh tranh"],
+    "question": "Trường hợp nào sau đây bắt buộc phải lựa chọn nhà thầu theo quy định tại Luật Đấu thầu?",
+    "options": ["Gói thầu thuộc dự án sử dụng vốn ngân sách nhà nước của cơ quan nhà nước", "Lựa chọn nhà thầu của doanh nghiệp nhà nước không sử dụng vốn ngân sách nhà nước", "Lựa chọn nhà thầu của đơn vị sự nghiệp công lập tự bảo đảm chi thường xuyên không sử dụng ngân sách nhà nước", "Việc thuê, mua, thuê mua nhà, trụ sở, tài sản gắn liền với đất"],
     "answer": 0,
-    "explanation": "Căn cứ Điều 20 Luật Đấu thầu số 22/2023/QH15 quy định về các hình thức lựa chọn nhà thầu, trong đó đấu thầu rộng rãi là hình thức phổ biến nhất không hạn chế số lượng nhà thầu tham gia."
+    "explanation": "Theo Khoản 1 Điều 2 Luật Đấu thầu, Luật này áp dụng đối với hoạt động lựa chọn nhà thầu của cơ quan, tổ chức sử dụng vốn ngân sách nhà nước. Do đó, gói thầu thuộc dự án sử dụng vốn ngân sách nhà nước của cơ quan nhà nước bắt buộc phải áp dụng Luật Đấu thầu. Các phương án B, C, D thuộc trường hợp được tự quyết định việc mua sắm theo quy định tại Khoản 7 Điều 3 Luật Đấu thầu (doanh nghiệp nhà nước không sử dụng vốn ngân sách, đơn vị sự nghiệp công lập tự chủ chi thường xuyên không sử dụng vốn ngân sách, thuê/mua trụ sở)."
   },
   {
-    "question": "Thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là bao nhiêu ngày?",
-    "options": ["10 ngày", "15 ngày", "20 ngày", "30 ngày"],
-    "answer": 2,
-    "explanation": "Căn cứ Điểm a Khoản 1 Điều 64 Nghị định 24/2024/NĐ-CP quy định thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là 20 ngày kể từ ngày đầu tiên phát hành hồ sơ mời thầu."
+    "question": "Chọn phương án đúng về phạm vi điều chỉnh của Luật Đấu thầu?",
+    "options": ["Quy định về quản lý nhà nước đối với hoạt động đấu thầu", "Quy định về thẩm quyền và trách nhiệm của các cơ quan, tổ chức, cá nhân trong hoạt động đấu thầu", "Quy định về hoạt động lựa chọn nhà thầu thực hiện gói thầu, hoạt động lựa chọn nhà đầu tư thực hiện dự án đầu tư kinh doanh", "Tất cả phương án trên đều đúng"],
+    "answer": 3,
+    "explanation": "Căn cứ Điều 1 Luật Đấu thầu, phạm vi điều chỉnh bao gồm cả quản lý nhà nước, thẩm quyền trách nhiệm của các bên, và các hoạt động lựa chọn nhà thầu, nhà đầu tư. Vì vậy, tất cả các phương án A, B, C đều đúng."
   },
   {
     "question": "Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?",
