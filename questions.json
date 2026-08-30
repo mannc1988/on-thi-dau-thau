@@ -305,7 +305,7 @@
       "Công ty A là nhà thầu tư vấn lập hồ sơ mời thầu gói thầu xây lắp X có sở hữu 30% vốn góp của Công ty B"
     ],
     "answer": 2,
-    "explanation": "Căn cứ quy định về bảo đảm cạnh tranh trong đấu thầu, công ty B độc lập với các đơn vị tư vấn thiết kế/lập HSMT hoặc chỉ có quan hệ gián tiếp không vi phạm quy định kiểm soát lẫn nhau sẽ được đánh giá là bảo đảm cạnh tranh. (Trong khi A, B, D vi phạm quy định trực tiếp về tính độc lập giữa đơn vị tư vấn lập HSMT/yêu cầu kỹ thuật và nhà thầu tham dự thầu)."
+    "explanation": "Căn cứ quy định về bảo đảm cạnh tranh trong đấu thầu, công ty B độc lập với các đơn vị tư vấn thiết kế/lập HSMT hoặc chỉ có quan hệ giasttiếp không vi phạm quy định kiểm soát lẫn nhau sẽ được đánh giá là bảo đảm cạnh tranh. (Trong khi A, B, D vi phạm quy định trực tiếp về tính độc lập giữa đơn vị tư vấn lập HSMT/yêu cầu kỹ thuật và nhà thầu tham dự thầu)."
   },
   {
     "question": "Chọn phương án đúng đối với nhà thầu phụ đặc biệt?",
@@ -317,5 +317,104 @@
     ],
     "answer": 0,
     "explanation": "Theo Khoản 4 Điều 11 Luật Đấu thầu, đối với gói thầu thuộc lĩnh vực khoa học, công nghệ, đổi mới sáng tạo, chuyển đổi số, nhà thầu trong nước được sử dụng nhà thầu phụ đặc biệt là nhà thầu nước ngoài cho phần công việc đặc thù."
+  },
+  {
+    "question": "Đối với đấu thầu không qua mạng, việc phê duyệt và phát hành hồ sơ mời thầu được thực hiện theo phương án nào sau đây?",
+    "options": [
+      "Phê duyệt và phát hành hồ sơ mời thầu trên Hệ thống mạng đấu thầu quốc gia",
+      "Phê duyệt trên Hệ thống mạng đấu thầu quốc gia và phát hành hồ sơ mời thầu bản giấy",
+      "Phê duyệt và phát hành hồ sơ mời thầu bản giấy",
+      "Tất cả các phương án trên đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Theo quy định hiện hành về lộ trình đấu thầu qua mạng (Điều 50 Luật Đấu thầu), việc phê duyệt và phát hành HSMT đều thực hiện trên Hệ thống mạng đấu thầu quốc gia (kể cả đấu thầu không qua mạng thì việc phát hành hồ sơ vẫn thực hiện trên mạng để đảm bảo công khai, xem Điều 8 Luật Đấu thầu)."
+  },
+  {
+    "question": "Gói thầu nào sau đây thuộc trường hợp được áp dụng chào hàng cạnh tranh?",
+    "options": [
+      "Tất cả gói thầu mua sắm hàng hóa có giá không quá 10 tỷ đồng",
+      "Gói thầu dịch vụ phi tư vấn thông dụng, đơn giản có giá không quá 10 tỷ đồng",
+      "Gói thầu dịch vụ tư vấn thông dụng, đơn giản có giá không quá 10 tỷ đồng",
+      "Gói thầu xây lắp công trình đơn giản đã có dự toán được phê duyệt có giá không quá 15 tỷ đồng"
+    ],
+    "answer": 1,
+    "explanation": "Theo Khoản 1 Điều 24 Luật Đấu thầu, chào hàng cạnh tranh áp dụng cho gói thầu dịch vụ phi tư vấn thông dụng, đơn giản; mua sắm hàng hóa thông dụng; xây lắp công trình đơn giản. Nghị định 214/2025/NĐ-CP (Điều 81) quy định hạn mức chào hàng cạnh tranh là không quá 10 tỷ đồng. Phương án B (Dịch vụ phi tư vấn thông dụng, đơn giản, giá không quá 10 tỷ) là chính xác."
+  },
+  {
+    "question": "Đối với gói thầu mua sắm hàng hóa thông dụng, sẵn có trên thị trường có giá gói thầu 05 tỷ đồng thì kế hoạch lựa chọn nhà thầu phê duyệt áp dụng hình thức lựa chọn nhà thầu nào sau đây?",
+    "options": [
+      "Chỉ được áp dụng hình thức chào hàng cạnh tranh",
+      "Được áp dụng hình thức chào hàng cạnh tranh hoặc đấu thầu rộng rãi",
+      "Bắt buộc áp dụng hình thức chỉ định thầu",
+      "Được áp dụng hình thức chỉ định thầu hoặc chào hàng cạnh tranh hoặc đấu thầu rộng rãi"
+    ],
+    "answer": 1,
+    "explanation": "Gói thầu mua sắm hàng hóa thông dụng, sẵn có, giá 05 tỷ đồng thuộc trường hợp được áp dụng Chào hàng cạnh tranh (theo Điều 24 Luật Đấu thầu và Nghị định 214). Đồng thời, Đấu thầu rộng rãi luôn là hình thức được áp dụng (không hạn chế). Do đó, kế hoạch có thể áp dụng Chào hàng cạnh tranh hoặc Đấu thầu rộng rãi. (Chỉ định thầu không áp dụng vì 5 tỷ vượt mức quy định)."
+  },
+  {
+    "question": "Hạn mức chỉ định thầu đối với gói thầu không hình thành dự án thuộc dự toán mua sắm thường xuyên là?",
+    "options": [
+      "500 triệu đồng",
+      "800 triệu đồng",
+      "01 tỷ đồng",
+      "300 triệu đồng"
+    ],
+    "answer": 0,
+    "explanation": "Theo Khoản 4 Điều 78 Nghị định 214/2025/NĐ-CP, hạn mức chỉ định thầu đối với gói thầu thuộc dự toán mua sắm không hình thành dự án là không quá 500 triệu đồng."
+  },
+  {
+    "question": "Hạn mức chỉ định thầu đối với gói thầu mua sắm hàng hóa thuộc dự án đầu tư là?",
+    "options": [
+      "800 triệu đồng",
+      "500 triệu đồng",
+      "01 tỷ đồng",
+      "02 tỷ đồng"
+    ],
+    "answer": 3,
+    "explanation": "Theo Khoản 4 Điều 78 Nghị định 214/2025/NĐ-CP, hạn mức chỉ định thầu đối với gói thầu dịch vụ phi tư vấn, hàng hóa, xây lắp, hỗn hợp thuộc dự án là không quá 02 tỷ đồng."
+  },
+  {
+    "question": "Phương án nào không phải là một trong các hình thức lựa chọn nhà thầu được phê duyệt trong kế hoạch lựa chọn nhà thầu?",
+    "options": [
+      "Đấu thầu rộng rãi",
+      "Đấu thầu hạn chế",
+      "Mua sắm trực tiếp",
+      "Đấu thầu qua mạng"
+    ],
+    "answer": 3,
+    "explanation": "\"Đấu thầu qua mạng\" là phương thức thực hiện (trên Hệ thống mạng), không phải là tên một hình thức lựa chọn nhà thầu (như Đấu thầu rộng rãi, Chỉ định thầu, Chào hàng cạnh tranh...). Các hình thức được quy định tại Điều 20 Luật Đấu thầu."
+  },
+  {
+    "question": "Gói thầu lựa chọn tư vấn là tổ chức có giá gói thầu là 500 triệu đồng áp dụng hình thức lựa chọn nhà thầu nào?",
+    "options": [
+      "Bắt buộc áp dụng hình thức chỉ định thầu",
+      "Được áp dụng hình thức chỉ định thầu hoặc đấu thầu rộng rãi",
+      "Được áp dụng hình thức chào hàng cạnh tranh hoặc đấu thầu rộng rãi",
+      "Được áp dụng hình thức chỉ định thầu hoặc đấu thầu rộng rãi hoặc chào hàng cạnh tranh"
+    ],
+    "answer": 1,
+    "explanation": "Gói thầu tư vấn 500 triệu đồng có hạn mức chỉ định thầu tư vấn thuộc dự án không quá 800 triệu đồng (theo Khoản 4 Điều 78 Nghị định 214/2025/NĐ-CP), do đó được Chỉ định thầu. Đấu thầu rộng rãi luôn được áp dụng cho mọi gói thầu. Chào hàng cạnh tranh không áp dụng cho dịch vụ tư vấn (theo Điều 24 Luật Đấu thầu). Vậy đáp án là: Được áp dụng Chỉ định thầu hoặc Đấu thầu rộng rãi."
+  },
+  {
+    "question": "Chọn phương án đúng về hạn mức đối với đấu thầu rộng rãi?",
+    "options": [
+      "Không quy định hạn mức áp dụng",
+      "Giá gói thầu trên 20 tỷ đồng",
+      "Giá gói thầu trên 10 tỷ đồng",
+      "Giá gói thầu trên 20 tỷ đồng đối với xây lắp, hàng hóa; trên 10 tỷ đồng đối với gói thầu dịch vụ tư vấn, phi tư vấn"
+    ],
+    "answer": 0,
+    "explanation": "Đấu thầu rộng rãi là hình thức không hạn chế số lượng nhà thầu và không quy định hạn mức áp dụng (có thể áp dụng cho mọi gói thầu trừ khi có yêu cầu đặc biệt khác)."
+  },
+  {
+    "question": "Chọn phương án đúng về loại gói thầu đối với hình thức mua sắm trực tiếp?",
+    "options": [
+      "Chỉ gói thầu dịch vụ phi tư vấn",
+      "Gói thầu mua sắm hàng hóa và dịch vụ phi tư vấn",
+      "Chỉ gói thầu mua sắm hàng hóa",
+      "Chỉ gói thầu xây lắp"
+    ],
+    "answer": 2,
+    "explanation": "Theo Điều 25 Luật Đấu thầu, hình thức mua sắm trực tiếp chỉ áp dụng đối với gói thầu mua sắm hàng hóa tương tự."
   }
 ]
