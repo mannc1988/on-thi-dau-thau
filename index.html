@@ -4,25 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ôn Luyện Thi Chứng Chỉ Đấu Thầu - BIDV</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <!-- Thư viện SheetJS đọc file Excel trực tuyến -->
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- SheetJS đọc file Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary-color: #005a43; /* Màu xanh đặc trưng thương hiệu */
+            --primary-color: #005a43; 
             --primary-hover: #004231;
-            --bg-color: #f8f9fa;
-            --card-shadow: 0 8px 24px rgba(149, 157, 165, 0.1);
+            --bg-color: #f4f7f6;
+            --card-shadow: 0 10px 30px rgba(0, 90, 67, 0.08);
         }
 
-        body { background-color: var(--bg-color); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        body { background-color: var(--bg-color); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; color: #333; }
         
-        /* CSS cho Banner Logo chuyên nghiệp có lề trên và dưới */
         .app-banner-container {
             width: 100%;
             background: #ffffff;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
             padding: 15px 0;
             margin-bottom: 25px;
         }
@@ -30,56 +33,89 @@
             width: 100%;
             height: auto;
             display: block;
-            max-height: 320px;
+            max-height: 300px;
             object-fit: contain;
         }
 
-        .custom-card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--card-shadow); border: none; margin-bottom: 20px; }
-        @media (min-width: 768px) { .custom-card { padding: 30px; } }
+        .custom-card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 20px; 
+            box-shadow: var(--card-shadow); 
+            border: none; 
+            margin-bottom: 25px; 
+            transition: transform 0.3s ease;
+        }
+        @media (min-width: 768px) { .custom-card { padding: 35px; } }
 
-        .question-card { min-height: 380px; display: none; animation: fadeIn 0.4s ease-out; }
+        .question-card { min-height: 380px; display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .question-card.active { display: block; }
-        .question-title { font-size: 1.1rem; font-weight: 600; margin-bottom: 20px; color: #2b2b2b; line-height: 1.5; }
+        .question-title { font-size: 1.15rem; font-weight: 600; margin-bottom: 22px; color: #1e293b; line-height: 1.6; }
         
-        .option-label { display: flex; align-items: center; margin-bottom: 10px; cursor: pointer; padding: 14px 16px; border: 2px solid #edf2f7; border-radius: 12px; transition: all 0.2s ease; font-size: 1rem; background: #fff; }
-        .option-label:hover { border-color: var(--primary-color); background-color: #f8faff; }
-        .option-icon { display: flex; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; background: #edf2f7; margin-right: 12px; font-weight: bold; color: #4a5568; flex-shrink: 0;}
+        .option-label { 
+            display: flex; 
+            align-items: center; 
+            margin-bottom: 12px; 
+            cursor: pointer; 
+            padding: 16px 20px; 
+            border: 2px solid #e2e8f0; 
+            border-radius: 14px; 
+            transition: all 0.25s ease; 
+            font-size: 1rem; 
+            background: #fff; 
+        }
+        .option-label:hover { border-color: var(--primary-color); background-color: #f0fdf4; transform: translateX(4px); }
+        .option-icon { 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 32px; 
+            height: 32px; 
+            border-radius: 50%; 
+            background: #f1f5f9; 
+            margin-right: 14px; 
+            font-weight: 700; 
+            color: #475569; 
+            flex-shrink: 0;
+            transition: 0.2s;
+        }
         
-        .option-label.correct { background-color: #f0fdf4; border-color: #22c55e; color: #166534; }
+        .option-label.correct { background-color: #f0fdf4; border-color: #22c55e; color: #166534; font-weight: 500; }
         .option-label.correct .option-icon { background: #22c55e; color: white; }
-        .option-label.incorrect { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; opacity: 0.8;}
+        .option-label.incorrect { background-color: #fef2f2; border-color: #ef4444; color: #991b1b; opacity: 0.85; }
         .option-label.incorrect .option-icon { background: #ef4444; color: white; }
         input[type="radio"] { display: none; }
         
-        .q-btn { width: 38px; height: 38px; margin: 4px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 2px solid #edf2f7; background: white; color: #4a5568; transition: 0.2s; }
-        .q-btn:hover { border-color: var(--primary-color); }
-        .q-btn.current { border-color: var(--primary-color); background-color: #f8faff; color: var(--primary-color); }
+        .q-btn { width: 42px; height: 42px; margin: 5px; border-radius: 10px; font-weight: 600; font-size: 0.95rem; border: 2px solid #e2e8f0; background: white; color: #475569; transition: all 0.2s; }
+        .q-btn:hover { border-color: var(--primary-color); transform: scale(1.08); }
+        .q-btn.current { border-color: var(--primary-color); background-color: #e6f4ea; color: var(--primary-color); box-shadow: 0 0 10px rgba(0, 90, 67, 0.2); }
         .q-btn.is-correct { background-color: #22c55e; color: white; border-color: #22c55e; }
         .q-btn.is-incorrect { background-color: #ef4444; color: white; border-color: #ef4444; }
 
-        .progress { background-color: #edf2f7; border-radius: 10px; }
-        .progress-bar { background: linear-gradient(90deg, var(--primary-color), #00a86b); }
-        .btn-primary-custom { background-color: var(--primary-color); color: white; border: none; font-weight: 500; border-radius: 8px; }
-        .btn-primary-custom:hover { background-color: var(--primary-hover); color: white; }
+        .progress { background-color: #e2e8f0; border-radius: 12px; height: 12px !important; overflow: hidden; }
+        .progress-bar { background: linear-gradient(90deg, var(--primary-color), #10b981); border-radius: 12px; transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         
+        .btn-custom { background-color: var(--primary-color); color: white; border: none; font-weight: 600; border-radius: 10px; padding: 10px 22px; transition: 0.2s; }
+        .btn-custom:hover { background-color: var(--primary-hover); color: white; transform: translateY(-1px); }
+
         .table-responsive-custom { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .explorer-table { border: 1px solid #dee2e6; border-radius: 8px; min-width: 500px; }
-        .explorer-table th { font-weight: 600; color: #6c757d; font-size: 0.8rem; text-transform: uppercase; background-color: #f8f9fa; }
+        .explorer-table { border: 1px solid #e2e8f0; border-radius: 12px; min-width: 500px; overflow: hidden; }
+        .explorer-table th { font-weight: 600; color: #64748b; font-size: 0.85rem; text-transform: uppercase; background-color: #f8fafc; border-bottom: 2px solid #e2e8f0; }
         .explorer-table tbody tr { cursor: pointer; transition: 0.15s; }
-        .explorer-table tbody tr:hover { background-color: #f1f3f5; }
-        .explorer-table td { vertical-align: middle; color: #495057; font-size: 0.9rem; padding: 12px; }
-        .file-icon { font-size: 1.2rem; vertical-align: middle; margin-right: 6px; }
+        .explorer-table tbody tr:hover { background-color: #f1f5f9; }
+        .explorer-table td { vertical-align: middle; color: #334155; font-size: 0.95rem; padding: 14px; }
+        .file-icon { font-size: 1.3rem; vertical-align: middle; margin-right: 8px; }
 
-        #doc-viewer-container { display: none; height: 500px; border: 1px solid #dee2e6; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: var(--card-shadow); margin-top: 15px; position: relative; }
-        @media (min-width: 768px) { #doc-viewer-container { height: 650px; } }
-        iframe { width: 100%; height: calc(100% - 45px); border: none; display: none; }
+        #doc-viewer-container { display: none; height: 550px; border: 1px solid #e2e8f0; border-radius: 14px; overflow: hidden; background: #fff; box-shadow: var(--card-shadow); margin-top: 20px; position: relative; }
+        @media (min-width: 768px) { #doc-viewer-container { height: 700px; } }
+        iframe { width: 100%; height: calc(100% - 50px); border: none; display: none; }
         
-        #excel-preview-container { width: 100%; height: calc(100% - 45px); overflow: auto; padding: 15px; background: #ffffff; display: none; }
+        #excel-preview-container { width: 100%; height: calc(100% - 50px); overflow: auto; padding: 20px; background: #ffffff; display: none; }
         #excel-preview-container table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        #excel-preview-container th, #excel-preview-container td { border: 1px solid #dee2e6; padding: 8px 12px; text-align: left; color: #333; }
-        #excel-preview-container th { background-color: #f8f9fa; position: sticky; top: 0; z-index: 10; font-weight: bold; }
+        #excel-preview-container th, #excel-preview-container td { border: 1px solid #cbd5e1; padding: 10px 14px; text-align: left; color: #334155; }
+        #excel-preview-container th { background-color: #f1f5f9; position: sticky; top: 0; z-index: 10; font-weight: 700; }
 
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
         #result-screen, #loading-screen { display: none; }
     </style>
 </head>
@@ -92,64 +128,70 @@
     </div>
 </div>
 
+<!-- MÀN HÌNH LOADING -->
 <div class="container mt-5" id="loading-screen" style="display: block;">
-    <div class="text-center">
-        <div class="spinner-border text-success" role="status" style="width: 3rem; height: 3rem;"></div>
-        <h4 class="mt-3 text-secondary" id="loading-text">Đang tải dữ liệu hệ thống...</h4>
+    <div class="text-center py-5">
+        <div class="spinner-border text-success" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
+        <h4 class="mt-4 fw-bold text-secondary" id="loading-text">Đang tải hệ thống dữ liệu ôn tập...</h4>
     </div>
 </div>
 
+<!-- MÀN HÌNH CHÍNH ÔN TẬP -->
 <div class="container mt-3 mt-md-4" id="exam-screen" style="display: none;">
     <div class="row justify-content-center">
         <div class="col-lg-10">
             
+            <!-- KHUNG CÂU HỎI & PROGRESS BAR % -->
             <div class="custom-card">
                 <div class="d-flex justify-content-between align-items-center mb-2">
-                    <span class="fw-semibold text-secondary small"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
+                    <span class="fw-bold text-secondary"><i class="bi bi-bar-chart-line-fill text-success me-2"></i>Tiến độ ôn tập</span>
+                    <span id="progress-percent-text" class="fw-bold text-success">0%</span>
                 </div>
-                <div class="progress mb-3" style="height: 8px;">
-                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%; transition: width 0.4s ease;"></div>
+                <div class="progress mb-4">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%;"></div>
                 </div>
                 
                 <div id="quiz-body"></div>
 
-                <div class="d-flex justify-content-between mt-4">
-                    <button class="btn btn-light border px-3 py-2 btn-sm md-btn-md" id="btn-prev" onclick="changeQuestion(-1)">
+                <div class="d-flex justify-content-between mt-4 pt-3 border-top">
+                    <button class="btn btn-outline-secondary px-4 py-2 fw-semibold rounded-pill" id="btn-prev" onclick="changeQuestion(-1)">
                         <i class="bi bi-arrow-left me-1"></i> Câu trước
                     </button>
-                    <button class="btn btn-primary-custom px-3 py-2 btn-sm md-btn-md" id="btn-next" onclick="changeQuestion(1)">
+                    <button class="btn btn-custom px-4 py-2 rounded-pill" id="btn-next" onclick="changeQuestion(1)">
                         Câu tiếp theo <i class="bi bi-arrow-right ms-1"></i>
                     </button>
                 </div>
             </div>
 
+            <!-- SƠ ĐỒ CÂU HỎI -->
             <div class="custom-card text-center">
-                <h6 class="mb-3 fw-bold"><i class="bi bi-grid-3x3-gap-fill text-success me-2"></i>Sơ Đồ Câu Hỏi</h6>
-                <div class="d-flex flex-wrap justify-content-center mb-3" id="question-palette"></div>
+                <h5 class="mb-3 fw-bold text-dark"><i class="bi bi-grid-3x3-gap-fill text-success me-2"></i>Bảng Điều Hướng Câu Hỏi</h5>
+                <div class="d-flex flex-wrap justify-content-center mb-4" id="question-palette"></div>
                 
-                <div class="d-flex justify-content-center align-items-center gap-4 mb-3" style="font-size: 0.85rem;">
+                <div class="d-flex justify-content-center align-items-center gap-4 mb-4" style="font-size: 0.9rem;">
                     <div class="d-flex align-items-center">
-                        <span class="badge bg-success me-1 d-flex align-items-center justify-content-center shadow-sm" style="width:20px; height:20px;"><i class="bi bi-check" style="font-size: 14px;"></i></span> 
+                        <span class="badge bg-success me-1 shadow-sm" style="width:12px; height:12px; border-radius:50%;"></span> 
                         <span class="text-success fw-bold">Đúng</span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <span class="badge bg-danger me-1 d-flex align-items-center justify-content-center shadow-sm" style="width:20px; height:20px;"><i class="bi bi-x" style="font-size: 14px;"></i></span> 
+                        <span class="badge bg-danger me-1 shadow-sm" style="width:12px; height:12px; border-radius:50%;"></span> 
                         <span class="text-danger fw-bold">Sai</span>
                     </div>
                     <div class="d-flex align-items-center">
-                        <span class="badge bg-white text-dark border me-1 d-flex align-items-center justify-content-center shadow-sm" style="width:20px; height:20px;">-</span> 
+                        <span class="badge bg-secondary me-1 shadow-sm" style="width:12px; height:12px; border-radius:50%; opacity: 0.4;"></span> 
                         <span class="text-secondary fw-bold">Chưa làm</span>
                     </div>
                 </div>
 
-                <button id="submit-btn" class="btn btn-dark px-5 py-2 fw-bold" onclick="finishPractice()">
-                    <i class="bi bi-flag-fill me-2"></i> Hoàn Thành Ôn Tập
+                <button id="submit-btn" class="btn btn-dark px-5 py-3 fw-bold rounded-pill shadow" onclick="finishPractice()">
+                    <i class="bi bi-flag-fill text-warning me-2"></i> Hoàn Thành & Nộp Bài Ôn Tập
                 </button>
             </div>
 
+            <!-- DANH SÁCH TÀI LIỆU THAM KHẢO -->
             <div class="custom-card">
-                <h5 class="fw-bold text-success mb-2 fs-5"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
-                <p class="text-muted small mb-3">Tự động đọc các file từ folder <code>documents/</code> (Hỗ trợ PDF, Word, Excel trực tuyến):</p>
+                <h5 class="fw-bold text-success mb-2"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
+                <p class="text-muted small mb-3">Hệ thống tự động quét từ thư mục <code>documents/</code> (Hỗ trợ PDF, Word, Excel trực tuyến):</p>
                 
                 <div class="table-responsive-custom mb-3">
                     <table class="table explorer-table mb-0">
@@ -164,18 +206,19 @@
                         <tbody id="file-list-body">
                             <tr>
                                 <td colspan="4" class="text-center text-secondary py-3">
-                                    <span class="spinner-border spinner-border-sm me-2"></span>Đang tự động quét thư mục documents...
+                                    <span class="spinner-border spinner-border-sm me-2"></span>Đang quét thư mục tài liệu...
                                 </td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
 
+                <!-- KHUNG XEM TÀI LIỆU TRỰC TUYẾN -->
                 <div id="doc-viewer-container">
-                    <div class="d-flex justify-content-between align-items-center bg-light p-2 border-bottom">
-                        <span class="fw-bold text-secondary small ms-2 text-truncate" id="viewer-title" style="max-width: 80%;">Đang hiển thị...</span>
-                        <button class="btn btn-sm btn-outline-danger py-0 px-2" onclick="closeDocumentViewer()">
-                            <i class="bi bi-x-lg"></i> Đóng
+                    <div class="d-flex justify-content-between align-items-center bg-light px-3 py-2 border-bottom">
+                        <span class="fw-bold text-dark small text-truncate" id="viewer-title" style="max-width: 85%;">Đang hiển thị...</span>
+                        <button class="btn btn-sm btn-outline-danger py-1 px-3 fw-semibold rounded-pill" onclick="closeDocumentViewer()">
+                            <i class="bi bi-x-lg me-1"></i> Đóng
                         </button>
                     </div>
                     <iframe id="doc-iframe" src=""></iframe>
@@ -187,23 +230,26 @@
     </div>
 </div>
 
+<!-- MÀN HÌNH BÁO CÁO KẾT QUẢ -->
 <div class="container mt-5" id="result-screen">
     <div class="row justify-content-center">
-        <div class="col-md-7 text-center custom-card p-5">
-            <div class="mb-4">
-                <i class="bi bi-trophy-fill text-warning" style="font-size: 4rem;"></i>
+        <div class="col-md-7 text-center custom-card p-5 shadow-lg">
+            <div class="mb-3">
+                <i class="bi bi-trophy-fill text-warning" style="font-size: 5rem;"></i>
             </div>
-            <h2 class="fw-bold mb-3 text-success">Báo Cáo Kết Quả!</h2>
-            <p class="text-muted mb-4">Bạn đã hoàn thành phiên ôn tập</p>
-            <div class="p-3 bg-light rounded-4 mb-4" id="result-text"></div>
-            <button class="btn btn-primary-custom px-4 py-2" onclick="location.reload()">
-                <i class="bi bi-arrow-repeat me-2"></i> Làm lại từ đầu
+            <h2 class="fw-bold mb-2 text-success">Chúc Mừng Bạn Đã Hoàn Thành!</h2>
+            <p class="text-muted mb-4">Kết quả phiên ôn tập chi tiết của bạn:</p>
+            <div class="p-4 bg-light rounded-4 mb-4 border" id="result-text"></div>
+            <button class="btn btn-custom px-5 py-3 rounded-pill fw-bold shadow" onclick="location.reload()">
+                <i class="bi bi-arrow-repeat me-2"></i> Làm Lại Từ Đầu
             </button>
         </div>
     </div>
 </div>
 
+<!-- Thư viện JavaScript bổ trợ -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
     let questions = []; 
@@ -223,9 +269,10 @@
             loadQuiz();
         } catch (error) {
             document.getElementById('loading-text').innerHTML = `
-                <div class="alert alert-danger mt-3">
+                <div class="alert alert-danger mt-3 shadow-sm">
+                    <i class="bi bi-exclamation-triangle-fill fs-4 me-2"></i>
                     <strong>Không tìm thấy file ngân hàng câu hỏi!</strong><br>
-                    Hãy upload file <code>questions.json</code> lên GitHub.
+                    Hãy kiểm tra và upload file <code>questions.json</code> lên kho lưu trữ GitHub của bạn.
                 </div>`;
             document.querySelector('.spinner-border').style.display = 'none';
         }
@@ -242,7 +289,7 @@
             let repo = pathParts[0] || '';
 
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Chế độ xem trên Local (Cần đưa lên GitHub Pages để quét tự động).</td></tr>`;
+                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Đang chạy trên môi trường Local. Đưa lên GitHub Pages để quét tự động thư mục documents.</td></tr>`;
                 return;
             }
 
@@ -250,7 +297,7 @@
             const response = await fetch(apiUrl);
 
             if (!response.ok) {
-                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-warning">Chưa tạo thư mục <code>documents/</code> hoặc chưa chứa file.</td></tr>`;
+                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-warning">Chưa tạo thư mục <code>documents/</code> hoặc thư mục trống.</td></tr>`;
                 return;
             }
 
@@ -288,8 +335,8 @@
                     tr.onclick = () => viewDocument(docPath, file.name);
                     tr.innerHTML = `
                         <td>${iconHTML} ${file.name}</td>
-                        <td id="date-${file.sha}" class="text-secondary small">Đang lấy...</td>
-                        <td class="small">${fileTypeLabel}</td>
+                        <td id="date-${file.sha}" class="text-secondary small">Đang tải...</td>
+                        <td class="small fw-semibold text-muted">${fileTypeLabel}</td>
                         <td class="text-secondary small">${sizeFormatted}</td>
                     `;
                     fileListBody.appendChild(tr);
@@ -299,12 +346,12 @@
             }
 
             if (!hasFiles) {
-                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Thư mục <code>documents/</code> hiện đang trống.</td></tr>`;
+                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Thư mục <code>documents/</code> chưa có file tài liệu nào.</td></tr>`;
             }
 
         } catch (error) {
             console.error("Lỗi quét thư mục:", error);
-            fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Không thể tự động tải danh sách file.</td></tr>`;
+            fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Không thể tự động tải danh sách file từ GitHub API.</td></tr>`;
         }
     }
 
@@ -334,7 +381,6 @@
         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
     }
 
-    // Nạp câu hỏi theo đúng nguyên bản (Không xáo trộn thứ tự câu và đáp án)
     function loadQuiz() {
         currentQuizData = JSON.parse(JSON.stringify(questions));
 
@@ -344,12 +390,12 @@
         palette.innerHTML = '';
 
         currentQuizData.forEach((q, index) => {
-            q.newAnswerIndex = q.answer; // Giữ nguyên vị trí đáp án chuẩn từ file json
+            q.newAnswerIndex = q.answer; 
             q.userAnswer = null; 
 
             let questionHTML = `<div class="question-card" id="q-card-${index}">
                 <div class="d-flex align-items-center mb-3">
-                    <span class="badge bg-success text-white me-2 px-3 py-1 fs-6 rounded-pill">Câu ${index + 1}</span>
+                    <span class="badge bg-success text-white me-2 px-3 py-2 fs-6 rounded-pill shadow-sm">Câu hỏi ${index + 1} / ${currentQuizData.length}</span>
                 </div>
                 <div class="question-title">${q.question}</div>
                 <div class="options-container">`;
@@ -364,7 +410,7 @@
                 `;
             });
 
-            questionHTML += `</div><div id="feedback-${index}" class="mt-3 p-3 rounded-3 border shadow-sm bg-white" style="display: none; font-size: 0.95rem;"></div></div>`;
+            questionHTML += `</div><div id="feedback-${index}" class="mt-4 p-3 rounded-4 border shadow-sm bg-white" style="display: none; font-size: 0.95rem;"></div></div>`;
             
             quizBody.innerHTML += questionHTML;
             palette.innerHTML += `<button class="q-btn" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
@@ -394,25 +440,26 @@
         let explanationHTML = "";
         if (qData.explanation) {
             if (/\.(png|jpg|jpeg|gif)$/i.test(qData.explanation)) {
-                explanationHTML = `<div class="mt-2 text-center"><img src="${qData.explanation}" class="img-fluid rounded border" alt="Ảnh chụp quy định" style="max-height: 250px;"></div>`;
+                explanationHTML = `<div class="mt-3 text-center"><img src="${qData.explanation}" class="img-fluid rounded border shadow-sm" alt="Ảnh minh họa" style="max-height: 250px;"></div>`;
             } else {
-                explanationHTML = `<div class="mt-2 text-secondary small border-top pt-2"><i class="bi bi-journal-check text-success me-1"></i><strong>Căn cứ / Gợi ý:</strong> ${qData.explanation}</div>`;
+                explanationHTML = `<div class="mt-2 text-secondary small border-top pt-2"><i class="bi bi-journal-check text-success me-1"></i><strong>Căn cứ pháp lý / Gợi ý:</strong> ${qData.explanation}</div>`;
             }
         }
 
         if (isCorrect) {
-            feedback.className = 'mt-3 p-3 rounded-3 border border-success bg-light shadow-sm';
+            feedback.className = 'mt-4 p-3 rounded-4 border border-success bg-success bg-opacity-10 shadow-sm';
             feedback.innerHTML = `
-                <div class="text-success fw-bold d-flex align-items-center mb-1"><i class="bi bi-check-circle-fill fs-5 me-2"></i> Chính xác!</div>
+                <div class="text-success fw-bold d-flex align-items-center mb-1"><i class="bi bi-check-circle-fill fs-5 me-2"></i> Chính xác tuyệt vời!</div>
                 ${explanationHTML}
             `;
         } else {
-            feedback.className = 'mt-3 p-3 rounded-3 border border-danger bg-light shadow-sm';
+            feedback.className = 'mt-4 p-3 rounded-4 border border-danger bg-danger bg-opacity-10 shadow-sm';
             feedback.innerHTML = `
                 <div class="text-danger fw-bold d-flex align-items-center mb-1"><i class="bi bi-x-circle-fill fs-5 me-2"></i> Chưa chính xác! Đáp án đúng là: <strong>${String.fromCharCode(65 + qData.newAnswerIndex)}</strong></div>
                 ${explanationHTML}
             `;
         }
+        updateProgress();
     }
 
     function changeQuestion(step) {
@@ -436,8 +483,17 @@
         document.getElementById('btn-prev').disabled = (currentIndex === 0);
         document.getElementById('btn-next').style.display = (currentIndex === total - 1) ? 'none' : 'inline-block';
 
-        let progress = ((currentIndex + 1) / total) * 100;
-        document.getElementById('progress-bar').style.width = progress + '%';
+        updateProgress();
+    }
+
+    function updateProgress() {
+        let total = currentQuizData.length;
+        let answeredCount = currentQuizData.filter(q => q.userAnswer !== null).length;
+        let percent = Math.round((answeredCount / total) * 100);
+
+        document.getElementById('progress-bar').style.width = percent + '%';
+        document.getElementById('progress-percent-text.innerText = percent + '%';
+        document.getElementById('progress-percent-text').innerText = percent + '%';
     }
 
     async function viewDocument(filePath, fileName) {
@@ -447,7 +503,7 @@
         const title = document.getElementById('viewer-title');
         
         viewerContainer.style.display = 'block';
-        title.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Đang mở file: ${fileName}`;
+        title.innerHTML = `<span class="spinner-border spinner-border-sm me-2 text-success"></span>Đang mở tài liệu: ${fileName}`;
         
         iframe.style.display = 'none';
         excelContainer.style.display = 'none';
@@ -495,7 +551,7 @@
 
         } catch (error) {
             title.innerText = "Lỗi đọc file: " + fileName;
-            excelContainer.innerHTML = `<div class="p-4 text-center text-danger">Không thể hiển thị file này trực tuyến.</div>`;
+            excelContainer.innerHTML = `<div class="p-4 text-center text-danger"><i class="bi bi-exclamation-octagon fs-3 me-2"></i>Không thể hiển thị file này trực tuyến.</div>`;
             excelContainer.style.display = 'block';
         }
     }
@@ -520,25 +576,48 @@
             else if (q.userAnswer === q.newAnswerIndex) score++;
         });
 
-        if (unattempted > 0 && !confirm(`Bạn còn ${unattempted} câu chưa xem. Chắc chắn muốn kết thúc?`)) return;
+        if (unattempted > 0) {
+            Swal.fire({
+                title: 'Chưa hoàn thành!',
+                text: `Bạn còn ${unattempted} câu chưa làm bài. Bạn có chắc chắn muốn nộp bài không?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#005a43',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Đồng ý nộp bài',
+                cancelButtonText: 'Tiếp tục làm bài'
+            }).then((result) => {
+                if (result.isConfirmed) processResult(score, total);
+            });
+        } else {
+            processResult(score, total);
+        }
+    }
 
+    function processResult(score, total) {
         document.getElementById('exam-screen').style.display = 'none';
-        const resultScreen = document.getElementById('result-screen');
-        resultScreen.style.display = 'block';
+        document.getElementById('result-screen').style.display = 'block';
         
         let percent = Math.round((score / total) * 100);
         document.getElementById('result-text').innerHTML = `
-            <div class="row text-center">
+            <div class="row text-center align-items-center">
                 <div class="col-6 border-end">
-                    <div class="text-muted mb-1">Số câu đúng</div>
-                    <h4 class="fw-bold text-success m-0">${score} / ${total}</h4>
+                    <div class="text-muted mb-1 small fw-bold uppercase">Số câu đúng</div>
+                    <h3 class="fw-bold text-success m-0">${score} / ${total}</h3>
                 </div>
                 <div class="col-6">
-                    <div class="text-muted mb-1">Tỷ lệ chính xác</div>
-                    <h4 class="fw-bold text-success m-0">${percent}%</h4>
+                    <div class="text-muted mb-1 small fw-bold uppercase">Tỷ lệ chính xác</div>
+                    <h3 class="fw-bold text-success m-0">${percent}%</h3>
                 </div>
             </div>
         `;
+
+        Swal.fire({
+            title: 'Nộp bài thành công!',
+            text: `Bạn đã đạt được ${score}/${total} câu đúng (${percent}%)`,
+            icon: 'success',
+            confirmButtonColor: '#005a43'
+        });
     }
 
     window.onload = initApp;
