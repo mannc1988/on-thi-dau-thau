@@ -471,7 +471,7 @@
                 iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
             }
 
-            title.innerText = "Đang xem (Blob Mode): " + fileName;
+            title.innerText = "Đang xem: " + fileName;
             viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
 
         } catch (error) {
