@@ -298,7 +298,9 @@
                 `;
             });
 
-            questionHTML += `</div><div id="feedback-${index}" class="mt-3 p-3 rounded-3 border-0 shadow-sm" style="display: none; font-size: 0.95rem;"></div></div>`;
+            // Khu vực hiển thị kết quả kèm Căn cứ pháp lý / Gợi ý trả lời
+            questionHTML += `</div><div id="feedback-${index}" class="mt-3 p-3 rounded-3 border shadow-sm bg-white" style="display: none; font-size: 0.95rem;"></div></div>`;
+            
             quizBody.innerHTML += questionHTML;
             palette.innerHTML += `<button class="q-btn" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
         });
@@ -308,11 +310,12 @@
     function selectAnswer(qIndex, optIndex) {
         currentQuizData[qIndex].userAnswer = optIndex;
         const isCorrect = (optIndex === currentQuizData[qIndex].newAnswerIndex);
+        const qData = currentQuizData[qIndex];
         
         const labels = document.querySelectorAll(`#q-card-${qIndex} .option-label`);
         labels.forEach((lbl, idx) => {
             lbl.classList.remove('correct', 'incorrect'); 
-            if (idx === currentQuizData[qIndex].newAnswerIndex) lbl.classList.add('correct'); 
+            if (idx === qData.newAnswerIndex) lbl.classList.add('correct'); 
             else if (idx === optIndex && !isCorrect) lbl.classList.add('incorrect'); 
         });
 
@@ -322,12 +325,30 @@
 
         const feedback = document.getElementById(`feedback-${qIndex}`);
         feedback.style.display = 'block';
+
+        // Tạo nội dung giải thích căn cứ pháp lý hoặc hiển thị ảnh quy định (nếu có trong trường explanation)
+        let explanationHTML = "";
+        if (qData.explanation) {
+            // Kiểm tra xem nếu explanation là tên file ảnh (đuôi .png, .jpg, .gif) thì hiển thị thẻ <img>, ngược lại hiển thị dạng text căn cứ
+            if (/\.(png|jpg|jpeg|gif)$/i.test(qData.explanation)) {
+                explanationHTML = `<div class="mt-2 text-center"><img src="${qData.explanation}" class="img-fluid rounded border" alt="Ảnh chụp quy định" style="max-height: 250px;"></div>`;
+            } else {
+                explanationHTML = `<div class="mt-2 text-secondary small border-top pt-2"><i class="bi bi-journal-check text-primary me-1"></i><strong>Căn cứ / Gợi ý:</strong> ${qData.explanation}</div>`;
+            }
+        }
+
         if (isCorrect) {
-            feedback.className = 'mt-3 p-3 rounded-3 bg-success text-white shadow-sm d-flex align-items-center';
-            feedback.innerHTML = '<i class="bi bi-check-circle-fill fs-5 me-2"></i> <div><strong>Chính xác!</strong></div>';
+            feedback.className = 'mt-3 p-3 rounded-3 border border-success bg-light shadow-sm';
+            feedback.innerHTML = `
+                <div class="text-success fw-bold d-flex align-items-center mb-1"><i class="bi bi-check-circle-fill fs-5 me-2"></i> Chính xác!</div>
+                ${explanationHTML}
+            `;
         } else {
-            feedback.className = 'mt-3 p-3 rounded-3 bg-danger text-white shadow-sm d-flex align-items-center';
-            feedback.innerHTML = `<i class="bi bi-x-circle-fill fs-5 me-2"></i> <div><strong>Sai!</strong> Đáp án đúng: <strong>${String.fromCharCode(65 + currentQuizData[qIndex].newAnswerIndex)}</strong></div>`;
+            feedback.className = 'mt-3 p-3 rounded-3 border border-danger bg-light shadow-sm';
+            feedback.innerHTML = `
+                <div class="text-danger fw-bold d-flex align-items-center mb-1"><i class="bi bi-x-circle-fill fs-5 me-2"></i> Chưa chính xác! Đáp án đúng là: <strong>${String.fromCharCode(65 + qData.newAnswerIndex)}</strong></div>
+                ${explanationHTML}
+            `;
         }
     }
 
@@ -356,7 +377,6 @@
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
-    // Tự động dùng Google Docs Viewer cho CẢ PDF và WORD để hiển thị mượt mà trên mobile
     function viewDocument(fileName) {
         const viewerContainer = document.getElementById('doc-viewer-container');
         const iframe = document.getElementById('doc-iframe');
@@ -369,9 +389,7 @@
         if (!currentUrl.endsWith('/')) currentUrl += '/';
         let fileFullUrl = currentUrl + fileName;
 
-        // Dùng chung một cơ chế Google Docs Viewer cho cả PDF và Word để tránh bị trình duyệt di động chặn/bắt mở tab mới
         iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
-
         viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
