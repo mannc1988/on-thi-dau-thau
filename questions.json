@@ -2,26 +2,19 @@
   {
     "question": "Theo Luật Đấu thầu, đâu là hình thức lựa chọn nhà thầu phổ biến nhất?",
     "options": ["Đấu thầu rộng rãi", "Đấu thầu hạn chế", "Chỉ định thầu", "Chào hàng cạnh tranh"],
-    "answer": 0
+    "answer": 0,
+    "explanation": "Căn cứ Điều 20 Luật Đấu thầu số 22/2023/QH15 quy định về các hình thức lựa chọn nhà thầu, trong đó đấu thầu rộng rãi là hình thức phổ biến nhất không hạn chế số lượng nhà thầu tham gia."
   },
   {
     "question": "Thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là bao nhiêu ngày?",
     "options": ["10 ngày", "15 ngày", "20 ngày", "30 ngày"],
-    "answer": 2
+    "answer": 2,
+    "explanation": "Căn cứ Điểm a Khoản 1 Điều 64 Nghị định 24/2024/NĐ-CP quy định thời gian chuẩn bị hồ sơ dự thầu đối với đấu thầu rộng rãi trong nước tối thiểu là 20 ngày kể từ ngày đầu tiên phát hành hồ sơ mời thầu."
   },
   {
     "question": "Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?",
     "options": ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"],
-    "answer": 0
-  },
-  {
-    "question": "Hình thức 'Chào hàng cạnh tranh' áp dụng cho gói thầu mua sắm hàng hóa có giá trị không quá bao nhiêu?",
-    "options": ["1 tỷ đồng", "3 tỷ đồng", "5 tỷ đồng", "10 tỷ đồng"],
-    "answer": 2
-  },
-  {
-    "question": "Trong đấu thầu, thuật ngữ 'Bảo lãnh thực hiện hợp đồng' có nghĩa vụ gì?",
-    "options": ["Đảm bảo nhà thầu không bỏ trốn", "Đảm bảo nhà thầu ký hợp đồng", "Đảm bảo trách nhiệm thực hiện hợp đồng đã ký", "Đảm bảo chất lượng thiết kế"],
-    "answer": 2
+    "answer": 0,
+    "explanation": "Quy định tại Điều 14 Luật Đấu thầu 2023 và các văn bản hướng dẫn chi tiết đối với gói thầu xây lắp quy mô nhỏ."
   }
 ]
