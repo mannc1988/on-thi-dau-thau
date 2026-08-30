@@ -134,6 +134,8 @@
 
             <div class="custom-card">
                 <h5 class="fw-bold text-primary mb-2 fs-5"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
+                <p class="text-muted small mb-3">Tự động đọc các file từ folder <code>documents/</code> (Nhấp chọn để xem online dạng Blob):</p>
+                
                 <div class="table-responsive-custom mb-3">
                     <table class="table explorer-table mb-0">
                         <thead>
@@ -191,6 +193,7 @@
     let questions = []; 
     let currentQuizData = [];
     let currentIndex = 0;
+    let currentBlobUrl = null; // Lưu trữ Blob URL tạm thời để giải phóng bộ nhớ
 
     async function initApp() {
         autoLoadFolderDocuments();
@@ -266,7 +269,7 @@
                     const docPath = `documents/${file.name}`;
 
                     const tr = document.createElement('tr');
-                    tr.onclick = () => viewDocument(docPath);
+                    tr.onclick = () => viewDocumentAsBlob(docPath, file.name);
                     tr.innerHTML = `
                         <td>${iconHTML} ${file.name}</td>
                         <td id="date-${file.sha}" class="text-secondary small">Đang lấy...</td>
@@ -430,25 +433,60 @@
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
-    function viewDocument(filePath) {
+    // --- HÀM TẢI FILE DƯỚI DẠNG BLOB VÀ HIỂN THỊ TRỰC TIẾP ---
+    async function viewDocumentAsBlob(filePath, fileName) {
         const viewerContainer = document.getElementById('doc-viewer-container');
         const iframe = document.getElementById('doc-iframe');
         const title = document.getElementById('viewer-title');
         
         viewerContainer.style.display = 'block';
-        title.innerText = "Đang xem: " + filePath;
+        title.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Đang tải dữ liệu Blob: ${fileName}`;
+        iframe.src = "";
 
-        let currentUrl = window.location.href.split('index.html')[0];
-        if (!currentUrl.endsWith('/')) currentUrl += '/';
-        let fileFullUrl = currentUrl + filePath;
+        try {
+            // Tải file về dưới dạng Blob nhị phân
+            const response = await fetch(filePath);
+            if (!response.ok) throw new Error("Không thể tải file");
+            
+            const blob = await response.blob();
+            
+            // Giải phóng Blob URL cũ (nếu có) để tiết kiệm bộ nhớ RAM của trình duyệt
+            if (currentBlobUrl) {
+                URL.revokeObjectURL(currentBlobUrl);
+            }
 
-        iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
-        viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            // Tạo Blob URL mới
+            currentBlobUrl = URL.createObjectURL(blob);
+            
+            const ext = fileName.split('.').pop().toLowerCase();
+
+            if (ext === 'pdf' || ['png', 'jpg', 'jpeg'].includes(ext)) {
+                // Hiển thị trực tiếp Blob URL cho file PDF và Hình ảnh
+                iframe.src = currentBlobUrl;
+            } else {
+                // Đối với file Word/Excel, dùng Google Docs Viewer trỏ kèm đường dẫn URL gốc đầy đủ
+                let currentUrl = window.location.href.split('index.html')[0];
+                if (!currentUrl.endsWith('/')) currentUrl += '/';
+                let fileFullUrl = currentUrl + filePath;
+                iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
+            }
+
+            title.innerText = "Đang xem (Blob Mode): " + fileName;
+            viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        } catch (error) {
+            title.innerText = "Lỗi tải file: " + fileName;
+            console.error(error);
+        }
     }
 
     function closeDocumentViewer() {
         document.getElementById('doc-viewer-container').style.display = 'none';
         document.getElementById('doc-iframe').src = "";
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+            currentBlobUrl = null;
+        }
     }
 
     function finishPractice() {
