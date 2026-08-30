@@ -48,14 +48,13 @@
         }
         @media (min-width: 768px) { .custom-card { padding: 35px; } }
 
-        /* Sửa lỗi dấu X bị tràn ra ngoài bằng cách thêm padding-left và padding-right vừa vặn */
         .search-box-container {
             position: relative;
             margin-bottom: 20px;
         }
         .search-box-container input {
             padding-left: 45px;
-            padding-right: 45px; /* Tạo khoảng trống bên phải để nút X không bị đè lên chữ */
+            padding-right: 45px;
             border-radius: 14px;
             border: 2px solid #e2e8f0;
             font-size: 0.95rem;
@@ -89,7 +88,6 @@
         }
         .search-clear-btn:hover { color: #ef4444; }
 
-        /* Tô màu highlight từ khóa tìm kiếm */
         mark.highlight {
             background-color: #fef08a;
             color: #854d0e;
@@ -471,7 +469,7 @@
 
             let questionHTML = `<div class="question-card" id="q-card-${renderIndex}">
                 <div class="d-flex align-items-center mb-3">
-                    <span class="badge bg-success text-white me-2 px-3 py-2 fs-6 rounded-pill shadow-sm">Câu hỏi ${q.originalIndex + 1} / ${questions.length}</span>
+                    <span class="badge bg-success text-white me-2 px-3 py-2 fs-6 rounded-pill shadow-sm">Câu hỏi: ${q.originalIndex + 1} / ${questions.length}</span>
                 </div>
                 <div class="question-title">${highlightedQuestion}</div>
                 <div class="options-container">`;
@@ -480,7 +478,6 @@
                 const char = String.fromCharCode(65 + optIndex);
                 let highlightedOpt = highlightText(opt, currentSearchKeyword);
                 
-                // Kiểm tra trạng thái: Mặc định chưa chọn, chỉ tô màu nếu người dùng đã click chọn trước đó
                 let labelStatusClass = '';
                 if (q.userAnswer !== null && q.userAnswer !== undefined) {
                     if (optIndex === q.newAnswerIndex) {
@@ -498,7 +495,6 @@
                 `;
             });
 
-            // Khôi phục khung giải thích nếu đã chọn trước đó
             let feedbackStyle = (q.userAnswer !== null && q.userAnswer !== undefined) ? 'display: block;' : 'display: none;';
             let feedbackClass = '';
             let feedbackContent = '';
@@ -538,7 +534,6 @@
         updateUI();
     }
 
-    // Xử lý tìm kiếm thời gian thực (Live Search)
     function handleSearch(keyword) {
         currentSearchKeyword = keyword.trim();
         const clearBtn = document.getElementById('search-clear');
@@ -566,7 +561,6 @@
         buildQuizHTML(questions);
     }
 
-    // Tô màu highlight từ khóa
     function highlightText(text, keyword) {
         if (!keyword) return text;
         const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
@@ -575,9 +569,8 @@
 
     function selectAnswer(renderIndex, optIndex) {
         let qItem = currentQuizData[renderIndex];
-        qItem.userAnswer = optIndex; // Ghi nhận đáp án người dùng vừa chọn
+        qItem.userAnswer = optIndex; 
         
-        // Đồng thời cập nhật vào mảng gốc questions dựa trên originalIndex
         let originalIdx = qItem.originalIndex;
         questions[originalIdx].userAnswer = optIndex;
 
