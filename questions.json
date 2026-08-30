@@ -1,32 +1,167 @@
 [
   {
     "question": "Trường hợp nào sau đây bắt buộc phải lựa chọn nhà thầu theo quy định tại Luật Đấu thầu?",
-    "options": ["Gói thầu thuộc dự án sử dụng vốn ngân sách nhà nước của cơ quan nhà nước", "Lựa chọn nhà thầu của doanh nghiệp nhà nước không sử dụng vốn ngân sách nhà nước", "Lựa chọn nhà thầu của đơn vị sự nghiệp công lập tự bảo đảm chi thường xuyên không sử dụng ngân sách nhà nước", "Việc thuê, mua, thuê mua nhà, trụ sở, tài sản gắn liền với đất"],
+    "options": [
+      "Gói thầu thuộc dự án sử dụng vốn ngân sách nhà nước của cơ quan nhà nước",
+      "Lựa chọn nhà thầu của doanh nghiệp nhà nước không sử dụng vốn ngân sách nhà nước",
+      "Lựa chọn nhà thầu của đơn vị sự nghiệp công lập tự bảo đảm chi thường xuyên không sử dụng ngân sách nhà nước",
+      "Việc thuê, mua, thuê mua nhà, trụ sở, tài sản gắn liền với đất"
+    ],
     "answer": 0,
     "explanation": "Theo Khoản 1 Điều 2 Luật Đấu thầu, Luật này áp dụng đối với hoạt động lựa chọn nhà thầu của cơ quan, tổ chức sử dụng vốn ngân sách nhà nước. Do đó, gói thầu thuộc dự án sử dụng vốn ngân sách nhà nước của cơ quan nhà nước bắt buộc phải áp dụng Luật Đấu thầu. Các phương án B, C, D thuộc trường hợp được tự quyết định việc mua sắm theo quy định tại Khoản 7 Điều 3 Luật Đấu thầu (doanh nghiệp nhà nước không sử dụng vốn ngân sách, đơn vị sự nghiệp công lập tự chủ chi thường xuyên không sử dụng vốn ngân sách, thuê/mua trụ sở)."
   },
   {
     "question": "Chọn phương án đúng về phạm vi điều chỉnh của Luật Đấu thầu?",
-    "options": ["Quy định về quản lý nhà nước đối với hoạt động đấu thầu", "Quy định về thẩm quyền và trách nhiệm của các cơ quan, tổ chức, cá nhân trong hoạt động đấu thầu", "Quy định về hoạt động lựa chọn nhà thầu thực hiện gói thầu, hoạt động lựa chọn nhà đầu tư thực hiện dự án đầu tư kinh doanh", "Tất cả phương án trên đều đúng"],
+    "options": [
+      "Quy định về quản lý nhà nước đối với hoạt động đấu thầu",
+      "Quy định về thẩm quyền và trách nhiệm của các cơ quan, tổ chức, cá nhân trong hoạt động đấu thầu",
+      "Quy định về hoạt động lựa chọn nhà thầu thực hiện gói thầu, hoạt động lựa chọn nhà đầu tư thực hiện dự án đầu tư kinh doanh",
+      "Tất cả phương án trên đều đúng"
+    ],
     "answer": 3,
     "explanation": "Căn cứ Điều 1 Luật Đấu thầu, phạm vi điều chỉnh bao gồm cả quản lý nhà nước, thẩm quyền trách nhiệm của các bên, và các hoạt động lựa chọn nhà thầu, nhà đầu tư. Vì vậy, tất cả các phương án A, B, C đều đúng."
   },
   {
     "question": "Trường hợp nào sau đây không thuộc đối tượng áp dụng của Luật Đấu thầu?",
-    "options": ["Gói thầu mua thuốc, hoá chất, vật tư xét nghiệm sử dụng nguồn ngân sách nhà nước của bệnh viện công lập A", "Gói thầu xây dựng đường giao thông sử dụng vốn đầu tư công do Ban Quản lý dự án đầu tư xây dựng công trình tỉnh A làm chủ đầu tư", "Gói thầu mua sắm trang thiết bị làm việc sử dụng vốn nhà nước của Văn phòng UBND tỉnh A", "Hoạt động mua phần mềm kế toán của hộ kinh doanh cá thể"],
+    "options": [
+      "Gói thầu mua thuốc, hoá chất, vật tư xét nghiệm sử dụng nguồn ngân sách nhà nước của bệnh viện công lập A",
+      "Gói thầu xây dựng đường giao thông sử dụng vốn đầu tư công do Ban Quản lý dự án đầu tư xây dựng công trình tỉnh A làm chủ đầu tư",
+      "Gói thầu mua sắm trang thiết bị làm việc sử dụng vốn nhà nước của Văn phòng UBND tỉnh A",
+      "Hoạt động mua phần mềm kế toán của hộ kinh doanh cá thể"
+    ],
     "answer": 3,
     "explanation": "Hoạt động mua phần mềm kế toán của hộ kinh doanh cá thể là hoạt động của tư nhân, không sử dụng vốn nhà nước và không thuộc đối tượng điều chỉnh bắt buộc của Luật Đấu thầu (trừ khi họ tự nguyện áp dụng). Các phương án A, B, C đều liên quan đến vốn nhà nước hoặc đơn vị công lập nên thuộc đối tượng áp dụng."
   },
   {
     "question": "Theo quy định pháp luật về đấu thầu, gói thầu nào là gói thầu cung cấp dịch vụ tư vấn?",
-    "options": ["Thiết kế và cung cấp hệ thống xử lý nước thải", "Gói thầu lập nhiệm vụ quy hoạch vùng", "Gói thầu quảng cáo trên nền tảng xã hội và phát sóng trên VTV", "Gói thầu mua phần mềm kế toán MISA"],
+    "options": [
+      "Thiết kế và cung cấp hệ thống xử lý nước thải",
+      "Gói thầu lập nhiệm vụ quy hoạch vùng",
+      "Gói thầu quảng cáo trên nền tảng xã hội và phát sóng trên VTV",
+      "Gói thầu mua phần mềm kế toán MISA"
+    ],
     "answer": 1,
     "explanation": "Gói thầu lập nhiệm vụ quy hoạch vùng là dịch vụ tư vấn (theo Khoản 4 Điều 4 Luật Đấu thầu: lập quy hoạch là dịch vụ tư vấn). A là gói thầu hỗn hợp (thiết kế và cung cấp hàng hóa). C là dịch vụ phi tư vấn (quảng cáo). D là mua sắm hàng hóa (phần mềm thương mại)."
   },
   {
     "question": "Theo quy định pháp luật về đấu thầu, gói thầu nào là gói thầu cung cấp dịch vụ phi tư vấn?",
-    "options": ["Gói thầu in sổ công tác của tỉnh A", "Gói thầu thuê kiểm toán dự án", "Gói thầu mua phần mềm kế toán hỗ trợ doanh nghiệp khởi nghiệp sáng tạo, doanh nghiệp nhỏ do phụ nữ làm chủ", "Gói thầu xây dựng trụ sở làm việc của tỉnh A"],
+    "options": [
+      "Gói thầu in sổ công tác của tỉnh A",
+      "Gói thầu thuê kiểm toán dự án",
+      "Gói thầu mua phần mềm kế toán hỗ trợ doanh nghiệp khởi nghiệp sáng tạo, doanh nghiệp nhỏ do phụ nữ làm chủ",
+      "Gói thầu xây dựng trụ sở làm việc của tỉnh A"
+    ],
     "answer": 0,
     "explanation": "Gói thầu in sổ công tác (in ấn) được quy định là dịch vụ phi tư vấn tại Khoản 5 Điều 4 Luật Đấu thầu. B là dịch vụ tư vấn (kiểm toán). C là hàng hóa (phần mềm). D là xây lắp."
+  },
+  {
+    "question": "Theo quy định pháp luật về đấu thầu, đấu thầu là gì?",
+    "options": [
+      "Là quá trình lựa chọn nhà thầu để ký kết, thực hiện hợp đồng cung cấp dịch vụ tư vấn, dịch vụ phi tư vấn, mua sắm hàng hóa, xây lắp trên cơ sở bảo đảm cạnh tranh, công bằng, minh bạch, hiệu quả kinh tế và trách nhiệm giải trình",
+      "Là quá trình lựa chọn nhà đầu tư để ký kết, thực hiện hợp đồng dự án đầu tư kinh doanh trên cơ sở bảo đảm cạnh tranh, công bằng, minh bạch, hiệu quả kinh tế và trách nhiệm giải trình",
+      "Là quá trình lựa chọn đơn vị để thực hiện hợp đồng thông qua các quy trình, thủ tục do pháp luật đấu thầu quy định.",
+      "Phương án A và B đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Theo Khoản 8 Điều 4 Luật Đấu thầu, đấu thầu là quá trình lựa chọn nhà thầu để ký kết, thực hiện hợp đồng... và lựa chọn nhà đầu tư để ký kết, thực hiện hợp đồng dự án đầu tư kinh doanh. Do đó, cả A và B đều đúng[cite: 2]."
+  },
+  {
+    "question": "Đấu thầu quốc tế là gì?",
+    "options": [
+      "Là hoạt động đấu thầu mà nhà thầu trong nước, nhà thầu nước ngoài được tham dự thầu",
+      "Là hoạt động đấu thầu mà nhà thầu trong nước, nhà thầu nước ngoài được tham dự thầu, trong đó nhà thầu trong nước bắt buộc phải liên danh với nhà thầu nước ngoài",
+      "Là hoạt động đấu thầu chỉ nhà thầu quốc tế được phép tham dự thầu",
+      "Là hoạt động đấu thầu chỉ nhà thầu trong nước được phép tham dự thầu"
+    ],
+    "answer": 0,
+    "explanation": "Theo Khoản 10 Điều 4 Luật Đấu thầu, đấu thầu quốc tế là hoạt động đấu thầu mà nhà thầu, nhà đầu tư trong nước, nước ngoài được tham dự thầu[cite: 2]."
+  },
+  {
+    "question": "Giá đề nghị trúng thầu là gì?",
+    "options": [
+      "Là giá dự thầu của nhà thầu ghi trong quyết định phê duyệt kết quả lựa chọn nhà thầu.",
+      "Là giá dự thầu của nhà thầu được đề nghị trúng thầu sau khi đã được sửa lỗi, hiệu chỉnh sai lệch theo yêu cầu của hồ sơ mời thầu, hồ sơ yêu cầu, trừ đi giá trị giảm giá (nếu có)",
+      "Là giá dự thầu của nhà thầu chưa tính sửa lỗi, hiệu chỉnh sai lệch và giá trị giảm giá (nếu có)",
+      "Là giá trị ghi trong hợp đồng giữa chủ đầu tư và nhà thầu"
+    ],
+    "answer": 1,
+    "explanation": "Theo Khoản 13 Điều 4 Luật Đấu thầu, giá đề nghị trúng thầu là giá dự thầu của nhà thầu được đề nghị trúng thầu sau khi đã được sửa lỗi, hiệu chỉnh sai lệch, trừ đi giá trị giảm giá (nếu có)[cite: 2]."
+  },
+  {
+    "question": "Theo quy định pháp luật về đấu thầu, hàng hóa gồm?",
+    "options": [
+      "Máy móc, thiết bị, nguyên liệu, nhiên liệu, vật liệu, vật tư, phụ tùng; sản phẩm; phương tiện; hàng tiêu dùng, phần mềm thương mại",
+      "Thuốc, hóa chất, vật tư xét nghiệm, thiết bị y tế",
+      "Phương án A và B đều đúng",
+      "Logistics, bảo hiểm, quảng cáo, nghiệm thu chạy thử, chụp ảnh vệ tinh"
+    ],
+    "answer": 2,
+    "explanation": "Theo Khoản 17 Điều 4 Luật Đấu thầu, hàng hóa bao gồm cả máy móc, thiết bị, nguyên liệu... và thuốc, hóa chất, vật tư xét nghiệm, thiết bị y tế. Do đó cả A và B đều đúng[cite: 2]."
+  },
+  {
+    "question": "Đối tượng nào sau đây được hưởng ưu đãi trong lựa chọn nhà thầu?",
+    "options": [
+      "Hàng hóa có xuất xứ Việt Nam",
+      "Nhà thầu trong nước sản xuất hàng hóa có xuất xứ Việt Nam phù hợp với hồ sơ mời thầu",
+      "Sản phẩm, dịch vụ thân thiện môi trường theo quy định của pháp luật về bảo vệ môi trường",
+      "Tất cả các phương án trên đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Theo Khoản 1 Điều 10 Luật Đấu thầu, tất cả các đối tượng nêu tại A, B, C (Hàng hóa xuất xứ Việt Nam; Sản phẩm thân thiện môi trường; Nhà thầu trong nước sản xuất hàng hóa xuất xứ Việt Nam) đều thuộc đối tượng được hưởng ưu đãi[cite: 2]."
+  },
+  {
+    "question": "Nhà thầu trong nước nào được hưởng ưu đãi trong lựa chọn nhà thầu?",
+    "options": [
+      "Nhà thầu trong nước sản xuất hàng hóa có xuất xứ Việt Nam phù hợp với hồ sơ mời thầu",
+      "Nhà thầu trong nước tham dự thầu với tư cách độc lập hoặc liên danh với nhà thầu trong nước khác khi tham dự đấu thầu quốc tế",
+      "Nhà thầu trong nước có sử dụng lao động nữ, thương binh, người khuyết tật hoặc người dân tộc thiểu số",
+      "Tất cả các phương án trên đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Theo Điểm c Khoản 1 Điều 10 Luật Đấu thầu, “Nhà thầu trong nước sản xuất hàng hóa có xuất xứ Việt Nam phù hợp với hồ sơ mời thầu” là một trong các đối tượng được hưởng ưu đãi. (Lưu ý: Phương án B và C cũng là đối tượng ưu đãi nhưng A là đáp án chính xác nhất trong ngữ cảnh câu hỏi về nhà thầu sản xuất)[cite: 2]."
+  },
+  {
+    "question": "Trường hợp nào sau đây cơ quan, tổ chức, doanh nghiệp được tự quyết định việc lựa chọn nhà thầu trên cơ sở bảo đảm công khai, minh bạch, hiệu quả và trách nhiệm giải trình?",
+    "options": [
+      "Thực hiện gói thầu thuộc dự án sử dụng vốn đầu tư công của cơ quan nhà nước",
+      "Thực hiện gói thầu thuộc dự án sử dụng vốn đầu tư công của đơn vị sự nghiệp công lập bảo đảm một phần chi thường xuyên",
+      "Thực hiện gói thầu thuộc dự án sử dụng vốn ngân sách nhà nước của doanh nghiệp nhà nước",
+      "Lựa chọn nhà thầu của doanh nghiệp nhà nước không sử dụng vốn ngân sách nhà nước, đơn vị sự nghiệp công lập tự bảo đảm chi thường xuyên và chi đầu tư, đơn vị sự nghiệp công lập tự bảo đảm chi thường xuyên không sử dụng ngân sách nhà nước"
+    ],
+    "answer": 3,
+    "explanation": "Căn cứ Điểm d Khoản 7 Điều 3 Luật Đấu thầu, doanh nghiệp nhà nước không sử dụng vốn ngân sách nhà nước, đơn vị sự nghiệp công lập tự bảo đảm chi thường xuyên (và chi đầu tư) không sử dụng ngân sách nhà nước được tự quyết định việc lựa chọn nhà thầu[cite: 2]."
+  },
+  {
+    "question": "Ngôn ngữ sử dụng đối với đấu thầu quốc tế là gì?",
+    "options": [
+      "Tiếng Việt",
+      "Tiếng Đức",
+      "Tiếng Anh hoặc tiếng Việt và tiếng Anh",
+      "Tiếng Đức hoặc tiếng Anh"
+    ],
+    "answer": 2,
+    "explanation": "Theo Khoản 2 Điều 12 Luật Đấu thầu, ngôn ngữ sử dụng đối với đấu thầu quốc tế là tiếng Anh hoặc tiếng Việt và tiếng Anh[cite: 2]."
+  },
+  {
+    "question": "Đối với đấu thầu quốc tế, trường hợp ngôn ngữ sử dụng trong hồ sơ mời thầu là tiếng Việt và tiếng Anh thì khi tham dự thầu, nhà thầu được sử dụng ngôn ngữ gì?",
+    "options": [
+      "Chỉ tiếng Việt",
+      "Chỉ tiếng Anh",
+      "Tiếng Việt hoặc tiếng Anh",
+      "Bắt buộc cả tiếng Việt và tiếng Anh"
+    ],
+    "answer": 2,
+    "explanation": "Theo Khoản 2 Điều 12 Luật Đấu thầu, trường hợp hồ sơ mời thầu sử dụng tiếng Việt và tiếng Anh thì nhà thầu được lựa chọn tiếng Việt hoặc tiếng Anh để tham dự thầu[cite: 2]."
+  },
+  {
+    "question": "Điều kiện để tổ chức đấu thầu quốc tế lựa chọn nhà thầu thực hiện gói thầu mua sắm hàng hóa là gì?",
+    "options": [
+      "Gói thầu mua sắm hàng hóa thông dụng, đơn giản, có sẵn trên thị trường",
+      "Gói thầu mua sắm hàng hóa mà hàng hóa đó trong nước sản xuất được và đáp ứng các yêu cầu về kỹ thuật, chất lượng, giá nhưng chủ đầu tư yêu cầu phải mua hàng hóa nhập khẩu",
+      "Gói thầu mua sắm hàng hóa mà hàng hóa đó trong nước không sản xuất được hoặc sản xuất được nhưng không đáp ứng một trong các yêu cầu về kỹ thuật, chất lượng, giá",
+      "Gói thầu mua sắm hàng hóa thông dụng đã được nhập khẩu và chào bán tại Việt Nam nhưng hàng hóa đó trong nước không sản xuất được"
+    ],
+    "answer": 2,
+    "explanation": "Theo Điểm d Khoản 1 Điều 11 Luật Đấu thầu, điều kiện tổ chức đấu thầu quốc tế đối với mua sắm hàng hóa là hàng hóa đó trong nước không sản xuất được hoặc sản xuất được nhưng không đáp ứng một trong các yêu cầu về kỹ thuật, chất lượng, giá[cite: 2]."
   }
 ]
