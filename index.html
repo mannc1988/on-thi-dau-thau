@@ -189,27 +189,28 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             
-            <!-- BẢNG ĐIỀU HƯỚNG CÂU HỎI KÈM NÚT NỘP BÀI NẰM NGAY DƯỚI LOGO -->
+            <!-- BẢNG ĐIỀU HƯỚNG CÂU HỎI KÈM HƯỚNG DẪN & NÚT NỘP BÀI -->
             <div class="custom-card text-center">
                 <h5 class="mb-3 fw-bold text-dark"><i class="bi bi-grid-3x3-gap-fill text-success me-2"></i>Bảng Điều Hướng Câu Hỏi</h5>
-                <div class="d-flex flex-wrap justify-content-center mb-3" id="question-palette"></div>
+                <div class="d-flex flex-wrap justify-content-center mb-4" id="question-palette"></div>
                 
-                <div class="d-flex justify-content-center align-items-center gap-4 mb-4" style="font-size: 0.9rem;">
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-success me-1 shadow-sm" style="width:12px; height:12px; border-radius:50%;"></span> 
+                <!-- HƯỚNG DẪN TRẠNG THÁI CÓ MÀU SẮC SINH ĐỘNG -->
+                <div class="d-flex flex-wrap justify-content-center align-items-center gap-3 mb-4" style="font-size: 0.9rem;">
+                    <div class="d-flex align-items-center px-3 py-1.5 rounded-pill bg-success bg-opacity-10 border border-success border-opacity-25 shadow-sm">
+                        <span class="badge bg-success me-2" style="width:10px; height:10px; border-radius:50%;"></span> 
                         <span class="text-success fw-bold">Đúng</span>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-danger me-1 shadow-sm" style="width:12px; height:12px; border-radius:50%;"></span> 
+                    <div class="d-flex align-items-center px-3 py-1.5 rounded-pill bg-danger bg-opacity-10 border border-danger border-opacity-25 shadow-sm">
+                        <span class="badge bg-danger me-2" style="width:10px; height:10px; border-radius:50%;"></span> 
                         <span class="text-danger fw-bold">Sai</span>
                     </div>
-                    <div class="d-flex align-items-center">
-                        <span class="badge bg-secondary me-1 shadow-sm" style="width:12px; height:12px; border-radius:50%; opacity: 0.4;"></span> 
+                    <div class="d-flex align-items-center px-3 py-1.5 rounded-pill bg-secondary bg-opacity-10 border border-secondary border-opacity-25 shadow-sm">
+                        <span class="badge bg-secondary me-2" style="width:10px; height:10px; border-radius:50%;"></span> 
                         <span class="text-secondary fw-bold">Chưa làm</span>
                     </div>
                 </div>
 
-                <!-- Nút nộp bài đưa chung vào đây -->
+                <!-- Nút nộp bài -->
                 <button id="submit-btn" class="btn btn-dark px-5 py-3 fw-bold rounded-pill shadow" onclick="finishPractice()">
                     <i class="bi bi-flag-fill text-warning me-2"></i> Hoàn Thành & Nộp Bài Ôn Tập
                 </button>
