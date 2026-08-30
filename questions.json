@@ -305,7 +305,7 @@
       "Công ty A là nhà thầu tư vấn lập hồ sơ mời thầu gói thầu xây lắp X có sở hữu 30% vốn góp của Công ty B"
     ],
     "answer": 2,
-    "explanation": "Căn cứ quy định về bảo đảm cạnh tranh trong đấu thầu, công ty B độc lập với các đơn vị tư vấn thiết kế/lập HSMT hoặc chỉ có quan hệ giasttiếp không vi phạm quy định kiểm soát lẫn nhau sẽ được đánh giá là bảo đảm cạnh tranh. (Trong khi A, B, D vi phạm quy định trực tiếp về tính độc lập giữa đơn vị tư vấn lập HSMT/yêu cầu kỹ thuật và nhà thầu tham dự thầu)."
+    "explanation": "Căn cứ quy định về bảo đảm cạnh tranh trong đấu thầu, công ty B độc lập với các đơn vị tư vấn thiết kế/lập HSMT hoặc chỉ có quan hệ gián tiếp không vi phạm quy định kiểm soát lẫn nhau sẽ được đánh giá là bảo đảm cạnh tranh. (Trong khi A, B, D vi phạm quy định trực tiếp về tính độc lập giữa đơn vị tư vấn lập HSMT/yêu cầu kỹ thuật và nhà thầu tham dự thầu)."
   },
   {
     "question": "Chọn phương án đúng đối với nhà thầu phụ đặc biệt?",
@@ -416,5 +416,137 @@
     ],
     "answer": 2,
     "explanation": "Theo Điều 25 Luật Đấu thầu, hình thức mua sắm trực tiếp chỉ áp dụng đối với gói thầu mua sắm hàng hóa tương tự."
+  },
+  {
+    "question": "Phương án nào không phải là điều kiện để được áp dụng hình thức mua sắm trực tiếp?",
+    "options": [
+      "Nhà thầu đã trúng thầu thông qua đấu thầu rộng rãi, đấu thầu hạn chế và đã ký hợp đồng gói thầu thực hiện gói thầu trước đó",
+      "Thời gian từ khi ký hợp đồng gói thầu trước đến ngày phê duyệt kết quả mua sắm trực tiếp không quá 12 tháng",
+      "Đơn giá các phần việc thuộc gói thầu mua sắm trực tiếp không vượt đơn giá phần việc tương ứng của gói thầu đã ký trước đó thuộc gói thầu tương tự đã ký hợp đồng trước đó, đồng thời, phù hợp với giá thị trường tại thời điểm hoàn thiện hợp đồng",
+      "Chủ đầu tư được áp dụng mua sắm trực tiếp nhiều lần đối với các loại hàng hóa thuộc gói thầu"
+    ],
+    "answer": 3,
+    "explanation": "Theo Điều 25 Luật Đấu thầu và Điều 82 Nghị định 214/2025/NĐ-CP, chủ đầu tư chỉ được áp dụng mua sắm trực tiếp một lần đối với các loại hàng hóa thuộc gói thầu. Do đó, phương án D (\"được áp dụng nhiều lần\") là sai, không phải là điều kiện đúng."
+  },
+  {
+    "question": "Hãy chọn phương án đúng về hình thức đặt hàng?",
+    "options": [
+      "Là một trong các hình thức lựa chọn nhà thầu",
+      "Pháp luật quản lý ngành, lĩnh vực quy định về quy trình, thủ tục đặt hàng khác với quy trình, thủ tục của pháp luật về đấu thầu thì áp dụng quy định của pháp luật về đấu thầu.",
+      "Đặt hàng chỉ được áp dụng cho sản phẩm, dịch vụ công",
+      "Đặt hàng chỉ áp dụng đối với nguồn chi thường xuyên ngân sách nhà nước, không được áp dụng đối với nguồn vốn khác"
+    ],
+    "answer": 0,
+    "explanation": "Theo Điều 20 Luật Đấu thầu, Đặt hàng là một trong các hình thức lựa chọn nhà thầu (được quy định cụ thể tại Điều 29a Luật Đấu thầu)."
+  },
+  {
+    "question": "Kế hoạch lựa chọn nhà thầu của dự án thuộc đối tượng áp dụng của Luật Đấu thầu bắt buộc phải đăng tải ở đâu?",
+    "options": [
+      "Hệ thống mạng đấu thầu quốc gia",
+      "Báo Tài chính-Đầu tư",
+      "Cổng Thông tin điện tử của Bộ, ngành",
+      "Phương án A và B đều đúng"
+    ],
+    "answer": 0,
+    "explanation": "Theo Điều 7 và Điều 8 Luật Đấu thầu, thông tin về kế hoạch lựa chọn nhà thầu bắt buộc phải đăng tải trên Hệ thống mạng đấu thầu quốc gia."
+  },
+  {
+    "question": "Chậm nhất là bao nhiêu ngày thì kế hoạch lựa chọn nhà thầu phải được đăng tải trên Hệ thống mạng đấu thầu quốc gia?",
+    "options": [
+      "05 ngày làm việc kể từ ngày kế hoạch lựa chọn nhà thầu được ban hành",
+      "07 ngày kể từ ngày kế hoạch lựa chọn nhà thầu được ban hành",
+      "07 ngày làm việc kể từ ngày kế hoạch lựa chọn nhà thầu được ban hành",
+      "10 ngày kể từ ngày kế hoạch lựa chọn nhà thầu được ban hành"
+    ],
+    "answer": 0,
+    "explanation": "Theo Khoản 4 Điều 8 Luật Đấu thầu, kế hoạch lựa chọn nhà thầu phải được đăng tải chậm nhất là 05 ngày làm việc kể từ ngày văn bản được ban hành."
+  },
+  {
+    "question": "Kế hoạch lựa chọn nhà thầu bao gồm nội dung nào sau đây?",
+    "options": [
+      "Giá gói thầu",
+      "Thời gian thực hiện hợp đồng",
+      "Giám sát hoạt động đấu thầu",
+      "Cả 3 phương án trên đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Theo thực tế đề thi và các nội dung cấu thành, các phương án đều phản ánh các thành phần hoặc yếu tố liên quan có trong quản lý và nội dung kế hoạch LCNT (với Giá gói thầu và Thời gian thực hiện hợp đồng là nội dung chính cốt lõi được quy định tại Điều 39 Luật Đấu thầu, kết hợp với các nội dung quản lý thực hiện)."
+  },
+  {
+    "question": "Đối với nội dung mua sắm hàng hóa có giá không quá 50 triệu đồng thì được thực hiện như thế nào?",
+    "options": [
+      "Không phải lập kế hoạch lựa chọn nhà thầu nhưng phải thực hiện mua sắm trên cơ sở tiết kiệm, hiệu quả, bảo đảm đầy đủ hoá đơn, chứng từ",
+      "Không phải lập kế hoạch lựa chọn nhà thầu nhưng phải thực hiện mua sắm theo giá công khai, giá niêm yết và không cần hoá đơn, chứng từ",
+      "Được hình thành gói thầu để thực hiện lựa chọn nhà thầu theo một trong các hình thức lựa chọn nhà thầu (đấu thầu rộng rãi, chào hàng cạnh tranh, chỉ định thầu) nhưng phải lập kế hoạch lựa chọn nhà thầu",
+      "Phương án A và C đều đúng"
+    ],
+    "answer": 0,
+    "explanation": "Theo Khoản 4 Điều 80 Nghị định 214/2025/NĐ-CP (quy định về chỉ định thầu rút gọn/mua sắm nhỏ lẻ), đối với gói thầu/nội dung mua sắm không quá 50 triệu đồng, thủ trưởng cơ quan chịu trách nhiệm quyết định việc mua sắm đảm bảo tiết kiệm, hiệu quả, có hóa đơn chứng từ, không phải lập kế hoạch lựa chọn nhà thầu."
+  },
+  {
+    "question": "Lựa chọn phương án phù hợp nhất đối với nội dung đền bù giải phóng mặt bằng khi lập kế hoạch lựa chọn nhà thầu?",
+    "options": [
+      "Tất cả nội dung công việc có liên quan đến giải phóng mặt bằng thuộc phần công việc không áp dụng một trong các hình thức lựa chọn nhà thầu",
+      "Đối với các công việc mà Hội đồng đền bù giải phóng mặt bằng tự làm (ví dụ: tổ chức họp với người sử dụng đất, chủ sở hữu tài sản; trình duyệt, công khai phương án bồi thường, bàn giao chi phí bồi thường…) thì thuộc phần không áp dụng một trong các hình thức lựa chọn nhà thầu",
+      "Đối với phần việc phải hình thành gói thầu thuê tư vấn để thực hiện nhằm phục vụ công việc giải phóng mặt bằng thì thuộc phần công việc thuộc kế hoạch lựa chọn nhà thầu",
+      "Phương án B và C đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Công việc đền bù giải phóng mặt bằng thường gồm nhiều phần. Phần công việc do Hội đồng đền bù giải phóng mặt bằng tự thực hiện (chi trả, họp dân...) thuộc phần công việc không áp dụng hình thức lựa chọn nhà thầu. Phần công việc cần thuê tư vấn (đo đạc, định giá...) phải hình thành gói thầu và lập kế hoạch LCNT. Vậy B và C đều đúng."
+  },
+  {
+    "question": "Đối với các gói thầu đã thanh lý hợp đồng, khi lập tờ trình Kế hoạch lựa chọn nhà thầu, giá trị phần công việc đã thực hiện của các gói thầu này được tính như thế nào?",
+    "options": [
+      "Giá gói thầu",
+      "Giá trị thanh lý hợp đồng",
+      "Giá hợp đồng",
+      "Tất cả phương án đều đúng"
+    ],
+    "answer": 1,
+    "explanation": "Khi lập Kế hoạch LCNT cho phần công việc còn lại của gói thầu đã thanh lý (do nhà thầu cũ vi phạm hoặc không thực hiện được), giá trị phần công việc đã thực hiện được tính bằng giá trị thanh lý hợp đồng (hoặc giá trị nghiệm thu). Điều này giúp xác định chính xác phần giá trị còn lại cần đấu thầu tiếp."
+  },
+  {
+    "question": "Bảo đảm cạnh tranh trong đấu thầu thuộc nội dung đánh giá về?",
+    "options": [
+      "Tư cách hợp lệ",
+      "Năng lực, kinh nghiệm",
+      "Kỹ thuật",
+      "Tài chính"
+    ],
+    "answer": 0,
+    "explanation": "Theo Điểm đ Khoản 1 Điều 5 Luật Đấu thầu, “Bảo đảm cạnh tranh trong đấu thầu” là một trong các điều kiện để nhà thầu có Tư cách hợp lệ."
+  },
+  {
+    "question": "Nhà thầu tham gia đấu thầu gói thầu hàng hóa phải độc lập với chủ thể nào sau đây?",
+    "options": [
+      "Phải độc lập với nhà thầu tư vấn lập hồ sơ mời thầu gói thầu hàng hóa",
+      "Phải độc lập với nhà thầu khác khi tham gia đấu thầu rộng rãi",
+      "Phải độc lập với nhà thầu tư vấn lập kế hoạch tổng thể lựa chọn nhà thầu",
+      "Phải độc lập với nhà thầu tư vấn lập kế hoạch lựa chọn nhà thầu"
+    ],
+    "answer": 0,
+    "explanation": "Theo quy định về bảo đảm cạnh tranh (Điều 6 Luật Đấu thầu), nhà thầu tham dự thầu phải độc lập về pháp lý và tài chính với nhà thầu tư vấn lập hồ sơ mời thầu cho gói thầu đó."
+  },
+  {
+    "question": "Nhận định nào sau đây không phù hợp với quy định về bảo đảm cạnh tranh trong đấu thầu?",
+    "options": [
+      "Nhà thầu tham dự thầu phải độc lập với chủ đầu tư, trừ trường hợp: nhà thầu là đơn vị sự nghiệp công lập thuộc cơ quan quản lý nhà nước có chức năng, nhiệm vụ được giao phù hợp với tính chất gói thầu của cơ quan quản lý nhà nước đó; đơn vị sự nghiệp công lập và doanh nghiệp có cùng một cơ quan trực tiếp quản lý, góp vốn; các đơn vị sự nghiệp công lập có cùng một cơ quan trực tiếp quản lý",
+      "Nhà thầu tham dự thầu phải độc lập với nhà thầu tư vấn quản lý dự án, tư vấn giám sát",
+      "Nhà thầu tham dự thầu phải độc lập với nhà thầu tư vấn lập, thẩm tra, thẩm định hồ sơ thiết kế, dự toán",
+      "Nhà thầu thực hiện hợp đồng phải độc lập với nhà thầu tư vấn lập kế hoạch lựa chọn nhà thầu."
+    ],
+    "answer": 3,
+    "explanation": "Các phương án A, B, C là các quy định đúng về tính độc lập (với Chủ đầu tư, với Tư vấn giám sát, với Tư vấn thiết kế). Phương án D (\"Nhà thầu thực hiện hợp đồng phải độc lập với nhà thầu tư vấn lập kế hoạch lựa chọn nhà thầu\") là nhận định không phù hợp vì Luật không bắt buộc nhà thầu thi công phải độc lập với đơn vị lập Kế hoạch LCNT (đơn vị lập Kế hoạch LCNT thường là Chủ đầu tư hoặc tư vấn lập dự án giai đoạn đầu, không ảnh hưởng trực tiếp đến tính cạnh tranh tại thời điểm xét thầu như tư vấn lập HSMT hay đánh giá HSDT)."
+  },
+  {
+    "question": "Nội dung nào sau đây không thuộc quy định về bảo đảm cạnh tranh trong đấu thầu khi nhà thầu tham dự đấu thầu rộng rãi gói thầu EPC, EP, EC?",
+    "options": [
+      "Nhà thầu tham dự thầu phải độc lập với nhà thầu lập, thẩm tra thiết kế FEED",
+      "Nhà thầu tham dự thầu phải độc lập với nhà thầu lập, thẩm tra báo cáo nghiên cứu khả thi trong trường hợp không lập thiết kế FEED",
+      "Nhà thầu tham dự thầu phải độc lập với nhà thầu lập, thẩm tra báo cáo kinh tế kỹ thuật trong trường hợp không lập báo cáo nghiên cứu khả thi, không lập thiết kế FEED theo quy định của pháp luật về xây dựng",
+      "Nhà thầu tham dự thầu phải độc lập với nhà thầu khác cùng tham dự đấu thầu rộng rãi"
+    ],
+    "answer": 3,
+    "explanation": "Gói thầu EPC/EP/EC thường là đấu thầu rộng rãi. A, B, C là các quy định nhà thầu EPC phải độc lập với tư vấn thiết kế FEED/FS. Phương án D (\"Phải độc lập với nhà thầu khác cùng tham dự đấu thầu rộng rãi\") là sai. Trong đấu thầu rộng rãi, các nhà thầu tham dự không cần phải độc lập với nhau (ví dụ công ty mẹ - con có thể cùng dự thầu độc lập, miễn là cạnh tranh công bằng về giá và kỹ thuật, không thông thầu). Yêu cầu độc lập giữa các nhà thầu chỉ áp dụng cho đấu thầu hạn chế (Khoản 2 Điều 6 Luật Đấu thầu)."
   }
 ]
