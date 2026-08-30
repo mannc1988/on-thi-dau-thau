@@ -249,7 +249,7 @@
             <!-- DANH SÁCH TÀI LIỆU THAM KHẢO -->
             <div class="custom-card">
                 <h5 class="fw-bold text-success mb-2"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
-                <p class="text-muted small mb-3">Hệ thống tự động quét từ thư mục <code>documents/</code> (Hỗ trợ PDF, Word, Excel trực tuyến):</p>
+                <p class="text-muted small mb-3">Hệ thống tự động quét từ thư mục <code>documents/</code> (Tối ưu xem PDF & Word qua Google Docs, Excel trực tuyến):</p>
                 
                 <div class="table-responsive-custom mb-3">
                     <table class="table explorer-table mb-0">
@@ -468,7 +468,6 @@
             
             let highlightedQuestion = highlightText(q.question, currentSearchKeyword);
 
-            // Hiển thị dạng: Câu hỏi: x/y theo kết quả tìm kiếm (ví dụ: 1/3, 2/3, 3/3)
             let questionHTML = `<div class="question-card" id="q-card-${renderIndex}">
                 <div class="d-flex align-items-center mb-3">
                     <span class="badge bg-success text-white me-2 px-3 py-2 fs-6 rounded-pill shadow-sm">Câu hỏi: ${renderIndex + 1} / ${totalFiltered} <span class="opacity-75 ms-1">(Gốc: #${q.originalIndex + 1})</span></span>
@@ -673,10 +672,9 @@
         const ext = fileName.split('.').pop().toLowerCase();
 
         try {
-            const response = await fetch(filePath);
-            if (!response.ok) throw new Error("Không thể tải file");
-
             if (ext === 'xlsx' || ext === 'xls') {
+                const response = await fetch(filePath);
+                if (!response.ok) throw new Error("Không thể tải file");
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                 
@@ -690,19 +688,12 @@
                 title.innerText = `Đang xem (Excel Online): ${fileName} [Sheet: ${firstSheetName}]`;
             } 
             else {
-                const blob = await response.blob();
-                if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
-                currentBlobUrl = URL.createObjectURL(blob);
-
-                if (ext === 'pdf' || ['png', 'jpg', 'jpeg'].includes(ext)) {
-                    iframe.src = currentBlobUrl;
-                } else {
-                    let currentUrl = window.location.href.split('index.html')[0];
-                    if (!currentUrl.endsWith('/')) currentUrl += '/';
-                    let fileFullUrl = currentUrl + filePath;
-                    iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
-                }
-
+                // Đối với file PDF, Word và các định dạng khác: Ép buộc sử dụng Google Docs Viewer để hiển thị chuẩn xác trên mobile
+                let currentUrl = window.location.href.split('index.html')[0];
+                if (!currentUrl.endsWith('/')) currentUrl += '/';
+                let fileFullUrl = currentUrl + filePath;
+                
+                iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
                 iframe.style.display = 'block';
                 title.innerText = "Đang xem: " + fileName;
             }
