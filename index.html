@@ -18,19 +18,20 @@
 
         body { background-color: var(--bg-color); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         
-        /* CSS cho Banner Logo chuyên nghiệp */
+        /* CSS cho Banner Logo chuyên nghiệp có thêm lề trên/dưới */
         .app-banner-container {
             width: 100%;
             background: #ffffff;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
+            padding: 15px 0; /* Tạo lề trên và dưới để ảnh không bị mất mép */
+            margin-bottom: 25px;
         }
         .app-banner-container img {
             width: 100%;
             height: auto;
             display: block;
-            max-height: 280px;
-            object-fit: cover;
+            max-height: 320px;
+            object-fit: contain; /* Giúp hiển thị trọn vẹn toàn bộ banner, không bị cắt xén */
         }
 
         .custom-card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--card-shadow); border: none; margin-bottom: 20px; }
@@ -84,11 +85,11 @@
 </head>
 <body>
 
-<!-- HEADER BANNER CHUYÊN NGHIỆP -->
+<!-- HEADER BANNER CHUYÊN NGHIỆP CÓ LỀ TRÊN VÀ DƯỚI -->
 <div class="app-banner-container">
-    <div class="container-fluid p-0">
+    <div class="container">
         <!-- Đổi chữ 'banner-bidv.png' thành đúng tên file ảnh bạn đã tải lên GitHub -->
-        <img src="banner-bidv.png" alt="Ôn Tập Thi Chứng Chỉ Đấu Thầu BIDV">
+        <img src="banner-bidv.png" alt="Ôn Tập Thi Chứng Chỉ Đấu Thầu BIDV" class="mx-auto">
     </div>
 </div>
 
@@ -529,7 +530,7 @@
             else if (q.userAnswer === q.newAnswerIndex) score++;
         });
 
-        if (unattitude > 0 && !confirm(`Bạn còn ${unattempted} câu chưa xem. Chắc chắn muốn kết thúc?`)) return;
+        if (unattempted > 0 && !confirm(`Bạn còn ${unattempted} câu chưa xem. Chắc chắn muốn kết thúc?`)) return;
 
         document.getElementById('exam-screen').style.display = 'none';
         const resultScreen = document.getElementById('result-screen');
