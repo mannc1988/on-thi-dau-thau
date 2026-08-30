@@ -88,7 +88,6 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             
-            <!-- 1. PHẦN CÂU HỎI -->
             <div class="custom-card">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="fw-semibold text-secondary small"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
@@ -109,7 +108,6 @@
                 </div>
             </div>
 
-            <!-- 2. SƠ ĐỒ CÂU HỎI -->
             <div class="custom-card text-center">
                 <h6 class="mb-3 fw-bold"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Sơ Đồ Câu Hỏi</h6>
                 <div class="d-flex flex-wrap justify-content-center mb-3" id="question-palette"></div>
@@ -134,7 +132,6 @@
                 </button>
             </div>
 
-            <!-- 3. DANH SÁCH FILE TỰ ĐỘNG LOAD TỪ FOLDER "documents" -->
             <div class="custom-card">
                 <h5 class="fw-bold text-primary mb-2 fs-5"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
                 <p class="text-muted small mb-3">Tự động đọc các file từ folder <code>documents/</code> (Nhấp chọn để xem online):</p>
@@ -217,21 +214,17 @@
         }
     }
 
-    // --- HÀM TỰ ĐỘNG LẤY TẤT CẢ FILE TRONG THƯ MỤC 'documents' BẰNG GITHUB API ---
     async function autoLoadFolderDocuments() {
         const fileListBody = document.getElementById('file-list-body');
         
         try {
-            // Tự động phân tích tên người dùng và tên repo từ URL hiện tại
             const hostParts = window.location.hostname.split('.');
             const pathParts = window.location.pathname.split('/').filter(p => p.length > 0);
             
-            // Ví dụ: username.github.io/reponame -> owner: username, repo: reponame
             let owner = hostParts[0];
             let repo = pathParts[0] || '';
 
-            // Nếu chạy trên máy cục bộ (localhost), sử dụng thông số dự phòng
-            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                 fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Chế độ xem trên Local (Cần đưa lên GitHub Pages để quét tự động).</td></tr>`;
                 return;
             }
@@ -245,7 +238,7 @@
             }
 
             const files = await response.json();
-            fileListBody.innerHTML = ''; // Xóa thông báo loading
+            fileListBody.innerHTML = ''; 
 
             let hasFiles = false;
 
@@ -254,7 +247,6 @@
                     hasFiles = true;
                     const ext = file.name.split('.').pop().toLowerCase();
                     
-                    // Xác định biểu tượng và tên loại file dựa trên đuôi mở rộng
                     let iconHTML = `<i class="bi bi-file-earmark-text text-secondary file-icon"></i>`;
                     let fileTypeLabel = ext.toUpperCase();
 
@@ -275,7 +267,6 @@
                     const sizeFormatted = formatBytes(file.size);
                     const docPath = `documents/${file.name}`;
 
-                    // Tạo hàng trong bảng Explorer
                     const tr = document.createElement('tr');
                     tr.onclick = () => viewDocument(docPath);
                     tr.innerHTML = `
@@ -286,7 +277,6 @@
                     `;
                     fileListBody.appendChild(tr);
 
-                    // Lấy ngày cập nhật từng file
                     fetchFileDate(docPath, `date-${file.sha}`);
                 }
             }
@@ -301,7 +291,6 @@
         }
     }
 
-    // Lấy ngày sửa đổi bằng lệnh HEAD
     async function fetchFileDate(filePath, elementId) {
         try {
             const res = await fetch(filePath, { method: 'HEAD', cache: 'no-cache' });
@@ -443,18 +432,17 @@
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
-    // Tự động dùng Google Docs Viewer cho CẢ PDF và WORD để hiển thị mượt mà trên mobile
-    function viewDocument(fileName) {
+    function viewDocument(filePath) {
         const viewerContainer = document.getElementById('doc-viewer-container');
         const iframe = document.getElementById('doc-iframe');
         const title = document.getElementById('viewer-title');
         
         viewerContainer.style.display = 'block';
-        title.innerText = "Đang xem: " + fileName;
+        title.innerText = "Đang xem: " + filePath;
 
         let currentUrl = window.location.href.split('index.html')[0];
         if (!currentUrl.endsWith('/')) currentUrl += '/';
-        let fileFullUrl = currentUrl + fileName;
+        let fileFullUrl = currentUrl + filePath;
 
         iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
         viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
