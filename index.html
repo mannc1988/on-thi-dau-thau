@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ôn Luyện Thi Chứng Chỉ Đấu Thầu - BIDV</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- SheetJS đọc file Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -165,12 +169,14 @@
 </head>
 <body>
 
+<!-- HEADER BANNER CHUYÊN NGHIỆP (LOGO) -->
 <div class="app-banner-container">
     <div class="container">
         <img src="banner-bidv.png" alt="Ôn Tập Thi Chứng Chỉ Đấu Thầu BIDV" class="mx-auto">
     </div>
 </div>
 
+<!-- MÀN HÌNH LOADING -->
 <div class="container mt-5" id="loading-screen" style="display: block;">
     <div class="text-center py-5">
         <div class="spinner-border text-success" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
@@ -178,15 +184,17 @@
     </div>
 </div>
 
+<!-- MÀN HÌNH CHÍNH ÔN TẬP -->
 <div class="container mt-3 mt-md-4" id="exam-screen" style="display: none;">
     <div class="row justify-content-center">
         <div class="col-lg-10">
             
+            <!-- BẢNG ĐIỀU HƯỚNG CÂU HỎI KÈM NÚT NỘP BÀI NẰM NGAY DƯỚI LOGO -->
             <div class="custom-card text-center">
                 <h5 class="mb-3 fw-bold text-dark"><i class="bi bi-grid-3x3-gap-fill text-success me-2"></i>Bảng Điều Hướng Câu Hỏi</h5>
-                <div class="d-flex flex-wrap justify-content-center mb-4" id="question-palette"></div>
+                <div class="d-flex flex-wrap justify-content-center mb-3" id="question-palette"></div>
                 
-                <div class="d-flex justify-content-center align-items-center gap-4 mb-3" style="font-size: 0.9rem;">
+                <div class="d-flex justify-content-center align-items-center gap-4 mb-4" style="font-size: 0.9rem;">
                     <div class="d-flex align-items-center">
                         <span class="badge bg-success me-1 shadow-sm" style="width:12px; height:12px; border-radius:50%;"></span> 
                         <span class="text-success fw-bold">Đúng</span>
@@ -200,10 +208,17 @@
                         <span class="text-secondary fw-bold">Chưa làm</span>
                     </div>
                 </div>
+
+                <!-- Nút nộp bài đưa chung vào đây -->
+                <button id="submit-btn" class="btn btn-dark px-5 py-3 fw-bold rounded-pill shadow" onclick="finishPractice()">
+                    <i class="bi bi-flag-fill text-warning me-2"></i> Hoàn Thành & Nộp Bài Ôn Tập
+                </button>
             </div>
             
+            <!-- KHUNG CÂU HỎI & PROGRESS BAR % -->
             <div class="custom-card">
                 
+                <!-- THANH TÌM KIẾM CÂU HỎI THEO THỜI GIAN THỰC -->
                 <div class="search-box-container">
                     <i class="bi bi-search"></i>
                     <input type="text" id="search-input" class="form-control shadow-none" placeholder="Tìm kiếm nhanh nội dung câu hỏi hoặc đáp án..." oninput="handleSearch(this.value)">
@@ -232,12 +247,7 @@
                 </div>
             </div>
 
-            <div class="custom-card text-center py-4">
-                <button id="submit-btn" class="btn btn-dark px-5 py-3 fw-bold rounded-pill shadow" onclick="finishPractice()">
-                    <i class="bi bi-flag-fill text-warning me-2"></i> Hoàn Thành & Nộp Bài Ôn Tập
-                </button>
-            </div>
-
+            <!-- DANH SÁCH TÀI LIỆU THAM KHẢO -->
             <div class="custom-card">
                 <h5 class="fw-bold text-success mb-2"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
                 <p class="text-muted small mb-3">Hệ thống tự động quét từ thư mục <code>documents/</code> (Tối ưu xem PDF & Word qua Google Docs, Excel trực tuyến):</p>
@@ -262,6 +272,7 @@
                     </table>
                 </div>
 
+                <!-- KHUNG XEM TÀI LIỆU TRỰC TUYẾN -->
                 <div id="doc-viewer-container">
                     <div class="d-flex justify-content-between align-items-center bg-light px-3 py-2 border-bottom">
                         <span class="fw-bold text-dark small text-truncate" id="viewer-title" style="max-width: 85%;">Đang hiển thị...</span>
@@ -278,6 +289,7 @@
     </div>
 </div>
 
+<!-- MÀN HÌNH BÁO CÁO KẾT QUẢ -->
 <div class="container mt-5" id="result-screen">
     <div class="row justify-content-center">
         <div class="col-md-7 text-center custom-card p-5 shadow-lg">
@@ -294,6 +306,7 @@
     </div>
 </div>
 
+<!-- Thư viện JavaScript bổ trợ -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
