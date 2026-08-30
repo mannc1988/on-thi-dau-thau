@@ -47,6 +47,9 @@
         .btn-primary-custom { background-color: var(--primary-color); color: white; border: none; font-weight: 500; border-radius: 8px; }
         .btn-primary-custom:hover { background-color: var(--primary-hover); color: white; }
         
+        #doc-viewer-container { display: none; height: 700px; border: 1px solid #dee2e6; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: var(--card-shadow); transition: 0.3s; }
+        iframe { width: 100%; height: 100%; border: none; }
+        
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #result-screen, #loading-screen { display: none; }
     </style>
@@ -73,7 +76,9 @@
 
 <div class="container mt-4" id="exam-screen" style="display: none;">
     <div class="row">
+        <!-- Cột bên trái: Câu hỏi và Inline Document -->
         <div class="col-lg-8 col-md-7 mb-4">
+            <!-- Khu vực câu hỏi -->
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-semibold text-secondary"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
             </div>
@@ -83,7 +88,7 @@
             
             <div id="quiz-body"></div>
 
-            <div class="d-flex justify-content-between mt-4">
+            <div class="d-flex justify-content-between mt-4 mb-5">
                 <button class="btn btn-light border px-4 py-2" id="btn-prev" onclick="changeQuestion(-1)">
                     <i class="bi bi-arrow-left me-2"></i> Câu trước
                 </button>
@@ -91,8 +96,38 @@
                     Câu tiếp theo <i class="bi bi-arrow-right ms-2"></i>
                 </button>
             </div>
+
+            <!-- Khu vực Xem tài liệu Inline -->
+            <div class="custom-card p-4">
+                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-journal-text me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
+                <p class="text-muted small mb-3">Nhấn vào các mục dưới đây để xem trực tiếp tài liệu liên quan đến đề thi:</p>
+                
+                <div class="d-flex flex-wrap gap-2 mb-4">
+                    <button class="btn btn-outline-danger" onclick="viewDocument('luat-dau-thau-2023.pdf', 'pdf')">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Luật Đấu thầu 2023
+                    </button>
+                    <button class="btn btn-outline-danger" onclick="viewDocument('nghi-dinh-24-2024.pdf', 'pdf')">
+                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Nghị định 24/2024
+                    </button>
+                    <button class="btn btn-outline-info" onclick="viewDocument('thong-tu-06-2024.docx', 'docx')">
+                        <i class="bi bi-file-earmark-word-fill me-1"></i> Thông tư 06/2024
+                    </button>
+                </div>
+
+                <!-- Khung hiển thị tài liệu -->
+                <div id="doc-viewer-container">
+                    <div class="d-flex justify-content-between align-items-center bg-light p-2 border-bottom">
+                        <span class="fw-bold text-secondary ms-2" id="viewer-title">Đang hiển thị tài liệu...</span>
+                        <button class="btn btn-sm btn-outline-secondary" onclick="closeDocumentViewer()">
+                            <i class="bi bi-x-lg"></i> Đóng
+                        </button>
+                    </div>
+                    <iframe id="doc-iframe" src=""></iframe>
+                </div>
+            </div>
         </div>
 
+        <!-- Cột bên phải: Điều hướng và Nộp bài -->
         <div class="col-lg-4 col-md-5">
             <div class="custom-card sticky-top" style="top: 100px;">
                 <h5 class="mb-4 fw-bold text-center"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Sơ Đồ Câu Hỏi</h5>
@@ -105,64 +140,9 @@
                     <div class="d-flex align-items-center"><span class="badge bg-light border text-dark me-2" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">-</span> Chưa làm</div>
                 </div>
 
-                <button class="btn btn-outline-primary w-100 py-2 mb-3 fw-bold" data-bs-toggle="modal" data-bs-target="#refDocsModal">
-                    <i class="bi bi-folder-fill me-2"></i> File Tài Liệu Tham Khảo
-                </button>
-
                 <button id="submit-btn" class="btn btn-dark w-100 py-3 fw-bold" onclick="finishPractice()">
                     <i class="bi bi-flag-fill me-2"></i> Hoàn Thành
                 </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal: Danh mục file đính kèm -->
-<div class="modal fade" id="refDocsModal" tabindex="-1" aria-labelledby="refDocsModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content border-0 rounded-4 shadow">
-            <div class="modal-header bg-light border-0 rounded-top-4">
-                <h5 class="modal-title fw-bold text-primary" id="refDocsModalLabel">
-                    <i class="bi bi-file-earmark-text-fill me-2"></i> Tệp Đính Kèm Tham Khảo
-                </h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body p-4">
-                <p class="text-muted mb-3">Nhấn vào các file dưới đây để xem trực tiếp trên trình duyệt:</p>
-                <div class="list-group list-group-flush border rounded-3 overflow-hidden">
-                    
-                    <!-- File PDF 1 -->
-                    <a href="luat-dau-thau-2023.pdf" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
-                        <i class="bi bi-file-earmark-pdf-fill fs-3 text-danger"></i>
-                        <div>
-                            <h6 class="fw-bold mb-1 text-primary">Luật Đấu thầu số 22/2023/QH15.pdf</h6>
-                            <small class="text-muted">Định dạng PDF - Nhấn để xem trực tiếp</small>
-                        </div>
-                    </a>
-
-                    <!-- File PDF 2 -->
-                    <a href="nghi-dinh-24-2024.pdf" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
-                        <i class="bi bi-file-earmark-pdf-fill fs-3 text-danger"></i>
-                        <div>
-                            <h6 class="fw-bold mb-1 text-primary">Nghị định 24/2024/NĐ-CP.pdf</h6>
-                            <small class="text-muted">Định dạng PDF - Nhấn để xem trực tiếp</small>
-                        </div>
-                    </a>
-
-                    <!-- File DOCX sử dụng Google Docs Viewer -->
-                    <!-- SỬA ĐƯỜNG LINK TRONG THUỘC TÍNH HREF DƯỚI ĐÂY -->
-                    <a href="https://docs.google.com/viewer?url=https://mannc1988.github.io/on-thi-dau-thau/thong-tu-06-2024.docx" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
-                        <i class="bi bi-file-earmark-word-fill fs-3 text-info"></i>
-                        <div>
-                            <h6 class="fw-bold mb-1 text-primary">Thông tư 06/2024/TT-BKHĐT.docx</h6>
-                            <small class="text-muted">Định dạng DOCX - Xem trực tiếp qua Google Docs</small>
-                        </div>
-                    </a>
-
-                </div>
-            </div>
-            <div class="modal-footer border-0">
-                <button type="button" class="btn btn-secondary px-4 rounded-3" data-bs-dismiss="modal">Đóng</button>
             </div>
         </div>
     </div>
@@ -305,6 +285,38 @@
 
         let progress = ((currentIndex + 1) / total) * 100;
         document.getElementById('progress-bar').style.width = progress + '%';
+    }
+
+    // -- PHẦN XỬ LÝ XEM TÀI LIỆU INLINE --
+    function viewDocument(fileName, type) {
+        const viewerContainer = document.getElementById('doc-viewer-container');
+        const iframe = document.getElementById('doc-iframe');
+        const title = document.getElementById('viewer-title');
+        
+        viewerContainer.style.display = 'block';
+        title.innerText = "Đang hiển thị: " + fileName;
+
+        if (type === 'pdf') {
+            // PDF có thể đọc trực tiếp bằng trình duyệt
+            iframe.src = fileName;
+        } else if (type === 'docx') {
+            // Lấy URL hiện tại tự động (Bỏ phần index.html nếu có)
+            let currentUrl = window.location.href.split('index.html')[0];
+            if (!currentUrl.endsWith('/')) currentUrl += '/';
+            
+            let fileFullUrl = currentUrl + fileName;
+            
+            // DOCX bắt buộc dùng Google Docs Viewer nhúng
+            iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
+        }
+
+        // Tự động cuộn màn hình xuống vùng xem tài liệu cho người học dễ thấy
+        viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function closeDocumentViewer() {
+        document.getElementById('doc-viewer-container').style.display = 'none';
+        document.getElementById('doc-iframe').src = "";
     }
 
     function finishPractice() {
