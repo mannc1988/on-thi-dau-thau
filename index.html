@@ -6,6 +6,8 @@
     <title>Ôn Luyện Trắc Nghiệm</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- Thư viện SheetJS đọc file Excel trực tuyến -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
             --primary-color: #4361ee;
@@ -56,10 +58,16 @@
         .explorer-table td { vertical-align: middle; color: #495057; font-size: 0.9rem; padding: 12px; }
         .file-icon { font-size: 1.2rem; vertical-align: middle; margin-right: 6px; }
 
-        #doc-viewer-container { display: none; height: 500px; border: 1px solid #dee2e6; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: var(--card-shadow); margin-top: 15px; }
+        #doc-viewer-container { display: none; height: 500px; border: 1px solid #dee2e6; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: var(--card-shadow); margin-top: 15px; position: relative; }
         @media (min-width: 768px) { #doc-viewer-container { height: 650px; } }
-        iframe { width: 100%; height: 100%; border: none; }
+        iframe { width: 100%; height: calc(100% - 45px); border: none; display: none; }
         
+        /* Giao diện hiển thị bảng Excel trực tuyến */
+        #excel-preview-container { width: 100%; height: calc(100% - 45px); overflow: auto; padding: 15px; background: #ffffff; display: none; }
+        #excel-preview-container table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        #excel-preview-container th, #excel-preview-container td { border: 1px solid #dee2e6; padding: 8px 12px; text-align: left; color: #333; }
+        #excel-preview-container th { background-color: #f8f9fa; position: sticky; top: 0; z-index: 10; font-weight: bold; }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         #result-screen, #loading-screen { display: none; }
     </style>
@@ -134,7 +142,7 @@
 
             <div class="custom-card">
                 <h5 class="fw-bold text-primary mb-2 fs-5"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
-                <p class="text-muted small mb-3">Tự động đọc các file từ folder <code>documents/</code> (Hỗ trợ PDF, Word, Excel qua Google Docs):</p>
+                <p class="text-muted small mb-3">Tự động đọc các file từ folder <code>documents/</code> (Hỗ trợ PDF, Word, Excel trực tuyến):</p>
                 
                 <div class="table-responsive-custom mb-3">
                     <table class="table explorer-table mb-0">
@@ -163,7 +171,10 @@
                             <i class="bi bi-x-lg"></i> Đóng
                         </button>
                     </div>
+                    <!-- Dành cho PDF, Word, Ảnh -->
                     <iframe id="doc-iframe" src=""></iframe>
+                    <!-- Dành riêng để render bảng dữ liệu Excel trực tuyến -->
+                    <div id="excel-preview-container"></div>
                 </div>
             </div>
 
@@ -193,6 +204,7 @@
     let questions = []; 
     let currentQuizData = [];
     let currentIndex = 0;
+    let currentBlobUrl = null;
 
     async function initApp() {
         autoLoadFolderDocuments();
@@ -268,7 +280,7 @@
                     const docPath = `documents/${file.name}`;
 
                     const tr = document.createElement('tr');
-                    tr.onclick = () => viewDocumentWithGoogleDocs(docPath, file.name);
+                    tr.onclick = () => viewDocument(docPath, file.name);
                     tr.innerHTML = `
                         <td>${iconHTML} ${file.name}</td>
                         <td id="date-${file.sha}" class="text-secondary small">Đang lấy...</td>
@@ -432,29 +444,78 @@
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
-    // --- HÀM MỞ MỌI LOẠI FILE (PDF, WORD, EXCEL) BẰNG GOOGLE DOCS VIEWER ---
-    function viewDocumentWithGoogleDocs(filePath, fileName) {
+    // --- HÀM XỬ LÝ ĐỌC FILE THÔNG MINH (XỬ LÝ RIÊNG EXCEL BẰNG SHEETJS) ---
+    async function viewDocument(filePath, fileName) {
         const viewerContainer = document.getElementById('doc-viewer-container');
         const iframe = document.getElementById('doc-iframe');
+        const excelContainer = document.getElementById('excel-preview-container');
         const title = document.getElementById('viewer-title');
         
         viewerContainer.style.display = 'block';
-        title.innerText = "Đang xem qua Google Docs: " + fileName;
-
-        // Lấy đường dẫn URL tuyệt đối của file trên GitHub Pages
-        let currentUrl = window.location.href.split('index.html')[0];
-        if (!currentUrl.endsWith('/')) currentUrl += '/';
-        let fileFullUrl = currentUrl + filePath;
-
-        // Google Docs Viewer hỗ trợ sẵn .pdf, .docx, .xlsx, .pptx
-        iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
+        title.innerHTML = `<span class="spinner-border spinner-border-sm me-2"></span>Đang mở file: ${fileName}`;
         
-        viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        iframe.style.display = 'none';
+        excelContainer.style.display = 'none';
+        iframe.src = "";
+        excelContainer.innerHTML = "";
+
+        const ext = fileName.split('.').pop().toLowerCase();
+
+        try {
+            const response = await fetch(filePath);
+            if (!response.ok) throw new Error("Không thể tải file");
+
+            // Nếu là file Excel (.xlsx, .xls) -> Dùng SheetJS vẽ thành bảng HTML trực tuyến
+            if (ext === 'xlsx' || ext === 'xls') {
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer, { type: 'array' });
+                
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+                
+                // Chuyển nội dung Sheet thành bảng HTML
+                const htmlTable = XLSX.utils.sheet_to_html(worksheet, { header: "" });
+                
+                excelContainer.innerHTML = htmlTable;
+                excelContainer.style.display = 'block';
+                title.innerText = `Đang xem (Excel Online): ${fileName} [Sheet: ${firstSheetName}]`;
+            } 
+            else {
+                // Các định dạng khác (PDF, Word, Ảnh) xử lý qua Blob hoặc Google Docs
+                const blob = await response.blob();
+                if (currentBlobUrl) URL.revokeObjectURL(currentBlobUrl);
+                currentBlobUrl = URL.createObjectURL(blob);
+
+                if (ext === 'pdf' || ['png', 'jpg', 'jpeg'].includes(ext)) {
+                    iframe.src = currentBlobUrl;
+                } else {
+                    let currentUrl = window.location.href.split('index.html')[0];
+                    if (!currentUrl.endsWith('/')) currentUrl += '/';
+                    let fileFullUrl = currentUrl + filePath;
+                    iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
+                }
+
+                iframe.style.display = 'block';
+                title.innerText = "Đang xem: " + fileName;
+            }
+
+            viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+        } catch (error) {
+            title.innerText = "Lỗi đọc file: " + fileName;
+            excelContainer.innerHTML = `<div class="p-4 text-center text-danger">Không thể hiển thị file này trực tuyến.</div>`;
+            excelContainer.style.display = 'block';
+        }
     }
 
     function closeDocumentViewer() {
         document.getElementById('doc-viewer-container').style.display = 'none';
         document.getElementById('doc-iframe').src = "";
+        document.getElementById('excel-preview-container').innerHTML = "";
+        if (currentBlobUrl) {
+            URL.revokeObjectURL(currentBlobUrl);
+            currentBlobUrl = null;
+        }
     }
 
     function finishPractice() {
