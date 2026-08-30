@@ -18,12 +18,12 @@
 
         body { background-color: var(--bg-color); font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
         
-        /* CSS cho Banner Logo chuyên nghiệp có thêm lề trên/dưới */
+        /* CSS cho Banner Logo chuyên nghiệp có lề trên và dưới */
         .app-banner-container {
             width: 100%;
             background: #ffffff;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 15px 0; /* Tạo lề trên và dưới để ảnh không bị mất mép */
+            padding: 15px 0;
             margin-bottom: 25px;
         }
         .app-banner-container img {
@@ -31,7 +31,7 @@
             height: auto;
             display: block;
             max-height: 320px;
-            object-fit: contain; /* Giúp hiển thị trọn vẹn toàn bộ banner, không bị cắt xén */
+            object-fit: contain;
         }
 
         .custom-card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--card-shadow); border: none; margin-bottom: 20px; }
@@ -85,10 +85,9 @@
 </head>
 <body>
 
-<!-- HEADER BANNER CHUYÊN NGHIỆP CÓ LỀ TRÊN VÀ DƯỚI -->
+<!-- HEADER BANNER CHUYÊN NGHIỆP -->
 <div class="app-banner-container">
     <div class="container">
-        <!-- Đổi chữ 'banner-bidv.png' thành đúng tên file ảnh bạn đã tải lên GitHub -->
         <img src="banner-bidv.png" alt="Ôn Tập Thi Chứng Chỉ Đấu Thầu BIDV" class="mx-auto">
     </div>
 </div>
@@ -335,16 +334,9 @@
         return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
     }
 
-    function shuffleArray(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
+    // Nạp câu hỏi theo đúng nguyên bản (Không xáo trộn thứ tự câu và đáp án)
     function loadQuiz() {
         currentQuizData = JSON.parse(JSON.stringify(questions));
-        shuffleArray(currentQuizData);
 
         const quizBody = document.getElementById('quiz-body');
         const palette = document.getElementById('question-palette');
@@ -352,9 +344,7 @@
         palette.innerHTML = '';
 
         currentQuizData.forEach((q, index) => {
-            const correctAnswerText = q.options[q.answer];
-            shuffleArray(q.options);
-            q.newAnswerIndex = q.options.indexOf(correctAnswerText);
+            q.newAnswerIndex = q.answer; // Giữ nguyên vị trí đáp án chuẩn từ file json
             q.userAnswer = null; 
 
             let questionHTML = `<div class="question-card" id="q-card-${index}">
