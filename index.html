@@ -4,9 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ôn Luyện Thi Chứng Chỉ Đấu Thầu - BIDV</title>
+    <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- SheetJS đọc file Excel -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <style>
         :root {
@@ -43,6 +47,52 @@
             transition: transform 0.3s ease;
         }
         @media (min-width: 768px) { .custom-card { padding: 35px; } }
+
+        /* CSS cho thanh tìm kiếm thông minh */
+        .search-box-container {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        .search-box-container input {
+            padding-left: 45px;
+            border-radius: 14px;
+            border: 2px solid #e2e8f0;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+        .search-box-container input:focus {
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 4px rgba(0, 90, 67, 0.1);
+        }
+        .search-box-container i {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #64748b;
+            font-size: 1.1rem;
+        }
+        .search-clear-btn {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #94a3b8;
+            display: none;
+            cursor: pointer;
+        }
+        .search-clear-btn:hover { color: #ef4444; }
+
+        /* Tô màu highlight từ khóa tìm kiếm */
+        mark.highlight {
+            background-color: #fef08a;
+            color: #854d0e;
+            padding: 0 2px;
+            border-radius: 3px;
+            font-weight: 600;
+        }
 
         .question-card { min-height: 380px; display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1); }
         .question-card.active { display: block; }
@@ -117,12 +167,14 @@
 </head>
 <body>
 
+<!-- HEADER BANNER CHUYÊN NGHIỆP -->
 <div class="app-banner-container">
     <div class="container">
         <img src="banner-bidv.png" alt="Ôn Tập Thi Chứng Chỉ Đấu Thầu BIDV" class="mx-auto">
     </div>
 </div>
 
+<!-- MÀN HÌNH LOADING -->
 <div class="container mt-5" id="loading-screen" style="display: block;">
     <div class="text-center py-5">
         <div class="spinner-border text-success" role="status" style="width: 3.5rem; height: 3.5rem;"></div>
@@ -130,11 +182,23 @@
     </div>
 </div>
 
+<!-- MÀN HÌNH CHÍNH ÔN TẬP -->
 <div class="container mt-3 mt-md-4" id="exam-screen" style="display: none;">
     <div class="row justify-content-center">
         <div class="col-lg-10">
             
+            <!-- KHUNG CÂU HỎI & PROGRESS BAR % -->
             <div class="custom-card">
+                
+                <!-- THANH TÌM KIẾM CÂU HỎI THEO THỜI GIAN THỰC -->
+                <div class="search-box-container">
+                    <i class="bi bi-search"></i>
+                    <input type="text" id="search-input" class="form-control shadow-none" placeholder="Tìm kiếm nhanh nội dung câu hỏi hoặc đáp án..." oninput="handleSearch(this.value)">
+                    <button class="search-clear-btn" id="search-clear" onclick="clearSearch()" title="Xóa tìm kiếm">
+                        <i class="bi bi-x-circle-fill fs-5"></i>
+                    </button>
+                </div>
+
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="fw-bold text-secondary"><i class="bi bi-bar-chart-line-fill text-success me-2"></i>Tiến độ ôn tập</span>
                     <span id="progress-percent-text" class="fw-bold text-success">0%</span>
@@ -155,6 +219,7 @@
                 </div>
             </div>
 
+            <!-- SƠ ĐỒ CÂU HỎI -->
             <div class="custom-card text-center">
                 <h5 class="mb-3 fw-bold text-dark"><i class="bi bi-grid-3x3-gap-fill text-success me-2"></i>Bảng Điều Hướng Câu Hỏi</h5>
                 <div class="d-flex flex-wrap justify-content-center mb-4" id="question-palette"></div>
@@ -179,6 +244,7 @@
                 </button>
             </div>
 
+            <!-- DANH SÁCH TÀI LIỆU THAM KHẢO -->
             <div class="custom-card">
                 <h5 class="fw-bold text-success mb-2"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
                 <p class="text-muted small mb-3">Hệ thống tự động quét từ thư mục <code>documents/</code> (Hỗ trợ PDF, Word, Excel trực tuyến):</p>
@@ -203,6 +269,7 @@
                     </table>
                 </div>
 
+                <!-- KHUNG XEM TÀI LIỆU TRỰC TUYẾN -->
                 <div id="doc-viewer-container">
                     <div class="d-flex justify-content-between align-items-center bg-light px-3 py-2 border-bottom">
                         <span class="fw-bold text-dark small text-truncate" id="viewer-title" style="max-width: 85%;">Đang hiển thị...</span>
@@ -219,6 +286,7 @@
     </div>
 </div>
 
+<!-- MÀN HÌNH BÁO CÁO KẾT QUẢ -->
 <div class="container mt-5" id="result-screen">
     <div class="row justify-content-center">
         <div class="col-md-7 text-center custom-card p-5 shadow-lg">
@@ -235,6 +303,7 @@
     </div>
 </div>
 
+<!-- Thư viện JavaScript bổ trợ -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
@@ -243,6 +312,7 @@
     let currentQuizData = [];
     let currentIndex = 0;
     let currentBlobUrl = null;
+    let currentSearchKeyword = "";
 
     async function initApp() {
         autoLoadFolderDocuments();
@@ -370,39 +440,122 @@
 
     function loadQuiz() {
         currentQuizData = JSON.parse(JSON.stringify(questions));
+        // Gắn thêm chỉ số index gốc để quản lý chính xác trạng thái người dùng
+        currentQuizData.forEach((q, idx) => { q.originalIndex = idx; });
+        
+        buildQuizHTML(currentQuizData);
+    }
 
+    function buildQuizHTML(dataToRender) {
         const quizBody = document.getElementById('quiz-body');
         const palette = document.getElementById('question-palette');
         quizBody.innerHTML = '';
         palette.innerHTML = '';
 
-        currentQuizData.forEach((q, index) => {
-            q.newAnswerIndex = q.answer; 
-            q.userAnswer = null; 
+        if (dataToRender.length === 0) {
+            quizBody.innerHTML = `<div class="text-center py-5 text-muted"><i class="bi bi-search fs-1"></i><p class="mt-2">Không tìm thấy câu hỏi phù hợp với từ khóa.</p></div>`;
+            return;
+        }
 
-            let questionHTML = `<div class="question-card" id="q-card-${index}">
+        dataToRender.forEach((q, renderIndex) => {
+            q.newAnswerIndex = q.answer; 
+            
+            let highlightedQuestion = highlightText(q.question, currentSearchKeyword);
+
+            let questionHTML = `<div class="question-card" id="q-card-${renderIndex}">
                 <div class="d-flex align-items-center mb-3">
-                    <span class="badge bg-success text-white me-2 px-3 py-2 fs-6 rounded-pill shadow-sm">Câu hỏi ${index + 1} / ${currentQuizData.length}</span>
+                    <span class="badge bg-success text-white me-2 px-3 py-2 fs-6 rounded-pill shadow-sm">Câu hỏi ${q.originalIndex + 1} / ${questions.length}</span>
                 </div>
-                <div class="question-title">${q.question}</div>
+                <div class="question-title">${highlightedQuestion}</div>
                 <div class="options-container">`;
             
             q.options.forEach((opt, optIndex) => {
                 const char = String.fromCharCode(65 + optIndex);
+                let highlightedOpt = highlightText(opt, currentSearchKeyword);
+                let isCheckedClass = (q.userAnswer === optIndex) ? 'correct' : ''; // Giữ trạng thái nếu đã chọn trước đó
+
                 questionHTML += `
-                    <label class="option-label" id="label-q${index}-opt${optIndex}" onclick="selectAnswer(${index}, ${optIndex})">
+                    <label class="option-label ${q.userAnswer !== null && optIndex === q.newAnswerIndex ? 'correct' : ''} ${q.userAnswer === optIndex && optIndex !== q.newAnswerIndex ? 'incorrect' : ''}" id="label-q${renderIndex}-opt${optIndex}" onclick="selectAnswer(${renderIndex}, ${optIndex})">
                         <div class="option-icon">${char}</div>
-                        <div class="option-text">${opt}</div>
+                        <div class="option-text">${highlightedOpt}</div>
                     </label>
                 `;
             });
 
-            questionHTML += `</div><div id="feedback-${index}" class="mt-4 p-3 rounded-4 border shadow-sm bg-white" style="display: none; font-size: 0.95rem;"></div></div>`;
+            // Khôi phục khung giải thích nếu đã chọn trước đó
+            let feedbackStyle = (q.userAnswer !== null) ? 'display: block;' : 'display: none;';
+            let feedbackClass = '';
+            let feedbackContent = '';
+
+            if (q.userAnswer !== null) {
+                const isCorrect = (q.userAnswer === q.newAnswerIndex);
+                let explanationHTML = "";
+                if (q.explanation) {
+                    if (/\.(png|jpg|jpeg|gif)$/i.test(q.explanation)) {
+                        explanationHTML = `<div class="mt-3 text-center"><img src="${q.explanation}" class="img-fluid rounded border shadow-sm" alt="Ảnh minh họa" style="max-height: 250px;"></div>`;
+                    } else {
+                        explanationHTML = `<div class="mt-2 text-secondary small border-top pt-2"><i class="bi bi-journal-check text-success me-1"></i><strong>Căn cứ pháp lý / Gợi ý:</strong> ${q.explanation}</div>`;
+                    }
+                }
+
+                if (isCorrect) {
+                    feedbackClass = 'mt-4 p-3 rounded-4 border border-success bg-success bg-opacity-10 shadow-sm';
+                    feedbackContent = `<div class="text-success fw-bold d-flex align-items-center mb-1"><i class="bi bi-check-circle-fill fs-5 me-2"></i> Chính xác tuyệt vời!</div>${explanationHTML}`;
+                } else {
+                    feedbackClass = 'mt-4 p-3 rounded-4 border border-danger bg-danger bg-opacity-10 shadow-sm';
+                    feedbackContent = `<div class="text-danger fw-bold d-flex align-items-center mb-1"><i class="bi bi-x-circle-fill fs-5 me-2"></i> Chưa chính xác! Đáp án đúng là: <strong>${String.fromCharCode(65 + q.newAnswerIndex)}</strong></div>${explanationHTML}`;
+                }
+            }
+
+            questionHTML += `</div><div id="feedback-${renderIndex}" class="${feedbackClass}" style="${feedbackStyle}">${feedbackContent}</div></div>`;
             
             quizBody.innerHTML += questionHTML;
-            palette.innerHTML += `<button class="q-btn" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
+            
+            let btnStatusClass = '';
+            if (q.userAnswer !== null) {
+                btnStatusClass = (q.userAnswer === q.newAnswerIndex) ? 'is-correct' : 'is-incorrect';
+            }
+            palette.innerHTML += `<button class="q-btn ${btnStatusClass}" id="btn-palette-${renderIndex}" onclick="goToQuestion(${renderIndex})">${q.originalIndex + 1}</button>`;
         });
+        
+        currentIndex = 0;
         updateUI();
+    }
+
+    // Xử lý tìm kiếm thời gian thực (Live Search)
+    function handleSearch(keyword) {
+        currentSearchKeyword = keyword.trim();
+        const clearBtn = document.getElementById('search-clear');
+        clearBtn.style.display = currentSearchKeyword ? 'block' : 'none';
+
+        if (currentSearchKeyword === "") {
+            loadQuiz();
+            return;
+        }
+
+        const lowerKeyword = currentSearchKeyword.toLowerCase();
+        const filteredData = questions.filter((q, idx) => {
+            q.originalIndex = idx;
+            let matchQ = q.question.toLowerCase().includes(lowerKeyword);
+            let matchOpt = q.options.some(opt => opt.toLowerCase().includes(lowerKeyword));
+            return matchQ || matchOpt;
+        });
+
+        buildQuizHTML(filteredData);
+    }
+
+    function clearSearch() {
+        document.getElementById('search-input').value = "";
+        currentSearchKeyword = "";
+        document.getElementById('search-clear').style.display = 'none';
+        loadQuiz();
+    }
+
+    // Tô màu highlight từ khóa
+    function highlightText(text, keyword) {
+        if (!keyword) return text;
+        const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<mark class="highlight">$1</mark>');
     }
 
     function selectAnswer(qIndex, optIndex) {
@@ -461,11 +614,15 @@
 
     function updateUI() {
         let total = currentQuizData.length;
+        if (total === 0) return;
+
         document.querySelectorAll('.question-card').forEach(card => card.classList.remove('active'));
-        document.getElementById(`q-card-${currentIndex}`).classList.add('active');
+        const activeCard = document.getElementById(`q-card-${currentIndex}`);
+        if (activeCard) activeCard.classList.add('active');
 
         document.querySelectorAll('.q-btn').forEach(btn => btn.classList.remove('current'));
-        document.getElementById(`btn-palette-${currentIndex}`).classList.add('current');
+        const activePalette = document.getElementById(`btn-palette-${currentIndex}`);
+        if (activePalette) activePalette.classList.add('current');
 
         document.getElementById('btn-prev').disabled = (currentIndex === 0);
         document.getElementById('btn-next').style.display = (currentIndex === total - 1) ? 'none' : 'inline-block';
@@ -474,8 +631,8 @@
     }
 
     function updateProgress() {
-        let total = currentQuizData.length;
-        let answeredCount = currentQuizData.filter(q => q.userAnswer !== null).length;
+        let total = questions.length; // Tính trên tổng số câu gốc của hệ thống
+        let answeredCount = questions.filter(q => q.userAnswer !== null && q.userAnswer !== undefined).length;
         let percent = Math.round((answeredCount / total) * 100);
 
         document.getElementById('progress-bar').style.width = percent + '%';
@@ -554,12 +711,12 @@
 
     function finishPractice() {
         let score = 0;
-        let total = currentQuizData.length;
+        let total = questions.length;
         let unattempted = 0;
 
-        currentQuizData.forEach(q => {
-            if (q.userAnswer === null) unattempted++;
-            else if (q.userAnswer === q.newAnswerIndex) score++;
+        questions.forEach(q => {
+            if (q.userAnswer === null || q.userAnswer === undefined) unattempted++;
+            else if (q.userAnswer === q.answer) score++;
         });
 
         if (unattempted > 0) {
