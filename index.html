@@ -37,7 +37,6 @@
         .option-label.incorrect .option-icon { background: #ef4444; color: white; }
         input[type="radio"] { display: none; }
         
-        /* Sơ đồ câu hỏi nằm ngang dạng thanh cuộn/lưới */
         .q-btn { width: 38px; height: 38px; margin: 4px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 2px solid #edf2f7; background: white; color: #4a5568; transition: 0.2s; }
         .q-btn:hover { border-color: var(--primary-color); }
         .q-btn.current { border-color: var(--primary-color); background-color: #f8faff; color: var(--primary-color); }
@@ -49,7 +48,6 @@
         .btn-primary-custom { background-color: var(--primary-color); color: white; border: none; font-weight: 500; border-radius: 8px; }
         .btn-primary-custom:hover { background-color: var(--primary-hover); color: white; }
         
-        /* Bảng Explorer tài liệu */
         .table-responsive-custom { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .explorer-table { border: 1px solid #dee2e6; border-radius: 8px; min-width: 500px; }
         .explorer-table th { font-weight: 600; color: #6c757d; font-size: 0.8rem; text-transform: uppercase; background-color: #f8f9fa; }
@@ -58,7 +56,6 @@
         .explorer-table td { vertical-align: middle; color: #495057; font-size: 0.9rem; padding: 12px; }
         .file-icon { font-size: 1.2rem; vertical-align: middle; margin-right: 6px; }
 
-        /* Khung hiển thị tài liệu trực tiếp */
         #doc-viewer-container { display: none; height: 500px; border: 1px solid #dee2e6; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: var(--card-shadow); margin-top: 15px; }
         @media (min-width: 768px) { #doc-viewer-container { height: 650px; } }
         iframe { width: 100%; height: 100%; border: none; }
@@ -91,7 +88,6 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             
-            <!-- 1. PHẦN CÂU HỎI ÔN TẬP Ở TRÊN -->
             <div class="custom-card">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="fw-semibold text-secondary small"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
@@ -112,7 +108,6 @@
                 </div>
             </div>
 
-            <!-- 2. SƠ ĐỒ CÂU HỎI (NẰM GIỮA CÂU HỎI VÀ DANH SÁCH FILE) -->
             <div class="custom-card text-center">
                 <h6 class="mb-3 fw-bold"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Sơ Đồ Câu Hỏi</h6>
                 <div class="d-flex flex-wrap justify-content-center mb-3" id="question-palette"></div>
@@ -128,7 +123,6 @@
                 </button>
             </div>
 
-            <!-- 3. DANH SÁCH FILE TÀI LIỆU THAM KHẢO Ở DƯỚI -->
             <div class="custom-card">
                 <h5 class="fw-bold text-primary mb-2 fs-5"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
                 <p class="text-muted small mb-3">Nhấp chọn tài liệu để xem trực tiếp ngay bên dưới:</p>
@@ -144,19 +138,19 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr onclick="viewDocument('luat-dau-thau-2023.pdf', 'pdf')">
+                            <tr onclick="viewDocument('luat-dau-thau-2023.pdf')">
                                 <td><i class="bi bi-file-earmark-pdf-fill text-danger file-icon"></i>Luật Đấu thầu 2023</td>
                                 <td id="date-luat" class="text-secondary small">...</td>
                                 <td class="small">PDF</td>
                                 <td id="size-luat" class="text-secondary small">--</td>
                             </tr>
-                            <tr onclick="viewDocument('nghi-dinh-24-2024.pdf', 'pdf')">
+                            <tr onclick="viewDocument('nghi-dinh-24-2024.pdf')">
                                 <td><i class="bi bi-file-earmark-pdf-fill text-danger file-icon"></i>Nghị định 24/2024/NĐ-CP</td>
                                 <td id="date-nghidinh" class="text-secondary small">...</td>
                                 <td class="small">PDF</td>
                                 <td id="size-nghidinh" class="text-secondary small">--</td>
                             </tr>
-                            <tr onclick="viewDocument('thong-tu-06-2024.docx', 'docx')">
+                            <tr onclick="viewDocument('thong-tu-06-2024.docx')">
                                 <td><i class="bi bi-file-earmark-word-fill text-info file-icon"></i>Thông tư 06/2024/TT-BKHĐT</td>
                                 <td id="date-thongtu" class="text-secondary small">...</td>
                                 <td class="small">Word</td>
@@ -166,7 +160,6 @@
                     </table>
                 </div>
 
-                <!-- Khung hiển thị tài liệu trực tiếp -->
                 <div id="doc-viewer-container">
                     <div class="d-flex justify-content-between align-items-center bg-light p-2 border-bottom">
                         <span class="fw-bold text-secondary small ms-2 text-truncate" id="viewer-title" style="max-width: 80%;">Đang hiển thị...</span>
@@ -363,7 +356,8 @@
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
-    function viewDocument(fileName, type) {
+    // Tự động dùng Google Docs Viewer cho CẢ PDF và WORD để hiển thị mượt mà trên mobile
+    function viewDocument(fileName) {
         const viewerContainer = document.getElementById('doc-viewer-container');
         const iframe = document.getElementById('doc-iframe');
         const title = document.getElementById('viewer-title');
@@ -371,14 +365,13 @@
         viewerContainer.style.display = 'block';
         title.innerText = "Đang xem: " + fileName;
 
-        if (type === 'pdf') {
-            iframe.src = fileName;
-        } else if (type === 'docx') {
-            let currentUrl = window.location.href.split('index.html')[0];
-            if (!currentUrl.endsWith('/')) currentUrl += '/';
-            let fileFullUrl = currentUrl + fileName;
-            iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
-        }
+        let currentUrl = window.location.href.split('index.html')[0];
+        if (!currentUrl.endsWith('/')) currentUrl += '/';
+        let fileFullUrl = currentUrl + fileName;
+
+        // Dùng chung một cơ chế Google Docs Viewer cho cả PDF và Word để tránh bị trình duyệt di động chặn/bắt mở tab mới
+        iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
+
         viewerContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
