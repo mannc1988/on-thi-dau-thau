@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ôn Luyện Trắc Nghiệm</title>
-    <!-- CSS Bootstrap & Icons -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
@@ -65,7 +64,6 @@
     </div>
 </div>
 
-<!-- Màn hình chờ tải dữ liệu -->
 <div class="container mt-5" id="loading-screen" style="display: block;">
     <div class="text-center">
         <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;"></div>
@@ -75,7 +73,6 @@
 
 <div class="container mt-4" id="exam-screen" style="display: none;">
     <div class="row">
-        <!-- Cột Câu hỏi -->
         <div class="col-lg-8 col-md-7 mb-4">
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-semibold text-secondary"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
@@ -96,7 +93,6 @@
             </div>
         </div>
 
-        <!-- Cột Điều hướng bên phải -->
         <div class="col-lg-4 col-md-5">
             <div class="custom-card sticky-top" style="top: 100px;">
                 <h5 class="mb-4 fw-bold text-center"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Sơ Đồ Câu Hỏi</h5>
@@ -109,12 +105,10 @@
                     <div class="d-flex align-items-center"><span class="badge bg-light border text-dark me-2" style="width:24px; height:24px; display:flex; align-items:center; justify-content:center;">-</span> Chưa làm</div>
                 </div>
 
-                <!-- Nút Tài liệu tham khảo -->
                 <button class="btn btn-outline-primary w-100 py-2 mb-3 fw-bold" data-bs-toggle="modal" data-bs-target="#refDocsModal">
-                    <i class="bi bi-journal-bookmark-fill me-2"></i> Tài Liệu Tham Khảo
+                    <i class="bi bi-folder-fill me-2"></i> File Tài Liệu Tham Khảo
                 </button>
 
-                <!-- Nút Nộp bài -->
                 <button id="submit-btn" class="btn btn-dark w-100 py-3 fw-bold" onclick="finishPractice()">
                     <i class="bi bi-flag-fill me-2"></i> Hoàn Thành
                 </button>
@@ -123,41 +117,44 @@
     </div>
 </div>
 
-<!-- Modal: Danh mục văn bản tham khảo -->
+<!-- Modal: Danh mục file đính kèm -->
 <div class="modal fade" id="refDocsModal" tabindex="-1" aria-labelledby="refDocsModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
         <div class="modal-content border-0 rounded-4 shadow">
             <div class="modal-header bg-light border-0 rounded-top-4">
                 <h5 class="modal-title fw-bold text-primary" id="refDocsModalLabel">
-                    <i class="bi bi-book-half me-2"></i> Danh Mục Văn Bản Tham Khảo
+                    <i class="bi bi-file-earmark-text-fill me-2"></i> Tệp Đính Kèm Tham Khảo
                 </h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body p-4">
-                <p class="text-muted mb-3">Các văn bản pháp luật hiện hành quy định về nghiệp vụ Đấu thầu để bạn tiện tra cứu trong quá trình ôn luyện:</p>
+                <p class="text-muted mb-3">Nhấn vào các file dưới đây để tải về hoặc xem trực tiếp trên trình duyệt:</p>
                 <div class="list-group list-group-flush border rounded-3 overflow-hidden">
                     
-                    <a href="https://thuvienphapluat.vn/van-ban/Thuong-mai/Luat-Dau-thau-2023-520147.aspx" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
+                    <!-- File PDF 1 -->
+                    <a href="luat-dau-thau-2023.pdf" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
                         <i class="bi bi-file-earmark-pdf-fill fs-3 text-danger"></i>
                         <div>
-                            <h6 class="fw-bold mb-1">Luật Đấu thầu số 22/2023/QH15</h6>
-                            <small class="text-muted">Ban hành ngày 23/06/2023 bởi Quốc Hội. Có hiệu lực từ 01/01/2024.</small>
+                            <h6 class="fw-bold mb-1 text-primary">Luật Đấu thầu số 22/2023/QH15.pdf</h6>
+                            <small class="text-muted">Định dạng PDF - Nhấn để xem hoặc tải về</small>
                         </div>
                     </a>
 
-                    <a href="https://thuvienphapluat.vn/van-ban/Thuong-mai/Nghi-dinh-24-2024-ND-CP-thi-hanh-Luat-Dau-thau-ve-lua-chon-nha-thau-598910.aspx" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
-                        <i class="bi bi-file-earmark-text-fill fs-3 text-primary"></i>
+                    <!-- File PDF 2 -->
+                    <a href="nghi-dinh-24-2024.pdf" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
+                        <i class="bi bi-file-earmark-pdf-fill fs-3 text-danger"></i>
                         <div>
-                            <h6 class="fw-bold mb-1">Nghị định 24/2024/NĐ-CP</h6>
-                            <small class="text-muted">Quy định chi tiết một số điều và biện pháp thi hành Luật Đấu thầu về lựa chọn nhà thầu.</small>
+                            <h6 class="fw-bold mb-1 text-primary">Nghị định 24/2024/NĐ-CP.pdf</h6>
+                            <small class="text-muted">Định dạng PDF - Nhấn để xem hoặc tải về</small>
                         </div>
                     </a>
 
-                    <a href="https://thuvienphapluat.vn/van-ban/Thuong-mai/Thong-tu-06-2024-TT-BKHHDT-huong-dan-cung-cap-dang-tai-thong-tin-ve-lua-chon-nha-thau-605891.aspx" target="_blank" class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
-                        <i class="bi bi-file-earmark-text-fill fs-3 text-primary"></i>
+                    <!-- File DOCX -->
+                    <a href="thong-tu-06-2024.docx" download class="list-group-item list-group-item-action p-3 d-flex align-items-start gap-3">
+                        <i class="bi bi-file-earmark-word-fill fs-3 text-info"></i>
                         <div>
-                            <h6 class="fw-bold mb-1">Thông tư 06/2024/TT-BKHĐT</h6>
-                            <small class="text-muted">Hướng dẫn việc cung cấp, đăng tải thông tin về lựa chọn nhà thầu và mẫu hồ sơ đấu thầu trên Hệ thống mạng đấu thầu quốc gia.</small>
+                            <h6 class="fw-bold mb-1 text-primary">Thông tư 06/2024/TT-BKHĐT.docx</h6>
+                            <small class="text-muted">Định dạng DOCX (Word) - Nhấn để tải về máy</small>
                         </div>
                     </a>
 
@@ -186,7 +183,6 @@
     </div>
 </div>
 
-<!-- Scripts của Bootstrap (Cần thiết để chạy Modal Popup) -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
 <script>
@@ -197,25 +193,18 @@
     async function fetchQuestions() {
         try {
             const response = await fetch('questions.json', { cache: "no-store" });
-            
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+            if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
             questions = await response.json();
             
             document.getElementById('loading-screen').style.display = 'none';
             document.getElementById('exam-screen').style.display = 'block';
-            
             loadQuiz();
         } catch (error) {
-            console.error("Lỗi khi tải file JSON:", error);
             document.getElementById('loading-text').innerHTML = `
                 <div class="alert alert-danger mt-3">
-                    <i class="bi bi-exclamation-triangle-fill fs-4 d-block mb-2"></i>
                     <strong>Không tìm thấy file ngân hàng câu hỏi!</strong><br>
-                    Vui lòng đảm bảo file <code>questions.json</code> đã được upload lên cùng thư mục với <code>index.html</code> trên GitHub.
-                </div>
-            `;
+                    Hãy upload file <code>questions.json</code> lên GitHub.
+                </div>`;
             document.querySelector('.spinner-border').style.display = 'none';
         }
     }
@@ -263,7 +252,6 @@
             quizBody.innerHTML += questionHTML;
             palette.innerHTML += `<button class="q-btn" id="btn-palette-${index}" onclick="goToQuestion(${index})">${index + 1}</button>`;
         });
-
         updateUI();
     }
 
@@ -274,12 +262,8 @@
         const labels = document.querySelectorAll(`#q-card-${qIndex} .option-label`);
         labels.forEach((lbl, idx) => {
             lbl.classList.remove('correct', 'incorrect'); 
-            
-            if (idx === currentQuizData[qIndex].newAnswerIndex) {
-                lbl.classList.add('correct'); 
-            } else if (idx === optIndex && !isCorrect) {
-                lbl.classList.add('incorrect'); 
-            }
+            if (idx === currentQuizData[qIndex].newAnswerIndex) lbl.classList.add('correct'); 
+            else if (idx === optIndex && !isCorrect) lbl.classList.add('incorrect'); 
         });
 
         const paletteBtn = document.getElementById(`btn-palette-${qIndex}`);
@@ -309,7 +293,6 @@
 
     function updateUI() {
         let total = currentQuizData.length;
-
         document.querySelectorAll('.question-card').forEach(card => card.classList.remove('active'));
         document.getElementById(`q-card-${currentIndex}`).classList.add('active');
 
@@ -336,7 +319,6 @@
         if (unattempted > 0 && !confirm(`Bạn còn ${unattempted} câu chưa xem. Chắc chắn muốn kết thúc?`)) return;
 
         document.getElementById('exam-screen').style.display = 'none';
-        
         const resultScreen = document.getElementById('result-screen');
         resultScreen.style.display = 'block';
         
