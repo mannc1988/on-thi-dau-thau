@@ -12,9 +12,21 @@
     "explanation": "Căn cứ Điều 1 Luật Đấu thầu, phạm vi điều chỉnh bao gồm cả quản lý nhà nước, thẩm quyền trách nhiệm của các bên, và các hoạt động lựa chọn nhà thầu, nhà đầu tư. Vì vậy, tất cả các phương án A, B, C đều đúng."
   },
   {
-    "question": "Đảm bảo dự thầu đối với gói thầu xây lắp quy mô nhỏ được quy định ở mức nào?",
-    "options": ["Từ 1% đến 1.5%", "Từ 1% đến 3%", "Từ 2% đến 3%", "Từ 1% đến 2%"],
+    "question": "Trường hợp nào sau đây không thuộc đối tượng áp dụng của Luật Đấu thầu?",
+    "options": ["Gói thầu mua thuốc, hoá chất, vật tư xét nghiệm sử dụng nguồn ngân sách nhà nước của bệnh viện công lập A", "Gói thầu xây dựng đường giao thông sử dụng vốn đầu tư công do Ban Quản lý dự án đầu tư xây dựng công trình tỉnh A làm chủ đầu tư", "Gói thầu mua sắm trang thiết bị làm việc sử dụng vốn nhà nước của Văn phòng UBND tỉnh A", "Hoạt động mua phần mềm kế toán của hộ kinh doanh cá thể"],
+    "answer": 3,
+    "explanation": "Hoạt động mua phần mềm kế toán của hộ kinh doanh cá thể là hoạt động của tư nhân, không sử dụng vốn nhà nước và không thuộc đối tượng điều chỉnh bắt buộc của Luật Đấu thầu (trừ khi họ tự nguyện áp dụng). Các phương án A, B, C đều liên quan đến vốn nhà nước hoặc đơn vị công lập nên thuộc đối tượng áp dụng."
+  },
+  {
+    "question": "Theo quy định pháp luật về đấu thầu, gói thầu nào là gói thầu cung cấp dịch vụ tư vấn?",
+    "options": ["Thiết kế và cung cấp hệ thống xử lý nước thải", "Gói thầu lập nhiệm vụ quy hoạch vùng", "Gói thầu quảng cáo trên nền tảng xã hội và phát sóng trên VTV", "Gói thầu mua phần mềm kế toán MISA"],
+    "answer": 3,
+    "explanation": "Gói thầu lập nhiệm vụ quy hoạch vùng là dịch vụ tư vấn (theo Khoản 4 Điều 4 Luật Đấu thầu: lập quy hoạch là dịch vụ tư vấn). A là gói thầu hỗn hợp (thiết kế và cung cấp hàng hóa). C là dịch vụ phi tư vấn (quảng cáo). D là mua sắm hàng hóa (phần mềm thương mại)."
+  },
+  {
+    "question": "Theo quy định pháp luật về đấu thầu, gói thầu nào là gói thầu cung cấp dịch vụ phi tư vấn?",
+    "options": ["Gói thầu in sổ công tác của tỉnh A", "Gói thầu thuê kiểm toán dự án", "Gói thầu mua phần mềm kế toán hỗ trợ doanh nghiệp khởi nghiệp sáng tạo, doanh nghiệp nhỏ do phụ nữ làm chủ", "Gói thầu xây dựng trụ sở làm việc của tỉnh A"],
     "answer": 0,
-    "explanation": "Quy định tại Điều 14 Luật Đấu thầu 2023 và các văn bản hướng dẫn chi tiết đối với gói thầu xây lắp quy mô nhỏ."
-  }
+    "explanation": "Gói thầu in sổ công tác (in ấn) được quy định là dịch vụ phi tư vấn tại Khoản 5 Điều 4 Luật Đấu thầu. B là dịch vụ tư vấn (kiểm toán). C là hàng hóa (phần mềm). D là xây lắp."
+  },
 ]
