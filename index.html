@@ -20,7 +20,7 @@
         .brand-logo { font-weight: 700; font-size: 1.3rem; margin: 0; display: flex; align-items: center; }
         .mode-badge { font-size: 0.85rem; font-weight: 600; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(5px); color: white; padding: 5px 12px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.3); }
         
-        .custom-card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--card-shadow); border: none; }
+        .custom-card { background: white; padding: 20px; border-radius: 16px; box-shadow: var(--card-shadow); border: none; margin-bottom: 20px; }
         @media (min-width: 768px) { .custom-card { padding: 30px; } }
 
         .question-card { min-height: 380px; display: none; animation: fadeIn 0.4s ease-out; }
@@ -37,7 +37,9 @@
         .option-label.incorrect .option-icon { background: #ef4444; color: white; }
         input[type="radio"] { display: none; }
         
-        .q-btn { width: 38px; height: 38px; margin: 4px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 2px solid #edf2f7; background: white; color: #4a5568;}
+        /* Sơ đồ câu hỏi nằm ngang dạng thanh cuộn/lưới */
+        .q-btn { width: 38px; height: 38px; margin: 4px; border-radius: 8px; font-weight: 600; font-size: 0.9rem; border: 2px solid #edf2f7; background: white; color: #4a5568; transition: 0.2s; }
+        .q-btn:hover { border-color: var(--primary-color); }
         .q-btn.current { border-color: var(--primary-color); background-color: #f8faff; color: var(--primary-color); }
         .q-btn.is-correct { background-color: #22c55e; color: white; border-color: #22c55e; }
         .q-btn.is-incorrect { background-color: #ef4444; color: white; border-color: #ef4444; }
@@ -47,7 +49,7 @@
         .btn-primary-custom { background-color: var(--primary-color); color: white; border: none; font-weight: 500; border-radius: 8px; }
         .btn-primary-custom:hover { background-color: var(--primary-hover); color: white; }
         
-        /* Bảng Explorer tối ưu cho mobile */
+        /* Bảng Explorer tài liệu */
         .table-responsive-custom { width: 100%; overflow-x: auto; -webkit-overflow-scrolling: touch; }
         .explorer-table { border: 1px solid #dee2e6; border-radius: 8px; min-width: 500px; }
         .explorer-table th { font-weight: 600; color: #6c757d; font-size: 0.8rem; text-transform: uppercase; background-color: #f8f9fa; }
@@ -86,33 +88,50 @@
 </div>
 
 <div class="container mt-3 mt-md-4" id="exam-screen" style="display: none;">
-    <div class="row">
-        <!-- Cột bên trái -->
-        <div class="col-lg-8 col-md-7 mb-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
             
-            <!-- 1. PHẦN ÔN LUYỆN TRẮC NGHIỆM (ĐÃ ĐƯA LÊN TRÊN) -->
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="fw-semibold text-secondary small"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
-            </div>
-            <div class="progress mb-3" style="height: 8px;">
-                <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%; transition: width 0.4s ease;"></div>
-            </div>
-            
-            <div id="quiz-body"></div>
+            <!-- 1. PHẦN CÂU HỎI ÔN TẬP Ở TRÊN -->
+            <div class="custom-card">
+                <div class="d-flex justify-content-between align-items-center mb-2">
+                    <span class="fw-semibold text-secondary small"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
+                </div>
+                <div class="progress mb-3" style="height: 8px;">
+                    <div id="progress-bar" class="progress-bar" role="progressbar" style="width: 0%; transition: width 0.4s ease;"></div>
+                </div>
+                
+                <div id="quiz-body"></div>
 
-            <div class="d-flex justify-content-between mt-4 mb-4">
-                <button class="btn btn-light border px-3 py-2 btn-sm md-btn-md" id="btn-prev" onclick="changeQuestion(-1)">
-                    <i class="bi bi-arrow-left me-1"></i> Câu trước
-                </button>
-                <button class="btn btn-primary-custom px-3 py-2 btn-sm md-btn-md" id="btn-next" onclick="changeQuestion(1)">
-                    Câu tiếp theo <i class="bi bi-arrow-right ms-1"></i>
+                <div class="d-flex justify-content-between mt-4">
+                    <button class="btn btn-light border px-3 py-2 btn-sm md-btn-md" id="btn-prev" onclick="changeQuestion(-1)">
+                        <i class="bi bi-arrow-left me-1"></i> Câu trước
+                    </button>
+                    <button class="btn btn-primary-custom px-3 py-2 btn-sm md-btn-md" id="btn-next" onclick="changeQuestion(1)">
+                        Câu tiếp theo <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 2. SƠ ĐỒ CÂU HỎI (NẰM GIỮA CÂU HỎI VÀ DANH SÁCH FILE) -->
+            <div class="custom-card text-center">
+                <h6 class="mb-3 fw-bold"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Sơ Đồ Câu Hỏi</h6>
+                <div class="d-flex flex-wrap justify-content-center mb-3" id="question-palette"></div>
+                
+                <div class="d-flex justify-content-center align-items-center gap-4 text-secondary mb-3" style="font-size: 0.85rem;">
+                    <div class="d-flex align-items-center"><span class="badge bg-success me-1" style="width:16px; height:16px;"></span> Đúng</div>
+                    <div class="d-flex align-items-center"><span class="badge bg-danger me-1" style="width:16px; height:16px;"></span> Sai</div>
+                    <div class="d-flex align-items-center"><span class="badge bg-light border text-dark me-1" style="width:16px; height:16px;">-</span> Chưa làm</div>
+                </div>
+
+                <button id="submit-btn" class="btn btn-dark px-5 py-2 fw-bold" onclick="finishPractice()">
+                    <i class="bi bi-flag-fill me-2"></i> Hoàn Thành Ôn Tập
                 </button>
             </div>
 
-            <!-- 2. PHẦN TÀI LIỆU THAM KHẢO INLINE (ĐÃ ĐƯA XUỐNG DƯỚI) -->
-            <div class="custom-card p-3 p-md-4 mt-4">
+            <!-- 3. DANH SÁCH FILE TÀI LIỆU THAM KHẢO Ở DƯỚI -->
+            <div class="custom-card">
                 <h5 class="fw-bold text-primary mb-2 fs-5"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
-                <p class="text-muted small mb-3">Nhấp chọn tài liệu để xem trực tiếp ngay bên dưới (hỗ trợ cả điện thoại):</p>
+                <p class="text-muted small mb-3">Nhấp chọn tài liệu để xem trực tiếp ngay bên dưới:</p>
                 
                 <div class="table-responsive-custom mb-3">
                     <table class="table explorer-table mb-0">
@@ -159,25 +178,6 @@
                 </div>
             </div>
 
-        </div>
-
-        <!-- Cột bên phải: Điều hướng và Nộp bài -->
-        <div class="col-lg-4 col-md-5">
-            <div class="custom-card sticky-top" style="top: 80px;">
-                <h6 class="mb-3 fw-bold text-center"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Sơ Đồ Câu Hỏi</h6>
-                <div class="d-flex flex-wrap justify-content-center" id="question-palette"></div>
-                <hr class="my-3 text-muted">
-                
-                <div class="d-flex flex-column gap-2 mb-3 text-secondary" style="font-size: 0.85rem;">
-                    <div class="d-flex align-items-center"><span class="badge bg-success me-2" style="width:18px; height:18px; display:flex; align-items:center; justify-content:center;"><i class="bi bi-check-lg" style="font-size:10px;"></i></span> Đúng</div>
-                    <div class="d-flex align-items-center"><span class="badge bg-danger me-2" style="width:18px; height:18px; display:flex; align-items:center; justify-content:center;"><i class="bi bi-x-lg" style="font-size:10px;"></i></span> Sai</div>
-                    <div class="d-flex align-items-center"><span class="badge bg-light border text-dark me-2" style="width:18px; height:18px; display:flex; align-items:center; justify-content:center; font-size:10px;">-</span> Chưa làm</div>
-                </div>
-
-                <button id="submit-btn" class="btn btn-dark w-100 py-2 fw-bold" onclick="finishPractice()">
-                    <i class="bi bi-flag-fill me-2"></i> Hoàn Thành
-                </button>
-            </div>
         </div>
     </div>
 </div>
@@ -288,7 +288,7 @@
             q.newAnswerIndex = q.options.indexOf(correctAnswerText);
             q.userAnswer = null; 
 
-            let questionHTML = `<div class="custom-card question-card" id="q-card-${index}">
+            let questionHTML = `<div class="question-card" id="q-card-${index}">
                 <div class="d-flex align-items-center mb-3">
                     <span class="badge bg-primary text-white me-2 px-3 py-1 fs-6 rounded-pill">Câu ${index + 1}</span>
                 </div>
