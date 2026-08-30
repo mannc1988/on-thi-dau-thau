@@ -88,6 +88,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-10">
             
+            <!-- 1. PHẦN CÂU HỎI -->
             <div class="custom-card">
                 <div class="d-flex justify-content-between align-items-center mb-2">
                     <span class="fw-semibold text-secondary small"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
@@ -108,7 +109,7 @@
                 </div>
             </div>
 
-            <!-- SƠ ĐỒ CÂU HỎI VỚI CHÚ THÍCH MÀU SẮC TRỰC QUAN -->
+            <!-- 2. SƠ ĐỒ CÂU HỎI -->
             <div class="custom-card text-center">
                 <h6 class="mb-3 fw-bold"><i class="bi bi-grid-3x3-gap-fill text-primary me-2"></i>Sơ Đồ Câu Hỏi</h6>
                 <div class="d-flex flex-wrap justify-content-center mb-3" id="question-palette"></div>
@@ -133,9 +134,10 @@
                 </button>
             </div>
 
+            <!-- 3. DANH SÁCH FILE TỰ ĐỘNG LOAD TỪ FOLDER "documents" -->
             <div class="custom-card">
                 <h5 class="fw-bold text-primary mb-2 fs-5"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
-                <p class="text-muted small mb-3">Nhấp chọn tài liệu để xem trực tiếp ngay bên dưới:</p>
+                <p class="text-muted small mb-3">Tự động đọc các file từ folder <code>documents/</code> (Nhấp chọn để xem online):</p>
                 
                 <div class="table-responsive-custom mb-3">
                     <table class="table explorer-table mb-0">
@@ -143,28 +145,15 @@
                             <tr>
                                 <th style="width: 45%;">Tên tài liệu</th>
                                 <th>Cập nhật</th>
-                                <th>Loại</th>
+                                <th>Loại file</th>
                                 <th>Dung lượng</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr onclick="viewDocument('luat-dau-thau-2023.pdf')">
-                                <td><i class="bi bi-file-earmark-pdf-fill text-danger file-icon"></i>Luật Đấu thầu 2023</td>
-                                <td id="date-luat" class="text-secondary small">...</td>
-                                <td class="small">PDF</td>
-                                <td id="size-luat" class="text-secondary small">--</td>
-                            </tr>
-                            <tr onclick="viewDocument('nghi-dinh-24-2024.pdf')">
-                                <td><i class="bi bi-file-earmark-pdf-fill text-danger file-icon"></i>Nghị định 24/2024/NĐ-CP</td>
-                                <td id="date-nghidinh" class="text-secondary small">...</td>
-                                <td class="small">PDF</td>
-                                <td id="size-nghidinh" class="text-secondary small">--</td>
-                            </tr>
-                            <tr onclick="viewDocument('thong-tu-06-2024.docx')">
-                                <td><i class="bi bi-file-earmark-word-fill text-info file-icon"></i>Thông tư 06/2024/TT-BKHĐT</td>
-                                <td id="date-thongtu" class="text-secondary small">...</td>
-                                <td class="small">Word</td>
-                                <td id="size-thongtu" class="text-secondary small">--</td>
+                        <tbody id="file-list-body">
+                            <tr>
+                                <td colspan="4" class="text-center text-secondary py-3">
+                                    <span class="spinner-border spinner-border-sm me-2"></span>Đang tự động quét thư mục documents...
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -209,7 +198,7 @@
     let currentIndex = 0;
 
     async function initApp() {
-        fetchFileMetadata();
+        autoLoadFolderDocuments();
         try {
             const response = await fetch('questions.json', { cache: "no-store" });
             if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
@@ -228,35 +217,105 @@
         }
     }
 
-    async function fetchFileMetadata() {
-        const filesToFetch = [
-            { id: 'luat', filename: 'luat-dau-thau-2023.pdf' },
-            { id: 'nghidinh', filename: 'nghi-dinh-24-2024.pdf' },
-            { id: 'thongtu', filename: 'thong-tu-06-2024.docx' }
-        ];
+    // --- HÀM TỰ ĐỘNG LẤY TẤT CẢ FILE TRONG THƯ MỤC 'documents' BẰNG GITHUB API ---
+    async function autoLoadFolderDocuments() {
+        const fileListBody = document.getElementById('file-list-body');
+        
+        try {
+            // Tự động phân tích tên người dùng và tên repo từ URL hiện tại
+            const hostParts = window.location.hostname.split('.');
+            const pathParts = window.location.pathname.split('/').filter(p => p.length > 0);
+            
+            // Ví dụ: username.github.io/reponame -> owner: username, repo: reponame
+            let owner = hostParts[0];
+            let repo = pathParts[0] || '';
 
-        for (let file of filesToFetch) {
-            try {
-                const response = await fetch(file.filename, { method: 'HEAD', cache: 'no-cache' });
-                if (response.ok) {
-                    const sizeBytes = response.headers.get('content-length');
-                    const lastModified = response.headers.get('last-modified');
-
-                    if (sizeBytes) {
-                        document.getElementById(`size-${file.id}`).innerText = formatBytes(sizeBytes);
-                    }
-                    if (lastModified) {
-                        const dateObj = new Date(lastModified);
-                        const dateStr = dateObj.toLocaleDateString('vi-VN');
-                        document.getElementById(`date-${file.id}`).innerText = dateStr;
-                    }
-                } else {
-                    document.getElementById(`date-${file.id}`).innerText = "Trống";
-                    document.getElementById(`size-${file.id}`).innerText = "--";
-                }
-            } catch (e) {
-                document.getElementById(`date-${file.id}`).innerText = "N/A";
+            // Nếu chạy trên máy cục bộ (localhost), sử dụng thông số dự phòng
+            if (hostname === 'localhost' || hostname === '127.0.0.1') {
+                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Chế độ xem trên Local (Cần đưa lên GitHub Pages để quét tự động).</td></tr>`;
+                return;
             }
+
+            const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/documents`;
+            const response = await fetch(apiUrl);
+
+            if (!response.ok) {
+                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-warning">Chưa tạo thư mục <code>documents/</code> hoặc chưa chứa file.</td></tr>`;
+                return;
+            }
+
+            const files = await response.json();
+            fileListBody.innerHTML = ''; // Xóa thông báo loading
+
+            let hasFiles = false;
+
+            for (let file of files) {
+                if (file.type === 'file') {
+                    hasFiles = true;
+                    const ext = file.name.split('.').pop().toLowerCase();
+                    
+                    // Xác định biểu tượng và tên loại file dựa trên đuôi mở rộng
+                    let iconHTML = `<i class="bi bi-file-earmark-text text-secondary file-icon"></i>`;
+                    let fileTypeLabel = ext.toUpperCase();
+
+                    if (ext === 'pdf') {
+                        iconHTML = `<i class="bi bi-file-earmark-pdf-fill text-danger file-icon"></i>`;
+                        fileTypeLabel = 'Tài liệu PDF';
+                    } else if (ext === 'doc' || ext === 'docx') {
+                        iconHTML = `<i class="bi bi-file-earmark-word-fill text-info file-icon"></i>`;
+                        fileTypeLabel = 'Tài liệu Word';
+                    } else if (ext === 'xls' || ext === 'xlsx') {
+                        iconHTML = `<i class="bi bi-file-earmark-excel-fill text-success file-icon"></i>`;
+                        fileTypeLabel = 'Tài liệu Excel';
+                    } else if (['png', 'jpg', 'jpeg'].includes(ext)) {
+                        iconHTML = `<i class="bi bi-file-earmark-image-fill text-warning file-icon"></i>`;
+                        fileTypeLabel = 'Hình ảnh';
+                    }
+
+                    const sizeFormatted = formatBytes(file.size);
+                    const docPath = `documents/${file.name}`;
+
+                    // Tạo hàng trong bảng Explorer
+                    const tr = document.createElement('tr');
+                    tr.onclick = () => viewDocument(docPath);
+                    tr.innerHTML = `
+                        <td>${iconHTML} ${file.name}</td>
+                        <td id="date-${file.sha}" class="text-secondary small">Đang lấy...</td>
+                        <td class="small">${fileTypeLabel}</td>
+                        <td class="text-secondary small">${sizeFormatted}</td>
+                    `;
+                    fileListBody.appendChild(tr);
+
+                    // Lấy ngày cập nhật từng file
+                    fetchFileDate(docPath, `date-${file.sha}`);
+                }
+            }
+
+            if (!hasFiles) {
+                fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-muted">Thư mục <code>documents/</code> hiện đang trống.</td></tr>`;
+            }
+
+        } catch (error) {
+            console.error("Lỗi quét thư mục:", error);
+            fileListBody.innerHTML = `<tr><td colspan="4" class="text-center text-danger">Không thể tự động tải danh sách file.</td></tr>`;
+        }
+    }
+
+    // Lấy ngày sửa đổi bằng lệnh HEAD
+    async function fetchFileDate(filePath, elementId) {
+        try {
+            const res = await fetch(filePath, { method: 'HEAD', cache: 'no-cache' });
+            if (res.ok) {
+                const lastModified = res.headers.get('last-modified');
+                if (lastModified) {
+                    const dateObj = new Date(lastModified);
+                    document.getElementById(elementId).innerText = dateObj.toLocaleDateString('vi-VN');
+                } else {
+                    document.getElementById(elementId).innerText = "Mặc định";
+                }
+            }
+        } catch (e) {
+            document.getElementById(elementId).innerText = "N/A";
         }
     }
 
@@ -384,6 +443,7 @@
         document.getElementById('progress-bar').style.width = progress + '%';
     }
 
+    // Tự động dùng Google Docs Viewer cho CẢ PDF và WORD để hiển thị mượt mà trên mobile
     function viewDocument(fileName) {
         const viewerContainer = document.getElementById('doc-viewer-container');
         const iframe = document.getElementById('doc-iframe');
