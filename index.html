@@ -48,23 +48,25 @@
         }
         @media (min-width: 768px) { .custom-card { padding: 35px; } }
 
-        /* CSS cho thanh tìm kiếm thông minh */
+        /* Sửa lỗi dấu X bị tràn ra ngoài bằng cách thêm padding-left và padding-right vừa vặn */
         .search-box-container {
             position: relative;
             margin-bottom: 20px;
         }
         .search-box-container input {
             padding-left: 45px;
+            padding-right: 45px; /* Tạo khoảng trống bên phải để nút X không bị đè lên chữ */
             border-radius: 14px;
             border: 2px solid #e2e8f0;
             font-size: 0.95rem;
             transition: all 0.3s;
+            height: 48px;
         }
         .search-box-container input:focus {
             border-color: var(--primary-color);
             box-shadow: 0 0 0 4px rgba(0, 90, 67, 0.1);
         }
-        .search-box-container i {
+        .search-box-container i.bi-search {
             position: absolute;
             left: 16px;
             top: 50%;
@@ -74,7 +76,7 @@
         }
         .search-clear-btn {
             position: absolute;
-            right: 14px;
+            right: 15px;
             top: 50%;
             transform: translateY(-50%);
             background: none;
@@ -82,6 +84,8 @@
             color: #94a3b8;
             display: none;
             cursor: pointer;
+            padding: 0;
+            line-height: 1;
         }
         .search-clear-btn:hover { color: #ef4444; }
 
