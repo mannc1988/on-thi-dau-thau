@@ -47,6 +47,16 @@
         .btn-primary-custom { background-color: var(--primary-color); color: white; border: none; font-weight: 500; border-radius: 8px; }
         .btn-primary-custom:hover { background-color: var(--primary-hover); color: white; }
         
+        /* Giao diện Windows Explorer Table */
+        .explorer-table { border: 1px solid #dee2e6; border-radius: 8px; overflow: hidden; }
+        .explorer-table table { margin-bottom: 0; font-size: 0.95rem; }
+        .explorer-table th { font-weight: 600; color: #6c757d; font-size: 0.85rem; text-transform: uppercase; border-bottom-width: 1px; }
+        .explorer-table tbody tr { cursor: pointer; transition: 0.15s; }
+        .explorer-table tbody tr:hover { background-color: #f1f3f5; }
+        .explorer-table td { vertical-align: middle; color: #495057; border-bottom-width: 1px; }
+        .explorer-table tr:last-child td { border-bottom: none; }
+        .file-icon { font-size: 1.4rem; vertical-align: middle; margin-right: 8px; }
+
         #doc-viewer-container { display: none; height: 700px; border: 1px solid #dee2e6; border-radius: 12px; overflow: hidden; background: #fff; box-shadow: var(--card-shadow); transition: 0.3s; }
         iframe { width: 100%; height: 100%; border: none; }
         
@@ -76,9 +86,9 @@
 
 <div class="container mt-4" id="exam-screen" style="display: none;">
     <div class="row">
-        <!-- Cột bên trái: Câu hỏi và Inline Document -->
+        <!-- Cột bên trái: Câu hỏi và Tài liệu tham khảo -->
         <div class="col-lg-8 col-md-7 mb-4">
-            <!-- Khu vực câu hỏi -->
+            
             <div class="d-flex justify-content-between align-items-center mb-2">
                 <span class="fw-semibold text-secondary"><i class="bi bi-bar-chart-steps me-1"></i> Tiến độ hoàn thành</span>
             </div>
@@ -97,21 +107,54 @@
                 </button>
             </div>
 
-            <!-- Khu vực Xem tài liệu Inline -->
+            <!-- BẢNG TÀI LIỆU KIỂU WINDOWS EXPLORER DETAIL -->
             <div class="custom-card p-4">
-                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-journal-text me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
-                <p class="text-muted small mb-3">Nhấn vào các mục dưới đây để xem trực tiếp tài liệu liên quan đến đề thi:</p>
+                <h5 class="fw-bold text-primary mb-3"><i class="bi bi-folder2-open me-2"></i>Tài liệu tham khảo nghiệp vụ</h5>
+                <p class="text-muted small mb-3">Nhấp chuột vào bất kỳ tài liệu nào để xem chi tiết bên dưới.</p>
                 
-                <div class="d-flex flex-wrap gap-2 mb-4">
-                    <button class="btn btn-outline-danger" onclick="viewDocument('luat-dau-thau-2023.pdf', 'pdf')">
-                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Luật Đấu thầu 2023
-                    </button>
-                    <button class="btn btn-outline-danger" onclick="viewDocument('nghi-dinh-24-2024.pdf', 'pdf')">
-                        <i class="bi bi-file-earmark-pdf-fill me-1"></i> Nghị định 24/2024
-                    </button>
-                    <button class="btn btn-outline-info" onclick="viewDocument('thong-tu-06-2024.docx', 'docx')">
-                        <i class="bi bi-file-earmark-word-fill me-1"></i> Thông tư 06/2024
-                    </button>
+                <div class="explorer-table mb-4">
+                    <table class="table table-hover mb-0">
+                        <thead class="table-light">
+                            <tr>
+                                <th scope="col" style="width: 50%;">Tên tài liệu</th>
+                                <th scope="col">Ngày ban hành</th>
+                                <th scope="col">Loại</th>
+                                <th scope="col">Kích thước</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Dòng 1: Luật -->
+                            <tr onclick="viewDocument('luat-dau-thau-2023.pdf', 'pdf')">
+                                <td>
+                                    <i class="bi bi-file-earmark-pdf-fill text-danger file-icon"></i>
+                                    Luật Đấu thầu số 22/2023/QH15
+                                </td>
+                                <td>23/06/2023</td>
+                                <td>Tài liệu PDF</td>
+                                <td>~2.5 MB</td>
+                            </tr>
+                            <!-- Dòng 2: Nghị định -->
+                            <tr onclick="viewDocument('nghi-dinh-24-2024.pdf', 'pdf')">
+                                <td>
+                                    <i class="bi bi-file-earmark-pdf-fill text-danger file-icon"></i>
+                                    Nghị định 24/2024/NĐ-CP
+                                </td>
+                                <td>27/02/2024</td>
+                                <td>Tài liệu PDF</td>
+                                <td>~1.8 MB</td>
+                            </tr>
+                            <!-- Dòng 3: Thông tư -->
+                            <tr onclick="viewDocument('thong-tu-06-2024.docx', 'docx')">
+                                <td>
+                                    <i class="bi bi-file-earmark-word-fill text-info file-icon"></i>
+                                    Thông tư 06/2024/TT-BKHĐT
+                                </td>
+                                <td>26/04/2024</td>
+                                <td>Tài liệu Word</td>
+                                <td>~1.2 MB</td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
 
                 <!-- Khung hiển thị tài liệu -->
@@ -300,13 +343,10 @@
             // PDF có thể đọc trực tiếp bằng trình duyệt
             iframe.src = fileName;
         } else if (type === 'docx') {
-            // Lấy URL hiện tại tự động (Bỏ phần index.html nếu có)
+            // Tự nhận diện URL để nhúng Google Docs Viewer
             let currentUrl = window.location.href.split('index.html')[0];
             if (!currentUrl.endsWith('/')) currentUrl += '/';
-            
             let fileFullUrl = currentUrl + fileName;
-            
-            // DOCX bắt buộc dùng Google Docs Viewer nhúng
             iframe.src = `https://docs.google.com/viewer?url=${encodeURIComponent(fileFullUrl)}&embedded=true`;
         }
 
