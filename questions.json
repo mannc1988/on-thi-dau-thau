@@ -548,5 +548,423 @@
     ],
     "answer": 3,
     "explanation": "Gói thầu EPC/EP/EC thường là đấu thầu rộng rãi. A, B, C là các quy định nhà thầu EPC phải độc lập với tư vấn thiết kế FEED/FS. Phương án D (\"Phải độc lập với nhà thầu khác cùng tham dự đấu thầu rộng rãi\") là sai. Trong đấu thầu rộng rãi, các nhà thầu tham dự không cần phải độc lập với nhau (ví dụ công ty mẹ - con có thể cùng dự thầu độc lập, miễn là cạnh tranh công bằng về giá và kỹ thuật, không thông thầu). Yêu cầu độc lập giữa các nhà thầu chỉ áp dụng cho đấu thầu hạn chế (Khoản 2 Điều 6 Luật Đấu thầu)."
+  },
+  {
+    "question": "Tiêu chuẩn đánh giá về kỹ thuật được yêu cầu về nhãn hiệu theo nhóm nhãn hiệu cho nguyên nhiên vật liệu, vật tư và các yếu tố đầu vào đối với trường hợp nào?",
+    "options": [
+      "Nội dung công việc xây lắp thuộc gói thầu xây lắp, gói thầu EC",
+      "Nội dung công việc xây lắp thuộc gói thầu EPC",
+      "Nội dung công việc xây lắp thuộc gói thầu EPC và gói thầu PC",
+      "Nội dung công việc xây lắp thuộc gói thầu xây lắp và gói thầu PC"
+    ],
+    "answer": 0,
+    "explanation": "Gói thầu EC (Thiết kế – Xây lắp) là loại hợp đồng mà nhà thầu thực hiện cả việc thiết kế và thi công xây dựng. Để đảm bảo tính đồng bộ và chất lượng của công trình theo đúng thiết kế, hồ sơ mời thầu có thể yêu cụ thể về nhãn hiệu, xuất xứ của một số vật tư, vật liệu đầu vào quan trọng."
+  },
+  {
+    "question": "Nội dung nào không phải là tiêu chuẩn đánh giá về kỹ thuật của gói thầu tư vấn?",
+    "options": [
+      "Giải pháp phương pháp luận",
+      "Uy tín của nhà thầu thông qua việc tham dự thầu, kết quả thực hiện hợp đồng của nhà thầu",
+      "Đã thực hiện nghĩa vụ kê khai thuế và nộp thuế",
+      "Kinh nghiệm và năng lực nhà thầu"
+    ],
+    "answer": 2,
+    "explanation": "Đối với gói thầu dịch vụ tư vấn, các tiêu chuẩn đánh giá kỹ thuật bao gồm: Kinh nghiệm và năng lực; Giải pháp và phương pháp luận; Nhân sự; Uy tín (nếu có); Chuyển giao công nghệ (nếu có). Nội dung “Đã thực hiện nghĩa vụ kê khai thuế và nộp thuế” thuộc phần đánh giá về năng lực và kinh nghiệm (cụ thể là năng lực tài chính/tư cách hợp lệ tùy hồ sơ), không phải là tiêu chuẩn kỹ thuật. Căn cứ: Khoản 5 Điều 63 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Một trong các căn cứ lập hồ sơ mời thầu là?",
+    "options": [
+      "Báo giá của nhà thầu",
+      "Quyết định mua sắm được phê duyệt",
+      "Kế hoạch lựa chọn nhà thầu được duyệt",
+      "Phương án B và C đều đúng"
+    ],
+    "answer": 2,
+    "explanation": "Theo quy định, việc lập hồ sơ mời thầu phải căn cứ vào Kế hoạch lựa chọn nhà thầu được duyệt. Báo giá của nhà sản xuất hay Quyết định mua sắm là căn cứ để lập kế hoạch hoặc dự toán, không phải căn cứ trực tiếp để lập hồ sơ mời thầu (dù là tài liệu tham khảo). Căn cứ: Khoản 1 Điều 26 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Đối với gói thầu cung cấp dịch vụ tư vấn, phương pháp đánh giá nào không được áp dụng?",
+    "options": [
+      "Giá thấp nhất",
+      "Giá đánh giá",
+      "Kết hợp giữa kỹ thuật và giá",
+      "Giá cố định"
+    ],
+    "answer": 1,
+    "explanation": "Luật Đấu thầu quy định 4 phương pháp đánh giá cho gói thầu tư vấn: Giá thấp nhất, Giá cố định, Kết hợp giữa kỹ thuật và giá, Dựa trên kỹ thuật. Phương pháp \"Giá đánh giá\" chỉ áp dụng cho gói thầu mua sắm hàng hóa, xây lắp, phi tư vấn và hỗn hợp. Căn cứ: Điều 59 Luật Đấu thầu."
+  },
+  {
+    "question": "Nội dung nào sau đây không thuộc hồ sơ mời thầu?",
+    "options": [
+      "Chỉ dẫn nhà thầu, tùy chọn mua thêm",
+      "Bảng dữ liệu đấu thầu",
+      "Phạm vi cung cấp, yêu cầu về kỹ thuật",
+      "Biên bản hoàn thiện hợp đồng"
+    ],
+    "answer": 3,
+    "explanation": "Hồ sơ mời thầu bao gồm: Chỉ dẫn nhà thầu, Bảng dữ liệu, Tiêu chuẩn đánh giá, Biểu mẫu, Phạm vi cung cấp, Điều kiện hợp đồng... Biên bản hoàn thiện hợp đồng là tài liệu được hình thành sau khi có kết quả đánh giá và thương thảo, không phải là thành phần của hồ sơ mời thầu khi phát hành. Căn cứ: Khoản 2 Điều 26 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Trường hợp nào hồ sơ mời thầu được đưa ra yêu cầu về giấy phép bán hàng?",
+    "options": [
+      "Hàng hóa thông thường, có sẵn trên thị trường",
+      "Hàng hóa nhập khẩu",
+      "Hàng hóa đặc thù, phức tạp cần gắn với trách nhiệm của nhà sản xuất",
+      "Hàng hóa có giá trị lớn"
+    ],
+    "answer": 2,
+    "explanation": "Hồ sơ mời thầu không được yêu cầu giấy phép bán hàng đối với hàng hóa thông dụng. Chỉ được yêu cầu đối với hàng hóa đặc thù, phức tạp cần gắn với trách nhiệm của nhà sản xuất trong việc cung cấp dịch vụ sau bán hàng (bảo hành, bảo trì, sửa chữa...). Căn cứ: Khoản 12 Điều 26 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Nội dung nào sau đây nếu đưa vào E-HSMT của gói thầu mua sắm hàng hóa áp dụng hình thức đấu thầu rộng rãi qua mạng có thể bị đánh giá là hạn chế cạnh tranh?",
+    "options": [
+      "Yêu cầu nhà thầu cung cấp tài liệu chứng minh hợp đồng tương tự",
+      "Yêu cầu nhà thầu phải là chủ sở hữu thiết bị chào thầu",
+      "Yêu cầu nhà thầu có năng lực tài chính lành mạnh",
+      "Yêu cầu nhà thầu phải hoàn thành nghĩa vụ thuế"
+    ],
+    "answer": 1,
+    "explanation": "Việc yêu cầu nhà thầu phải là chủ sở hữu của thiết bị thi công là hành vi hạn chế cạnh tranh, vì nhà thầu có quyền đi thuê, mượn hoặc huy động thiết bị để thực hiện gói thầu miễn là đảm bảo khả năng huy động. Căn cứ: Khoản 3 Điều 44 Luật Đấu thầu."
+  },
+  {
+    "question": "Gói thầu mua sắm máy điều hòa không khí của Sở Tài chính tỉnh X được tổ chức đấu thầu tập trung theo hình thức đấu thầu rộng rãi qua mạng thì E-HSMT có được nêu xuất xứ hàng hóa không?",
+    "options": [
+      "Được nêu xuất xứ cụ thể của một nước bất kỳ",
+      "Được nêu xuất xứ theo nhóm nước, vùng lãnh thổ",
+      "Được nêu xuất xứ cụ thể của một nước bất kỳ nhưng phải kèm theo cụm từ \"hoặc tương đương\"",
+      "Không được nêu xuất xứ theo nhóm nước, vùng lãnh thổ"
+    ],
+    "answer": 1,
+    "explanation": "Theo Luật Đấu thầu 2023, đối với gói thầu mua sắm hàng hóa áp dụng đấu thầu rộng rãi, hồ sơ mời thầu được nêu xuất xứ theo nhóm nước, vùng lãnh thổ (ví dụ: G7, EU, ASEAN...) để đảm bảo chất lượng, nhưng không được nêu xuất xứ cụ thể của một quốc gia (trừ trường hợp đặc biệt). Căn cứ: Khoản 2 Điều 44 Luật Đấu thầu."
+  },
+  {
+    "question": "Khi tham dự thầu đấu thầu qua mạng, đại diện hợp pháp của nhà thầu có được ủy quyền cho Giám đốc chi nhánh để ký đơn dự thầu hay không?",
+    "options": [
+      "Được ủy quyền nhưng phải bằng văn bản",
+      "Không được ủy quyền",
+      "Được ủy quyền nhưng phải tạo tài khoản nghiệp vụ cho Giám đốc chi nhánh khi tham dự thầu trên Hệ thống mạng đấu thầu quốc gia",
+      "Các phương án trên đều sai"
+    ],
+    "answer": 1,
+    "explanation": "Trên Hệ thống mạng đấu thầu quốc gia, việc nộp hồ sơ dự thầu được thực hiện bằng tài khoản và chữ ký số của người đại diện theo pháp luật đã đăng ký. Thao tác này không thể ủy quyền cho người khác như Giám đốc chi nhánh thực hiện trên hệ thống. Giấy ủy quyền chỉ có giá trị cho các giao dịch ngoài hệ thống."
+  },
+  {
+    "question": "Đối với đấu thầu rộng rãi qua mạng, trường hợp gói thầu có giá trị bảo đảm dự thầu nhỏ hơn 50 triệu đồng, thời gian có hiệu lực của thư bảo lãnh dự thầu hoặc giấy chứng nhận bảo hiểm bảo lãnh được quy định tại đâu?",
+    "options": [
+      "Trong E-HSMT",
+      "Trong thông báo mời đối chiếu tài liệu",
+      "Trong thông báo mời thương thảo hợp đồng",
+      "Các phương án trên đều sai"
+    ],
+    "answer": 0,
+    "explanation": "Đối với bảo đảm dự thầu bằng thư bảo lãnh giấy, nhà thầu nộp bản scan cùng E-HSDT. Yêu cầu về thời gian hiệu lực được nêu trong E-HSMT, nhưng việc kiểm tra bản gốc và tính hợp lệ của nó thường được thực hiện khi nhà thầu được mời đến đối chiếu tài liệu. Thông báo mời đối chiếu tài liệu sẽ nhắc lại yêu cầu."
+  },
+  {
+    "question": "Đối với đấu thầu rộng rãi qua mạng, trường hợp gói thầu có giá trị bảo đảm dự thầu nhỏ hơn 50 triệu đồng, nhà thầu thực hiện nộp thư bảo lãnh dự thầu hoặc giấy chứng nhận bảo hiểm bảo lãnh thì thời gian có hiệu lực của thư bảo lãnh dự thầu hoặc giấy chứng nhận bảo hiểm bảo lãnh được tính từ ngày nào?",
+    "options": [
+      "Ngày có thời điểm đóng thầu",
+      "Ngày phê duyệt kết quả lựa chọn nhà thầu",
+      "Ngày thực hiện đối chiếu tài liệu",
+      "Các phương án trên đều sai"
+    ],
+    "answer": 0,
+    "explanation": "Thời gian có hiệu lực của bảo đảm dự thầu phải bắt đầu không muộn hơn thời điểm đóng thầu. Tuy nhiên, trong thực tế, để đảm bảo tính hợp lệ tại các bước sau, thời điểm hiệu lực thường được yêu cầu tính từ ngày thực hiện đối chiếu tài liệu để đảm bảo nó bao trùm toàn bộ quá trình xét thầu tiếp theo."
+  },
+  {
+    "question": "Đối với đấu thầu qua mạng, trường hợp EHSMT có yêu cầu cung cấp hàng mẫu, nhà thầu có thể nộp bổ sung hàng mẫu theo phương án nào sau đây?",
+    "options": [
+      "Trong thời hạn 07 ngày làm việc sau thời điểm đóng thầu",
+      "Trong thời hạn 07 ngày làm việc sau thời điểm mở thầu",
+      "Trong thời hạn 05 ngày làm việc sau thời điểm đóng thầu",
+      "Không được nộp bổ sung hàng mẫu sau thời điểm đóng thầu"
+    ],
+    "answer": 2,
+    "explanation": "Đây là quy định cụ thể trong các văn bản hướng dẫn về đấu thầu qua mạng. Do hàng mẫu là vật chất không thể nộp qua mạng được, nhà thầu sẽ nộp E-HSDT trên mạng và nộp hàng mẫu trực tiếp cho bên mời thầu trong một khoảng thời gian nhất định (05 ngày làm việc) sau thời điểm đóng thầu."
+  },
+  {
+    "question": "Đối với gói thầu tư vấn tổ chức đấu thầu rộng rãi qua mạng, sử dụng thang điểm 1.000 để xây dựng tiêu chuẩn đánh giá về kỹ thuật, E-HSMT quy định số điểm đối với tiêu chí đánh giá về uy tín của nhà thầu thông qua việc tham dự thầu, kết quả thực hiện hợp đồng của nhà thầu là bao nhiêu?",
+    "options": [
+      "150 điểm",
+      "100 điểm",
+      "50 điểm",
+      "Từ 0 đến 49 điểm"
+    ],
+    "answer": 2,
+    "explanation": "Trong thang điểm 1000, uy tín của nhà thầu là một tiêu chí phụ để đánh giá. Mặc dù quan trọng, nó không phải là yếu tố cốt lõi như giải pháp kỹ thuật hay năng lực nhân sự. Do đó, một tỷ trọng điểm nhỏ hơn, chẳng hạn như 5% (tương đương 50 điểm), thường được phân bổ cho tiêu chí này để đảm bảo nó không ảnh hưởng quá lớn đến kết quả đánh giá kỹ thuật tổng thể."
+  },
+  {
+    "question": "Đối với gói thầu thuê hệ thống máy chủ áp dụng đấu thầu rộng rãi qua mạng, thời gian thực hiện gói thầu là 5 năm (có tính chất công việc lặp lại theo chu kỳ qua các năm), giá gói thầu là 5 tỷ đồng, quy mô hợp đồng tương tự tối thiểu được quy định trong EHSMT là bao nhiêu thì phù hợp quy định?",
+    "options": [
+      "2,5 tỷ đồng",
+      "2 tỷ đồng",
+      "1,5 tỷ đồng",
+      "300 triệu đồng"
+    ],
+    "answer": 3,
+    "explanation": "Đối với các gói thầu có tính chất công việc lặp lại theo chu kỳ, yêu cầu về kinh nghiệm thực hiện hợp đồng tương tự thường được tính trên cơ sở giá trị của một chu kỳ (thường là 1 năm) để không gây hạn chế cạnh tranh. Giá trị gói thầu 1 năm là 1 tỷ đồng. Yêu cầu về hợp đồng tương tự có thể là một tỷ lệ phần trăm của giá trị này, ví dụ 30%, tương đương 300 triệu đồng, là một mức yêu cầu hợp lý để thu hút nhiều nhà thầu tham gia."
+  },
+  {
+    "question": "Đối với đấu thầu quốc tế, hồ sơ mời thầu phải quy định sử dụng lao động trong nước trong trường hợp nào?",
+    "options": [
+      "Những vị trí công việc mà lao động trong nước đáp ứng được và có khả năng cung cấp",
+      "Những vị trí công việc mà lao động trong nước không đáp ứng được nhưng cần tạo điều kiện để tiếp nhận công nghệ từ nước ngoài được chuyển giao",
+      "Lao động phổ thông",
+      "Phương án A và C đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Trong đấu thầu quốc tế, E-HSMT phải yêu cầu nhà thầu sử dụng lao động trong nước đối với những vị trí công việc mà lao động trong nước đáp ứng được, có khả năng cung cấp, cũng như đối với lực lượng lao động phổ thông nhằm đảm bảo chính sách việc làm trong nước."
+  },
+  {
+    "question": "Trường hợp hồ sơ mời thầu có quy định về xuất xứ theo nhóm nước, vùng lãnh thổ mà không bao gồm xuất xứ Việt Nam, nhà thầu chào hàng hóa có xuất xứ Việt Nam sẽ bị đánh giá như thế nào?",
+    "options": [
+      "Hàng hóa của nhà thầu không được xem xét, đánh giá",
+      "Hàng hóa của nhà thầu vẫn được xem xét, đánh giá",
+      "Yêu cầu nhà thầu bổ sung hàng hóa theo đúng xuất xứ thuộc nhóm nước, vùng lãnh thổ theo yêu cầu hồ sơ mời thầu nhưng phải cùng ký mã hiệu, nhãn hiệu với hàng hóa nhà thầu đã đề xuất trong hồ sơ dự thầu",
+      "Yêu cầu nhà thầu bổ sung hàng hóa theo đúng xuất xứ thuộc nhóm nước, vùng lãnh thổ theo yêu cầu hồ sơ mời thầu, không phải đáp ứng cùng ký mã hiệu, nhãn hiệu với hàng hóa nhà thầu đã đề xuất trong hồ sơ dự thầu"
+    ],
+    "answer": 3,
+    "explanation": "Quy định về nhóm nước (ví dụ G7, EU...) là để đảm bảo chất lượng cao. Tuy nhiên, nếu hàng hóa có xuất xứ Việt Nam đáp ứng yêu cầu kỹ thuật thì vẫn được xem xét, đánh giá (để khuyến khích hàng trong nước), ngay cả khi hồ sơ mời thầu không liệt kê \"Việt Nam\" trong nhóm nước đó. Căn cứ: Điểm b Khoản 9 Điều 26 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Gói thầu mua sắm 20 máy điều hòa, tổ chức đấu thầu rộng rãi qua mạng, một giai đoạn một túi hồ sơ, trường hợp E-HSMT có quy định về kinh nghiệm thực hiện hợp đồng tương tự thì tính chất tương tự được quy định như thế nào?",
+    "options": [
+      "Quy định hàng hóa thuộc cùng lĩnh vực tổng quát với máy điều hòa (thiết bị điện...)",
+      "Chỉ quy định hàng hóa có cùng mã Chương, mã Nhóm (tương ứng với 4 số đầu tiên của bộ mã) trong Hệ thống mã HS với mã HS của máy điều hòa",
+      "Được quy định hàng hóa thuộc cùng chủng loại hoặc hàng hóa có cùng mã Chương, mã Nhóm (tương ứng với 4 số đầu tiên của bộ mã) trong hệ thống mã HS với mã HS của máy điều hòa",
+      "Tất cả đáp án đều đúng"
+    ],
+    "answer": 1,
+    "explanation": "Hàng hóa tương tự có thể được hiểu theo 2 cách linh hoạt: (1) Có cùng lĩnh vực tổng quát (ví dụ cùng là thiết bị điện tử); hoặc (2) Có cùng mã Chương, mã Nhóm (4 số đầu mã HS). Nhà thầu đáp ứng một trong hai tiêu chí này đều được chấp nhận. Căn cứ: Ghi chú trong Mẫu số 4A Thông tư 79/2025/TT-BTC."
+  },
+  {
+    "question": "Tiêu chuẩn đánh giá về kỹ thuật gói thầu dịch vụ phi tư vấn không bao gồm nội dung nào sau đây?",
+    "options": [
+      "Nhà thầu bị đánh giá về uy tín trong việc tham dự thầu",
+      "Bảo đảm điều kiện vệ sinh môi trường và các điều kiện khác như phòng cháy, chữa cháy, an toàn lao động.",
+      "Mức độ đáp ứng các yêu cầu về bảo hành, bảo trì (nếu có);",
+      "Tất cả đáp án đều sai"
+    ],
+    "answer": 3,
+    "explanation": "Nội dung \"Nhà thầu bị đánh giá về uy tín trong việc tham dự thầu\" (ví dụ: bỏ thầu, không ký hợp đồng...) thường được sử dụng để yêu cầu tăng giá trị bảo đảm dự thầu ở các gói thầu sau, hoặc đánh giá ở bước kỹ thuật của gói thầu tư vấn. Đối với gói thầu Phi tư vấn, nội dung này không nằm trong bảng tiêu chuẩn đánh giá kỹ thuật thông thường. Căn cứ: Khoản 2 Điều 20 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Nhận định nào sau đây là đúng về tiêu chuẩn đánh giá E-HSDT gói thầu dịch vụ tư vấn tổ chức đấu thầu rộng rãi qua mạng?",
+    "options": [
+      "Có thể không quy định về tiêu chuẩn kinh nghiệm và năng lực trong tiêu chuẩn đánh giá về kỹ thuật",
+      "Không được quy định mức điểm tối thiểu về kinh nghiệm và năng lực trong tiêu chuẩn đánh giá về kỹ thuật",
+      "Không được quy định uy tín của nhà thầu thông qua việc tham dự thầu trong tiêu chuẩn đánh giá về kỹ thuật",
+      "Hợp đồng tương tự được xác định trên cơ sở tương tự cả về tính chất và quy mô (giá trị hợp đồng)"
+    ],
+    "answer": 0,
+    "explanation": "Nhận định đúng là có thể không quy định về tiêu chuẩn kinh nghiệm và năng lực trong tiêu chuẩn đánh giá về kỹ thuật (vì kinh nghiệm và năng lực chủ yếu được đánh giá ở bước đánh giá về năng lực và kinh nghiệm hoặc tuỳ thuộc vào quy định cụ thể của pháp luật đấu thầu đối với gói thầu tư vấn)."
+  },
+  {
+    "question": "Đối với gói thầu xây dựng \"Trường trung học phổ thông A\", bao gồm tổ hợp các công trình:\n+ Nhà A1 (Nhà học): Cao 10 tầng, tổng diện tích sàn 8.000 m2, có giá trị theo dự toán được duyệt là (2X) VND. Nhà A1 là công trình kết cấu dạng nhà cấp II theo quy định của Thông tư số 06/2021/TT-BXD.\n+ Nhà A2 (Nhà học): Cao 6 tầng, tổng diện tích sàn 1.000 m2, có giá trị theo dự toán được duyệt là (Y) VND. Nhà A2 là công trình kết cấu dạng nhà cấp III theo quy định của Thông tư số 06/2021/TT-BXD.\n+ Hàng rào bảo vệ: Cao 3m\n+ Nhà bảo vệ: Cao 1 tầng, diện tích sàn 12 m2.\nKinh nghiệm thi công công trình tương tự được quy định trong hồ sơ mời thầu như thế nào là phù hợp?",
+    "options": [
+      "Nhà thầu đã hoàn thành công trình xây dựng nhà, kết cấu dạng nhà cấp II, có giá trị tối thiểu là 50% x (2X) VND",
+      "Nhà thầu đã hoàn thành công trình xây dựng nhà, kết cấu dạng nhà cấp II, có giá trị tối thiểu là 50% x (2X) VND, trong đó phải bao gồm hạng mục hàng rào bảo vệ, nhà bảo vệ",
+      "Nhà thầu đã hoàn thành công trình xây dựng nhà, kết cấu dạng nhà cấp III, có giá trị tối thiểu là 50% x (2X) VND",
+      "Nhà thầu đã hoàn thành công trình xây dựng nhà, kết cấu dạng nhà cấp III, có giá trị tối thiểu là 50% x (2X) VND, trong đó phải bao gồm hạng mục hàng rào bảo vệ, nhà bảo vệ"
+    ],
+    "answer": 0,
+    "explanation": "Khi xét tính tương tự của gói thầu xây lắp có nhiều hạng mục, công trình chính quyết định là hạng mục cấp cao nhất và có giá trị lớn nhất (Nhà A1 cấp II). Yêu cầu kinh nghiệm tập trung vào công trình chính với giá trị tương ứng (tối thiểu 50% giá trị gói thầu chính), không bắt buộc phải gom các hạng mục phụ nhỏ như hàng rào, nhà bảo vệ vào hợp đồng tương tự."
+  },
+  {
+    "question": "Đối với gói thầu áp dụng chào hàng cạnh tranh, việc đánh giá về kỹ thuật thực hiện theo phương án nào sau đây?",
+    "options": [
+      "Phải sử dụng phương pháp đánh giá “đạt”, “không đạt”",
+      "Phải sử dụng phương pháp chấm điểm",
+      "Được sử dụng một trong hai phương pháp “đạt”, “không đạt” hoặc chấm điểm",
+      "Chỉ cần yêu cầu nhà thầu cam kết đáp ứng yêu cầu về kỹ thuật"
+    ],
+    "answer": 0,
+    "explanation": "Chào hàng cạnh tranh áp dụng cho hàng hóa/dịch vụ thông dụng, đơn giản. Do đó, tiêu chuẩn đánh giá kỹ thuật phải sử dụng phương pháp “đạt/không đạt”, không sử dụng phương pháp chấm điểm (phức tạp). Căn cứ: Điểm a Khoản 2 Điều 81 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Chủ đầu tư dự kiến mua sắm hàng hóa (không phải mua sắm tập trung hoặc mua sắm hàng hóa có số lượng, khối lượng mời thầu lớn) như sau:\n– Hàng hóa A có mã HS là 9035, giá trị dự toán là 4.000.000.000 đồng\n– Hàng hóa B có mã HS là 9035, giá trị dự toán là 6.000.000.000\nE-HSMT yêu cầu về kinh nghiệm thực hiện hợp đồng cung cấp hàng hóa tương tự trong trường hợp nào sau đây là phù hợp?",
+    "options": [
+      "Cung cấp 01 hợp đồng có mã hàng hóa 9035 với giá trị tối thiểu 02 tỷ đồng",
+      "Cung cấp 01 hợp đồng có mã hàng hóa 9035 với giá trị tối thiểu 03 tỷ đồng",
+      "Cung cấp 01 hợp đồng có mã hàng hóa 9035 với giá trị tối thiểu 05 tỷ đồng",
+      "Cung cấp 01 hợp đồng có mã hàng hóa 9035 với giá trị tối thiểu 07 tỷ đồng"
+    ],
+    "answer": 2,
+    "explanation": "Tổng giá trị dự toán của gói thầu là 4.000.000.000 + 6.000.000.000 = 10.000.000.000 đồng (10 tỷ đồng). Theo quy định, yêu cầu về giá trị hợp đồng tương tự thông thường bằng khoảng 50% giá trị gói thầu, tức là 50% x 10 tỷ = 5 tỷ đồng."
+  },
+  {
+    "question": "Gói thầu mua sắm hàng hóa có khối lượng, số lượng công việc căn cứ nhu cầu theo các năm và thời gian thực hiện gói thầu là 02 năm thì E-HSMT quy định về giá trị của hợp đồng tương tự như thế nào?",
+    "options": [
+      "Có giá trị bằng 50% giá gói thầu",
+      "Có giá trị bằng 70% giá gói thầu",
+      "Có giá trị bằng 50% giá trị theo chu kỳ 01 năm của gói thầu",
+      "Có giá trị tối thiểu bằng 50% giá gói thầu"
+    ],
+    "answer": 2,
+    "explanation": "Theo quy định mới tại Thông tư số 79/2025/TT-BTC (Mẫu E-HSMT), đối với gói thầu thực hiện trong nhiều năm, quy mô hợp đồng tương tự được xác định bằng 50% giá trị của phần công việc thực hiện trong năm có giá trị cao nhất (hoặc hiểu đơn giản là theo chu kỳ 1 năm nếu giá trị phân bổ đều), không bắt buộc phải bằng 50% tổng giá trị gói thầu của cả 2 năm."
+  },
+  {
+    "question": "Nội dung nào không phù hợp với quy định về nhà thầu phụ đối với gói thầu mua sắm hàng hóa?",
+    "options": [
+      "Chủ đầu tư phải ghi tỷ lệ % giá trị dành cho nhà thầu phụ trong E-BDL làm cơ sở để nhà thầu lập E-HSDT",
+      "Năng lực và kinh nghiệm của nhà thầu phụ sẽ không được xem xét khi đánh giá E-HSDT của nhà thầu",
+      "Nhà thầu được ký kết hợp đồng với các nhà thầu phụ trong danh sách các nhà thầu phụ nêu trong E-HSDT",
+      "Nhà thầu được ký kết hợp đồng với các nhà thầu phụ được chủ đầu tư chấp thuận để tham gia thực hiện cung cấp dịch vụ liên quan"
+    ],
+    "answer": 0,
+    "explanation": "Đối với gói thầu mua sắm hàng hóa, chủ đầu tư không được ấn định tỷ lệ % giá trị dành cho nhà thầu phụ. Việc sử dụng thầu phụ là do nhà thầu đề xuất dựa trên nhu cầu thực tế (thường là cho các dịch vụ liên quan như vận chuyển, lắp đặt). Quy định \"Chủ đầu tư phải ghi tỷ lệ %...\" là sai và chỉ áp dụng cho gói thầu xây lắp/hỗn hợp. Căn cứ: Mẫu số 4A Thông tư 79/2025/TT-BTC."
+  },
+  {
+    "question": "Trong quá trình đánh giá hồ sơ dự thầu gói thầu áp dụng đấu thầu rộng rãi, chủ đầu tư phát hiện người đại diện theo pháp luật của 02 nhà thầu tham dự thầu là anh em ruột thì xem xét, đánh giá như thế nào?",
+    "options": [
+      "Thuộc hành vi bị cấm trong đấu thầu",
+      "Không đáp ứng yêu cầu về bảo đảm cạnh tranh trong đấu thầu",
+      "Hồ sơ dự thầu của một trong hai nhà thầu không được xem xét",
+      "Không thuộc hành vi bị cấm, không vi phạm quy định về bảo đảm cạnh tranh trong đấu thầu"
+    ],
+    "answer": 3,
+    "explanation": "Trong đấu thầu rộng rãi, pháp luật không cấm người thân (anh em ruột) đại diện cho các nhà thầu khác nhau cùng tham dự. Luật chỉ cấm trong trường hợp “Đấu thầu hạn chế” (yêu cầu các nhà thầu dự thầu phải độc lập với nhau về vốn). Do đó, trường hợp này không thuộc hành vi bị cấm và không vi phạm. Căn cứ: Khoản 4 Điều 6 Luật Đấu thầu."
+  },
+  {
+    "question": "Việc đánh giá nhà thầu đang trong thời gian bị cấm tham dự thầu thuộc nội dung đánh giá về?",
+    "options": [
+      "Kỹ thuật",
+      "Tài chính",
+      "Tư cách hợp lệ",
+      "Năng lực, kinh nghiệm"
+    ],
+    "answer": 2,
+    "explanation": "Việc nhà thầu không đang trong thời gian bị cấm tham dự thầu là một trong các điều kiện tiên quyết để xác định tư cách hợp lệ của nhà thầu. Căn cứ: Khoản 1 Điều 5 Luật Đấu thầu."
+  },
+  {
+    "question": "Khi đánh giá về năng lực kinh nghiệm đối với gói thầu mua sắm hàng hóa áp dụng đấu thầu rộng rãi, nhà thầu được đánh giá là đạt khi nào?",
+    "options": [
+      "Nhà thầu được đánh giá đạt tất cả tiêu chuẩn đánh giá về năng lực và kinh nghiệm trong hồ sơ mời thầu",
+      "Nhà thầu đáp ứng một trong các tiêu chuẩn đánh giá về năng lực và kinh nghiệm trong hồ sơ mời thầu",
+      "Nhà thầu đáp ứng hai phần ba các tiêu chuẩn đánh giá về năng lực và kinh nghiệm trong hồ sơ mời thầu",
+      "Nhà thầu đáp ứng các tiêu chuẩn đánh giá về năng lực và kinh nghiệm quan trọng trong hồ sơ mời thầu"
+    ],
+    "answer": 0,
+    "explanation": "Nhà thầu phải được đánh giá đạt tất cả nội dung yêu cầu về năng lực và kinh nghiệm (tài chính, kinh nghiệm, sản xuất...) thì mới được coi là ĐẠT ở bước này. Căn cứ: Điểm a Khoản 4 Điều 26 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Việc đánh giá về nhân sự chủ chốt và thiết bị chủ yếu đối với gói thầu xây lắp tổ chức đấu thầu rộng rãi được thực hiện như thế nào?",
+    "options": [
+      "Đánh giá đối với tất cả các nhà thầu tham dự thầu",
+      "Đánh giá đối với nhà thầu xếp thứ nhất",
+      "Đánh giá đối với tất cả các nhà thầu được đánh giá đạt về kỹ thuật",
+      "Không đánh giá về nhân sự chủ chốt và thiết bị chủ yếu"
+    ],
+    "answer": 1,
+    "explanation": "Đối với gói thầu xây lắp đấu thầu rộng rãi, việc đánh giá chi tiết về nhân sự chủ chốt và thiết bị thi công chủ yếu chỉ thực hiện đối với nhà thầu xếp hạng thứ nhất (sau khi đã đánh giá tài chính). Ở bước đánh giá hồ sơ dự thầu ban đầu, nhà thầu chỉ cần cam kết. Căn cứ: Khoản 2 Điều 29 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Đối với gói thầu mua sắm hàng hóa áp dụng hình thức chào hàng cạnh tranh, trường hợp hồ sơ mời thầu không yêu cầu về năng lực, kinh nghiệm thì việc đánh giá được thực hiện như thế nào?",
+    "options": [
+      "Không phải đánh giá về năng lực, kinh nghiệm nhưng nhà thầu phải cam kết đáp ứng năng lực, kinh nghiệm trong đơn dự thầu",
+      "Trường hợp nhà thầu đính kèm tài liệu về năng lực, kinh nghiệm thì chủ đầu tư bắt buộc phải đánh giá về năng lực, kinh nghiệm của nhà thầu",
+      "Bắt buộc phải đánh giá năng lực, kinh nghiệm của nhà thầu",
+      "Phương án A và B đều đúng"
+    ],
+    "answer": 0,
+    "explanation": "Đối với chào hàng cạnh tranh, hồ sơ mời thầu có thể không yêu cầu tiêu chuẩn năng lực kinh nghiệm. Khi đó, Bên mời thầu không phải đánh giá nội dung này nhưng nhà thầu phải cam kết trong đơn dự thầu là có đủ năng lực, kinh nghiệm để thực hiện gói thầu. Căn cứ: Khoản 1 Điều 81 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Đối với gói thầu xây lắp tổ chức đấu thầu rộng rãi, có bắt buộc quy định việc đánh giá đối với yêu cầu về nguồn lực tài chính trong hồ sơ mời thầu phải bằng cam kết tín dụng không?",
+    "options": [
+      "Bắt buộc quy định trong hồ sơ mời thầu do đây là tiêu chí chứng minh nguồn lực tài chính",
+      "Không bắt buộc quy định, hồ sơ mời thầu có thể đưa ra yêu cầu về cam kết cung cấp tín dụng hoặc không yêu cầu về cam kết cung cấp tín dụng",
+      "Bắt buộc quy định trong hồ sơ mời thầu đối với gói thầu xây lắp áp dụng phương thức một giai đoạn hai túi hồ sơ",
+      "Bắt buộc quy định trong hồ sơ mời thầu đối với gói thầu có giá trên 20 tỷ đồng"
+    ],
+    "answer": 1,
+    "explanation": "Theo các mẫu hồ sơ mời thầu mới, việc chứng minh nguồn lực tài chính có thể bằng nhiều cách (số dư tài khoản, hạn mức tín dụng...). Do đó, không bắt buộc phải quy định cứng là “phải bằng cam kết tín dụng”, nhà thầu có thể dùng các tài liệu tương đương khác. Căn cứ: Mẫu số 3A Thông tư 79/2025/TT-BTC."
+  },
+  {
+    "question": "Đối với gói thầu chia thành 2 phần (phần 1: mua sắm máy tính; phần 2: mua sắm bàn ghế cho cán bộ công chức), áp dụng phương pháp giá thấp nhất (máy tính và bàn ghế là hàng hóa thuộc danh mục do Chính phủ, Thủ tướng Chính phủ quy định tiêu chuẩn, định mức), việc xét duyệt trúng thầu trong trường hợp này được thực hiện như thế nào?",
+    "options": [
+      "Giá đề nghị trúng thầu của từng hàng hóa đảm bảo không vượt mức giá của từng hàng hóa đó theo tiêu chuẩn, định mức do cấp có thẩm quyền ban hành và tổng giá đề nghị trúng thầu của gói thầu là thấp nhất, không vượt giá gói thầu được duyệt",
+      "Tổng giá đề nghị trúng thầu của gói thầu là thấp nhất và không vượt giá gói thầu được duyệt mà không so sánh với ước tính chi phí của từng phần, không so sánh với tiêu chuẩn, định mức từng mặt hàng",
+      "Giá từng phần thấp nhất, tổng giá đề nghị trúng thầu không vượt giá gói thầu được duyệt, không cần so sánh với tiêu chuẩn, định mức từng mặt hàng",
+      "Tất cả phương án trên đều sai"
+    ],
+    "answer": 0,
+    "explanation": "Đối với hàng hóa có tiêu chuẩn, định mức do cơ quan có thẩm quyền ban hành (như máy tính, xe ô tô, bàn ghế...), điều kiện tiên quyết để trúng thầu là giá đề nghị trúng thầu của từng hàng hóa không được vượt mức giá theo tiêu chuẩn, định mức, đồng thời tổng giá gói thầu không vượt giá gói thầu được duyệt. Căn cứ: Khoản 2 Điều 93 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Đối với gói thầu xây lắp áp dụng đấu thầu rộng rãi qua mạng, trường hợp E-HSMT quy định nhà thầu phải cung cấp đầy đủ các tài liệu: giấy đăng ký thiết bị, hợp đồng, hóa đơn mua hàng, giấy đăng kiểm, kiểm định theo quy định của pháp luật để chứng minh khả năng huy động thiết bị thi công chủ yếu thì nhà thầu phải cung cấp những tài liệu nào?",
+    "options": [
+      "Phải cung cấp đầy đủ theo yêu cầu của E-HSMT gồm: giấy đăng ký thiết bị, hợp đồng, hóa đơn mua hàng, giấy đăng kiểm, kiểm định theo quy định của pháp luật",
+      "Chỉ cần cung cấp một trong các tài liệu: giấy đăng ký thiết bị, hợp đồng, hóa đơn mua hàng, giấy đăng kiểm, kiểm định theo quy định của pháp luật",
+      "Phải buộc cung cấp giấy đăng ký thiết bị kèm theo giấy đăng kiểm, kiểm định theo quy định của pháp luật",
+      "Phải bắt buộc cung cấp hợp đồng, hóa đơn mua hàng"
+    ],
+    "answer": 1,
+    "explanation": "Theo hướng dẫn tại Mẫu E-HSMT, để chứng minh khả năng huy động thiết bị, nhà thầu chỉ cần cung cấp một trong các tài liệu (giấy đăng ký, hoặc hợp đồng thuê, hoặc hóa đơn...) để chứng minh quyền sở hữu hoặc quyền sử dụng, không bắt buộc phải nộp “đầy đủ tất cả” các loại giấy tờ cùng lúc. Căn cứ: Mẫu số 3A Thông tư 79/2025/TT-BTC."
+  },
+  {
+    "question": "Danh sách xếp hạng nhà thầu có phải thẩm định trước khi phê duyệt hay không?",
+    "options": [
+      "Phải thẩm định trong trường hợp có hơn 01 nhà thầu trong danh sách xếp hạng",
+      "Không phải thẩm định",
+      "Do người có thẩm quyền quyết định",
+      "Phương án A và C đều đúng"
+    ],
+    "answer": 1,
+    "explanation": "Theo quy định hiện hành, không tiến hành thẩm định danh sách xếp hạng nhà thầu. Chỉ thẩm định kết quả lựa chọn nhà thầu (hoặc danh sách đạt kỹ thuật đối với phương thức 2 túi hồ sơ). Căn cứ: Điểm g Khoản 1 Điều 136 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Đối với gói thầu xây lắp áp dụng hình thức đấu thầu rộng rãi trong nước (không áp dụng sơ tuyển), trường hợp tại thời điểm đóng thầu chỉ có 01 nhà thầu nộp hồ sơ dự thầu thì xử lý như thế nào?",
+    "options": [
+      "Mở thầu ngay để tiến hành đánh giá",
+      "Gia hạn thời điểm đóng thầu tối thiểu 10 ngày",
+      "Báo cáo người có thẩm quyền xem xét, quyết định",
+      "Phương án A và B đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Khi chỉ có 1 nhà thầu nộp hồ sơ, chủ đầu tư có 2 lựa chọn: (1) Xử lý tình huống bằng cách gia hạn thời điểm đóng thầu; hoặc (2) Mở thầu ngay để tiến hành đánh giá. Phương án A là một trong các cách xử lý đúng quy định và thường được áp dụng để đảm bảo tiến độ. Cả hai cách đều đúng quy định xử lý tình huống. Căn cứ: Khoản 5 Điều 140 Nghị định 214/2025/NĐ-CP."
+  },
+  {
+    "question": "Đối với gói thầu xây lắp, trường hợp công ty mẹ tham dự thầu và huy động công ty con tham gia thực hiện gói thầu thì việc đánh giá kinh nghiệm thực hiện hợp đồng tương tự được thực hiện như thế nào?",
+    "options": [
+      "Đánh giá kinh nghiệm thực hiện hợp đồng tương tự của công ty mẹ, không đánh giá kinh nghiệm của công ty con",
+      "Đánh giá kinh nghiệm thực hiện hợp đồng tương tự căn cứ vào giá trị, khối lượng công việc do công ty mẹ, công ty con đảm nhiệm trong gói thầu",
+      "Đánh giá kinh nghiệm thực hiện hợp đồng tương tự của công ty con, không đánh giá kinh nghiệm của công ty mẹ, không phân biệt khối lượng công việc do công ty mẹ, công ty con đảm nhiệm trong gói thầu",
+      "Đánh giá theo tổng kinh nghiệm thực hiện hợp đồng tương tự của công ty mẹ và công ty con, không phân biệt khối lượng công việc do công ty mẹ, công ty con đảm nhiệm trong gói thầu"
+    ],
+    "answer": 1,
+    "explanation": "Khi công ty mẹ dự thầu và huy động công ty con (với tư cách nhà thầu phụ hoặc đơn vị thành viên), năng lực kinh nghiệm được đánh giá căn cứ vào giá trị, khối lượng công việc do công ty mẹ và công ty con đảm nhận. Công ty con làm phần nào thì được tính năng lực tương ứng phần đó. Căn cứ: Điều 10 Nghị định 214/2025/NĐ-CP (quy định về ưu đãi) và hướng dẫn trong Mẫu E-HSMT."
+  },
+  {
+    "question": "Kinh nghiệm thực hiện hợp đồng xây lắp tương tự gói thầu chỉ bao gồm 01 công trình độc lập được xét trên cơ sở nào sau đây?",
+    "options": [
+      "Xét theo công trình nhà thầu đã hoàn thành toàn bộ hoặc hoàn thành phần lớn có cùng loại kết cấu, cấp công trình và đáp ứng quy mô theo yêu cầu của hồ sơ mời thầu",
+      "Chỉ xét theo công trình nhà thầu đã hoàn thành toàn bộ, đã được nghiệm thu, cùng loại công trình và đáp ứng quy mô theo yêu cầu của hồ sơ mời thầu",
+      "Xét theo các hạng mục công việc có tính chất tương tự nhà thầu đã hoàn thành phần lớn và đáp ứng quy mô theo yêu cầu của hồ sơ mời thầu",
+      "Tất cả phương án trên đều đúng"
+    ],
+    "answer": 0,
+    "explanation": "Đối với xây lắp, hợp đồng tương tự là công trình mà nhà thầu đã hoàn thành toàn bộ hoặc hoàn thành phần lớn (thường là >=80% giá trị), có cùng loại kết cấu và cấp công trình đáp ứng yêu cầu của hồ sơ mời thầu. Căn cứ: Mẫu số 3A Thông tư 79/2025/TT-BTC."
+  },
+  {
+    "question": "Đối với gói thầu mua sắm hàng hóa tổ chức đấu thầu rộng rãi qua mạng, kinh nghiệm thực hiện hợp đồng cung cấp hàng hóa tương tự được xét trên cơ sở nào sau đây?",
+    "options": [
+      "Hàng hóa phải cùng chủng loại với gói thầu đang xét",
+      "Hàng hóa thuộc cùng lĩnh vực tổng quát với hàng hóa của gói thầu",
+      "Hàng hóa có 4 số đầu tiên mã HS cùng với mã HS của hàng hóa thuộc gói thầu",
+      "Cả 2 phương án B và C đều đúng"
+    ],
+    "answer": 3,
+    "explanation": "Hàng hóa tương tự có thể được hiểu theo 2 cách linh hoạt: (1) Có cùng lĩnh vực tổng quát (ví dụ cùng là thiết bị điện tử); hoặc (2) Có cùng mã Chương, mã Nhóm (4 số đầu mã HS). Nhà thầu đáp ứng một trong hai tiêu chí này đều được chấp nhận. Căn cứ: Mẫu số 4A Thông tư 79/2025/TT-BTC."
+  },
+  {
+    "question": "Gói thầu dịch vụ phi tư vấn chia thành nhiều phần thì việc đánh giá về doanh thu đối với nhà thầu tham dự nhiều phần được thực hiện như thế nào?",
+    "options": [
+      "Việc đánh giá về doanh thu căn cứ trên tổng giá trị doanh thu bình quân yêu cầu đối với các phần mà nhà thầu tham dự",
+      "Việc đánh giá về doanh thu căn cứ trên từng phần mà nhà thầu tham dự, nhà thầu không phải đáp ứng tổng doanh thu đối với các phần mà nhà thầu tham dự",
+      "Việc đánh giá về doanh thu căn cứ trên phần có giá trị lớn nhất trong tổng số các phần nhà thầu tham dự",
+      "Các phương án trên đều sai"
+    ],
+    "answer": 0,
+    "explanation": "Doanh thu là năng lực tài chính tổng thể của doanh nghiệp. Nếu nhà thầu tham dự nhiều phần, họ phải chứng minh đủ năng lực tài chính để thực hiện TẤT CẢ các phần đó. Do đó, yêu cầu doanh thu sẽ căn cứ trên tổng giá trị doanh thu bình quân yêu cầu đối với các phần mà nhà thầu tham dự. Căn cứ: Mẫu số 5A Thông tư 79/2025/TT-BTC."
   }
 ]
