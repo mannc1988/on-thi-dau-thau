@@ -24,23 +24,35 @@
     
     <style>
         body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        .card { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        .card-header { border-radius: 12px 12px 0 0 !important; }
+        .card { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
+        .card-header { border-radius: 12px 12px 0 0 !important; font-weight: 600; }
         #reader { border: 2px dashed #0d6efd; border-radius: 8px; background: #fff; }
-        .nav-pills .nav-link.active { background-color: #0d6efd; font-weight: 600; }
-        .nav-pills .nav-link { color: #495057; font-weight: 500; }
-    </style>
-    <style>
+        
+        /* Tùy chỉnh Header bảng và khoảng hở icon Order tam giác trên/dưới */
         .table thead th {
-    background-color: #f1f5f9;
-    color: #334155;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-    padding: 12px;
-    border-bottom: 2px solid #e2e8f0;
-}
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            position: relative;
+        }
+        table.dataTable thead th.sorting, 
+        table.dataTable thead th.sorting_asc, 
+        table.dataTable thead th.sorting_desc {
+            padding-right: 30px !important;
+        }
+        table.dataTable thead th.sorting:before, 
+        table.dataTable thead th.sorting:after,
+        table.dataTable thead th.sorting_asc:before, 
+        table.dataTable thead th.sorting_asc:after,
+        table.dataTable thead th.sorting_desc:before, 
+        table.dataTable thead th.sorting_desc:after {
+            bottom: 12px !important;
+        }
     </style>
 </head>
 <body class="py-4">
@@ -52,136 +64,110 @@
             <p class="text-muted">Hệ thống Full CRUD kết hợp DataTables Server-side & Quét QR liên tục</p>
         </div>
 
-        <!-- Tab Điều Hướng -->
-        <ul class="nav nav-pills justify-content-center mb-4 gap-2" id="pills-tab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active shadow-sm" id="pills-scan-tab" data-bs-toggle="pill" data-bs-target="#pills-scan" type="button"><i class="fa-solid fa-camera me-1"></i> Quét QR Kiểm Kê</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link shadow-sm" id="pills-assets-tab" data-bs-toggle="pill" data-bs-target="#pills-assets" type="button"><i class="fa-solid fa-laptop me-1"></i> Quản Lý Danh Mục Tài Sản</button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link shadow-sm" id="pills-history-tab" data-bs-toggle="pill" data-bs-target="#pills-history" type="button"><i class="fa-solid fa-clock-rotate-left me-1"></i> Lịch Sử Kiểm Kê</button>
-            </li>
-        </ul>
+        <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD) -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-success text-white py-3">
+                <h5 class="mb-0"><i class="fa-solid fa-laptop me-2"></i> 1. Quản Lý Danh Mục Tài Sản (CRUD)</h5>
+            </div>
+            <div class="card-body">
+                <form id="assetForm" onsubmit="saveAsset(event)" class="mb-4 pb-3 border-bottom">
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Mã Tài Sản (ID):</label>
+                            <input type="text" id="assetId" class="form-control" placeholder="VD: TS004" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Tên Tài Sản:</label>
+                            <input type="text" id="assetName" class="form-control" placeholder="VD: Máy chiếu Sony" required>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold">Phòng Ban / Vị Trí:</label>
+                            <input type="text" id="assetRoom" class="form-control" placeholder="VD: Phòng Họp A" required>
+                        </div>
+                        <div class="col-12 text-end">
+                            <button type="button" class="btn btn-secondary px-4 me-2" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i> Làm mới</button>
+                            <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu Vào Database</button>
+                        </div>
+                    </div>
+                </form>
 
-        <div class="tab-content" id="pills-tabContent">
-            
-            <!-- TAB 1: QUÉT QR -->
-            <div class="tab-pane fade show active" id="pills-scan" role="tabpanel">
-                <div class="row">
-                    <div class="col-lg-5 mb-4">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold text-dark mb-3"><i class="fa-solid fa-sliders me-1 text-primary"></i> Thiết Lập Quét</h5>
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold text-secondary">Đợt Kiểm Kê:</label>
-                                    <select id="selectDot" class="form-select border-primary-subtle"></select>
-                                </div>
-                                <div class="mb-3">
-                                    <label class="form-label fw-semibold text-secondary">Cán Bộ Kiểm Kê:</label>
-                                    <input type="text" id="txtNguoiKK" class="form-control border-primary-subtle" value="Nguyễn Cao Mẫn">
-                                </div>
-                                <div class="alert alert-info py-2 small mb-0">
-                                    <i class="fa-solid fa-circle-info me-1"></i> Camera tự động nhận diện liên tục và phát âm thanh khi quét thành công.
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-lg-7 mb-4">
-                        <div class="card shadow-sm text-center">
-                            <div class="card-body">
-                                <h5 class="card-title fw-bold text-dark mb-3"><i class="fa-solid fa-qrcode me-1 text-success"></i> Camera Quét Liên Tục</h5>
-                                <div id="reader" style="width: 100%; max-width: 380px; margin: auto;" class="p-2"></div>
-                                <div id="scan-result" class="mt-3 fw-bold fs-6 p-2 rounded"></div>
-                            </div>
-                        </div>
-                    </div>
+                <div class="table-responsive">
+                    <table id="assetsTable" class="table table-striped table-hover align-middle w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã TS</th>
+                                <th>Tên Tài Sản</th>
+                                <th>Phòng Ban</th>
+                                <th class="text-center">Thao Tác</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
                 </div>
             </div>
-
-            <!-- TAB 2: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD) -->
-            <div class="tab-pane fade" id="pills-assets" role="tabpanel">
-                <div class="card shadow-sm mb-4">
-                    <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
-                        <h5 class="mb-0"><i class="fa-solid fa-pen-to-square me-2"></i> Thêm / Cập Nhật Tài Sản</h5>
-                    </div>
-                    <div class="card-body">
-                        <form id="assetForm" onsubmit="saveAsset(event)">
-                            <div class="row g-3">
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">Mã Tài Sản (ID):</label>
-                                    <input type="text" id="assetId" class="form-control" placeholder="VD: TS004" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">Tên Tài Sản:</label>
-                                    <input type="text" id="assetName" class="form-control" placeholder="VD: Máy chiếu Sony" required>
-                                </div>
-                                <div class="col-md-4">
-                                    <label class="form-label fw-semibold">Phòng Ban / Vị Trí:</label>
-                                    <input type="text" id="assetRoom" class="form-control" placeholder="VD: Phòng Họp A" required>
-                                </div>
-                                <div class="col-12 text-end">
-                                    <button type="button" class="btn btn-secondary px-4 me-2" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i> Làm mới</button>
-                                    <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu Vào Database</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-                </div>
-
-                <div class="card shadow-sm">
-                    <div class="card-header bg-dark text-white py-3">
-                        <h5 class="mb-0"><i class="fa-solid fa-list me-2"></i> Danh Sách Tài Sản Hiện Có</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="assetsTable" class="table table-striped table-hover align-middle w-100">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Mã TS</th>
-                                        <th>Tên Tài Sản</th>
-                                        <th>Phòng Ban</th>
-                                        <th class="text-center">Thao Tác</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 3: LỊCH SỬ KIỂM KÊ -->
-            <div class="tab-pane fade" id="pills-history" role="tabpanel">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
-                        <h5 class="mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i> Lịch Sử Đã Kiểm Kê</h5>
-                        <button class="btn btn-light btn-sm fw-semibold" onclick="refreshData()"><i class="fa-solid fa-rotate me-1"></i> Làm mới</button>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="historyTable" class="table table-striped table-hover align-middle w-100">
-                                <thead class="table-light">
-                                    <tr>
-                                        <th>STT</th>
-                                        <th>Mã TS</th>
-                                        <th>Tên Tài Sản</th>
-                                        <th>Cán Bộ KK</th>
-                                        <th>Thời Gian</th>
-                                        <th>Ghi Chú</th>
-                                        <th class="text-center">Xóa</th>
-                                    </tr>
-                                </thead>
-                                <tbody></tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
         </div>
+
+        <!-- PHẦN 2: QUÉT QR KIỂM KÊ -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white py-3">
+                <h5 class="mb-0"><i class="fa-solid fa-camera me-2"></i> 2. Quét QR Kiểm Kê Tài Sản</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-lg-5 mb-4 mb-lg-0">
+                        <div class="p-3 border rounded bg-light h-100">
+                            <h5 class="card-title fw-bold text-dark mb-3"><i class="fa-solid fa-sliders me-1 text-primary"></i> Thiết Lập Quét</h5>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-secondary">Đợt Kiểm Kê:</label>
+                                <select id="selectDot" class="form-select border-primary-subtle"></select>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label fw-semibold text-secondary">Cán Bộ Kiểm Kê:</label>
+                                <input type="text" id="txtNguoiKK" class="form-control border-primary-subtle" value="Nguyễn Cao Mẫn">
+                            </div>
+                            <div class="alert alert-info py-2 small mb-0">
+                                <i class="fa-solid fa-circle-info me-1"></i> Camera tự động nhận diện liên tục và phát âm thanh khi quét thành công.
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-7">
+                        <div class="p-3 border rounded bg-light text-center">
+                            <h5 class="card-title fw-bold text-dark mb-3"><i class="fa-solid fa-qrcode me-1 text-success"></i> Camera Quét Liên Tục</h5>
+                            <div id="reader" style="width: 100%; max-width: 380px; margin: auto;" class="p-2"></div>
+                            <div id="scan-result" class="mt-3 fw-bold fs-6 p-2 rounded"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHẦN 3: LỊCH SỬ KIỂM KÊ -->
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center py-3">
+                <h5 class="mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i> 3. Lịch Sử Đã Kiểm Kê</h5>
+                <button class="btn btn-light btn-sm fw-semibold" onclick="refreshData()"><i class="fa-solid fa-rotate me-1"></i> Làm mới</button>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="historyTable" class="table table-striped table-hover align-middle w-100">
+                        <thead class="table-light">
+                            <tr>
+                                <th>STT</th>
+                                <th>Mã TS</th>
+                                <th>Tên Tài Sản</th>
+                                <th>Cán Bộ KK</th>
+                                <th>Thời Gian</th>
+                                <th>Ghi Chú</th>
+                                <th class="text-center">Xóa</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
     </div>
 
     <!-- Bootstrap 5 & SweetAlert2 JS -->
@@ -333,8 +319,8 @@
             document.getElementById('assetId').setAttribute('readonly', true);
             document.getElementById('assetName').value = name;
             document.getElementById('assetRoom').value = room;
-            const tab = new bootstrap.Tab(document.querySelector('#pills-assets-tab'));
-            tab.show();
+            // Cuộn trang lên đầu để dễ thao tác sửa
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetForm() {
