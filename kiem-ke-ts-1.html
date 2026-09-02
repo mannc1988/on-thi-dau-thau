@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro</title>
+    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Bảo Mật AES)</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -11,14 +11,17 @@
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     
-    <!-- DataTables Bootstrap 5 CSS (Dùng CDNJS chống bị chặn) -->
+    <!-- DataTables Bootstrap 5 CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-bs5/1.13.6/dataTables.bootstrap5.min.css">
     
-    <!-- jQuery & DataTables JS (Dùng CDNJS chống bị chặn) -->
+    <!-- jQuery & DataTables JS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.0/jquery.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net/1.13.6/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-bs5/1.13.6/dataTables.bootstrap5.min.js"></script>
     
+    <!-- Crypto-JS dùng để mã hóa AES phía Client trước khi gửi lên Aiven MySQL -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+
     <!-- QR Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
@@ -28,17 +31,30 @@
         .card-header { border-radius: 12px 12px 0 0 !important; font-weight: 600; }
         #reader { border: 2px dashed #0d6efd; border-radius: 8px; background: #fff; }
         
-        /* Tùy chỉnh Header bảng và khoảng hở icon Order tam giác trên/dưới */
         .table thead th {
-    background-color: #f1f5f9;
-    color: #334155;
-    font-weight: 600;
-    text-transform: uppercase;
-    font-size: 0.75rem;
-    letter-spacing: 0.5px;
-    padding: 12px;
-    border-bottom: 2px solid #e2e8f0;
-}
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.5px;
+            padding: 12px;
+            border-bottom: 2px solid #e2e8f0;
+            position: relative;
+        }
+        table.dataTable thead th.sorting, 
+        table.dataTable thead th.sorting_asc, 
+        table.dataTable thead th.sorting_desc {
+            padding-right: 30px !important;
+        }
+        table.dataTable thead th.sorting:before, 
+        table.dataTable thead th.sorting:after,
+        table.dataTable thead th.sorting_asc:before, 
+        table.dataTable thead th.sorting_asc:after,
+        table.dataTable thead th.sorting_desc:before, 
+        table.dataTable thead th.sorting_desc:after {
+            bottom: 12px !important;
+        }
     </style>
 </head>
 <body class="py-4">
@@ -46,14 +62,14 @@
     <div class="container">
         <!-- Header -->
         <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN QR</h2>
-            <p class="text-muted">Hệ thống Full CRUD kết hợp DataTables Server-side & Quét QR liên tục</p>
+            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN QR (AES ENCRYPTED)</h2>
+            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối trước khi lưu vào Aiven MySQL</p>
         </div>
 
         <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD) -->
         <div class="card shadow-sm">
             <div class="card-header bg-success text-white py-3">
-                <h5 class="mb-0"><i class="fa-solid fa-laptop me-2"></i> 1. Quản Lý Danh Mục Tài Sản (CRUD)</h5>
+                <h5 class="mb-0"><i class="fa-solid fa-laptop me-2"></i> 1. Quản Lý Danh Mục Tài Sản (Mã Hóa AES)</h5>
             </div>
             <div class="card-body">
                 <form id="assetForm" onsubmit="saveAsset(event)" class="mb-4 pb-3 border-bottom">
@@ -72,7 +88,7 @@
                         </div>
                         <div class="col-12 text-end">
                             <button type="button" class="btn btn-secondary px-4 me-2" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i> Làm mới</button>
-                            <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu Vào Database</button>
+                            <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu Đã Mã Hóa</button>
                         </div>
                     </div>
                 </form>
@@ -83,8 +99,8 @@
                             <tr>
                                 <th>STT</th>
                                 <th>Mã TS</th>
-                                <th>Tên Tài Sản</th>
-                                <th>Phòng Ban</th>
+                                <th>Tên Tài Sản (Giải Mã)</th>
+                                <th>Phòng Ban (Giải Mã)</th>
                                 <th class="text-center">Thao Tác</th>
                             </tr>
                         </thead>
@@ -113,7 +129,7 @@
                                 <input type="text" id="txtNguoiKK" class="form-control border-primary-subtle" value="Nguyễn Cao Mẫn">
                             </div>
                             <div class="alert alert-info py-2 small mb-0">
-                                <i class="fa-solid fa-circle-info me-1"></i> Camera tự động nhận diện liên tục và phát âm thanh khi quét thành công.
+                                <i class="fa-solid fa-circle-info me-1"></i> Dữ liệu quét sẽ được mã hóa AES trước khi ghi nhận lịch sử.
                             </div>
                         </div>
                     </div>
@@ -141,10 +157,10 @@
                             <tr>
                                 <th>STT</th>
                                 <th>Mã TS</th>
-                                <th>Tên Tài Sản</th>
+                                <th>Tên Tài Sản (Giải Mã)</th>
                                 <th>Cán Bộ KK</th>
                                 <th>Thời Gian</th>
-                                <th>Ghi Chú</th>
+                                <th>Ghi Chú (Giải Mã)</th>
                                 <th class="text-center">Xóa</th>
                             </tr>
                         </thead>
@@ -163,12 +179,31 @@
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
 
-    <!-- Script logic -->
+    <!-- Script Logic tích hợp mã hóa AES -->
     <script>
         const API_URL = 'https://kiem-ke-tai-san-vercel.vercel.app/api';
+        const SECRET_KEY = 'ManNC@2026_SecureKeyAivenMySQL!'; // Khóa bí mật dùng chung mã hóa/giải mã
+        
         let danhSachTS = [];
         let isScanning = true;
         let assetsTable, historyTable;
+
+        // Các hàm Mã hóa & Giải mã AES sử dụng thư viện CryptoJS
+        function encryptData(plainText) {
+            if (!plainText) return '';
+            return CryptoJS.AES.encrypt(plainText.toString(), SECRET_KEY).toString();
+        }
+
+        function decryptData(cipherText) {
+            if (!cipherText) return '';
+            try {
+                const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
+                const originalText = bytes.toString(CryptoJS.enc.Utf8);
+                return originalText || cipherText; // Trả về chuỗi gốc nếu giải mã thành công, không thì trả nguyên bản
+            } catch (e) {
+                return cipherText; // Trả về text gốc nếu dữ liệu cũ chưa mã hóa
+            }
+        }
 
         function playBeep() {
             try {
@@ -192,18 +227,19 @@
                 processing: true,
                 ajax: {
                     url: `${API_URL}?action=server_assets`,
-                    type: 'GET'
+                    type: 'GET',
+                    dataDcs: function(d) { return d; }
                 },
                 columns: [
                     { data: null, render: (data, type, row, meta) => meta.settings._iDisplayStart + meta.row + 1 },
                     { data: 'id', render: data => `<span class="badge bg-secondary">${data}</span>` },
-                    { data: 'name', render: data => `<span class="fw-semibold">${data}</span>` },
-                    { data: 'room' },
+                    { data: 'name', render: data => `<span class="fw-semibold">${decryptData(data)}</span>` }, // Tự động giải mã tên tài sản
+                    { data: 'room', render: data => decryptData(data) }, // Tự động giải mã phòng ban
                     { 
                         data: 'id', 
                         className: 'text-center',
                         render: (data, type, row) => `
-                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${row.name}', '${row.room}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${decryptData(row.name)}', '${decryptData(row.room)}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn btn-danger btn-sm" onclick="deleteAsset('${row.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                         `
                     }
@@ -229,10 +265,10 @@
                 columns: [
                     { data: null, render: (data, type, row, meta) => meta.settings._iDisplayStart + meta.row + 1 },
                     { data: 'tsId', render: data => `<span class="badge bg-secondary">${data}</span>` },
-                    { data: 'tsName', render: data => `<span class="fw-semibold text-dark">${data}</span>` },
+                    { data: 'tsName', render: data => `<span class="fw-semibold text-dark">${decryptData(data)}</span>` }, // Giải mã tên tài sản lịch sử
                     { data: 'nguoiKK' },
                     { data: 'thoiGian', render: data => `<span class="text-muted small">${data}</span>` },
-                    { data: 'ghiChu', render: data => `<span class="badge bg-success-subtle text-success border border-success-subtle">${data}</span>` },
+                    { data: 'ghiChu', render: data => `<span class="badge bg-success-subtle text-success border border-success-subtle">${decryptData(data)}</span>` }, // Giải mã ghi chú lịch sử
                     { 
                         data: 'id', 
                         className: 'text-center',
@@ -259,7 +295,13 @@
                 const response = await fetch(`${API_URL}?action=data`);
                 const result = await response.json();
                 if (result.success) {
-                    danhSachTS = result.danh_sach; // Cache dùng để đối soát khi quét QR
+                    // Giải mã ngầm cache để đối soát QR chính xác
+                    danhSachTS = result.danh_sach.map(item => ({
+                        ...item,
+                        name: decryptData(item.name),
+                        room: decryptData(item.room)
+                    }));
+                    
                     const selectDot = document.getElementById('selectDot');
                     selectDot.innerHTML = '';
                     result.dot_kiem_ke.forEach(d => {
@@ -278,8 +320,12 @@
         async function saveAsset(e) {
             e.preventDefault();
             const id = document.getElementById('assetId').value.trim();
-            const name = document.getElementById('assetName').value.trim();
-            const room = document.getElementById('assetRoom').value.trim();
+            const rawName = document.getElementById('assetName').value.trim();
+            const rawRoom = document.getElementById('assetRoom').value.trim();
+
+            // MÃ HÓA AES DỮ LIỆU TRƯỚC KHI GỬI LÊN DATABASE AIVEN MYSQL
+            const name = encryptData(rawName);
+            const room = encryptData(rawRoom);
 
             try {
                 const response = await fetch(`${API_URL}?action=save_asset`, {
@@ -289,7 +335,7 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã lưu tài sản vào Database.', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu vào Aiven MySQL.', timer: 1500, showConfirmButton: false });
                     resetForm();
                     refreshData();
                 } else {
@@ -305,7 +351,6 @@
             document.getElementById('assetId').setAttribute('readonly', true);
             document.getElementById('assetName').value = name;
             document.getElementById('assetRoom').value = room;
-            // Cuộn trang lên đầu để dễ thao tác sửa
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
@@ -385,8 +430,12 @@
             const nguoiKK = document.getElementById('txtNguoiKK').value || 'Nhân viên';
 
             const asset = danhSachTS.find(t => t.id === tsId);
-            const tsName = asset ? asset.name : `Tài sản quét (${tsId})`;
+            const rawTsName = asset ? asset.name : `Tài sản quét (${tsId})`;
             const thoiGian = new Date().toLocaleString('vi-VN');
+
+            // Mã hóa tên tài sản và ghi chú kiểm kê trước khi đẩy lên server lịch sử
+            const tsName = encryptData(rawTsName);
+            const ghiChu = encryptData('Quét QR Liên Tục');
 
             const resultDiv = document.getElementById('scan-result');
             resultDiv.className = 'mt-3 fw-bold fs-6 p-2 bg-warning-subtle text-warning border border-warning rounded';
@@ -396,14 +445,14 @@
                 const response = await fetch(`${API_URL}?action=history`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ dotId, tsId, tsName, nguoiKK, thoiGian, ghiChu: 'Quét QR Liên Tục' })
+                    body: JSON.stringify({ dotId, tsId, tsName, nguoiKK, thoiGian, ghiChu })
                 });
                 const result = await response.json();
                 
                 if (result.success) {
                     playBeep();
                     resultDiv.className = 'mt-3 fw-bold fs-6 p-2 bg-success-subtle text-success border border-success rounded';
-                    resultDiv.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i> Ghi nhận thành công: ${tsName}!`;
+                    resultDiv.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i> Ghi nhận thành công: ${rawTsName}!`;
                     refreshData();
                 } else {
                     resultDiv.className = 'mt-3 fw-bold fs-6 p-2 bg-danger-subtle text-danger border border-danger rounded';
