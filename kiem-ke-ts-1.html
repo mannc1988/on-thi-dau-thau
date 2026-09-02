@@ -128,9 +128,7 @@
                                         <th class="text-center">Thao Tác</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableAssets">
-                                    <tr><td colspan="5" class="text-center text-muted">Đang tải...</td></tr>
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -158,9 +156,7 @@
                                         <th class="text-center">Xóa</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableHistory">
-                                    <tr><td colspan="7" class="text-center text-muted py-3">Đang tải dữ liệu...</td></tr>
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -188,11 +184,17 @@
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/dataTables.responsive.min.js"></script>
     <script src="https://cdn.datatables.net/responsive/2.5.0/js/responsive.bootstrap5.min.js"></script>
 
+    <!-- CÔNG CỤ XEM LỖI F12 TRÊN ĐIỆN THOẠI (Eruda) -->
+    <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
+    <script>eruda.init();</script>
+
     <!-- Script xử lý Logic -->
     <script>
         const API_URL = 'https://kiem-ke-tai-san-vercel.vercel.app/api';
         let danhSachTS = [];
         let isScanning = true;
+        let assetsTableInstance = null;
+        let historyTableInstance = null;
 
         function playBeep() {
             try {
@@ -209,10 +211,36 @@
             } catch (e) {}
         }
 
+        $(document).ready(function() {
+            assetsTableInstance = $('#assetsTable').DataTable({
+                responsive: true,
+                dom: '<"row mb-3"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                buttons: [
+                    { extend: 'excel', text: '<i class="fa-solid fa-file-excel me-1"></i> Excel', className: 'btn btn-success btn-sm' },
+                    { extend: 'pdf', text: '<i class="fa-solid fa-file-pdf me-1"></i> PDF', className: 'btn btn-danger btn-sm' }
+                ],
+                language: { search: "Tìm kiếm:", lengthMenu: "Hiển thị _MENU_ dòng", info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng", zeroRecords: "Không tìm thấy dữ liệu", infoEmpty: "0 dòng" }
+            });
+
+            historyTableInstance = $('#historyTable').DataTable({
+                responsive: true,
+                dom: '<"row mb-3"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
+                buttons: [
+                    { extend: 'excel', text: '<i class="fa-solid fa-file-excel me-1"></i> Excel', className: 'btn btn-success btn-sm' },
+                    { extend: 'pdf', text: '<i class="fa-solid fa-file-pdf me-1"></i> PDF', className: 'btn btn-danger btn-sm' }
+                ],
+                language: { search: "Tìm kiếm:", lengthMenu: "Hiển thị _MENU_ dòng", info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng", zeroRecords: "Không tìm thấy dữ liệu", infoEmpty: "0 dòng" },
+                order: [[0, "desc"]]
+            });
+
+            loadData();
+        });
+
         async function loadData() {
             try {
                 const response = await fetch(`${API_URL}?action=data`);
                 const result = await response.json();
+                
                 if (result.success) {
                     danhSachTS = result.danh_sach;
                     
@@ -222,93 +250,47 @@
                         selectDot.innerHTML += `<option value="${d.id}">${d.name}</option>`;
                     });
 
-                    // Hủy DataTables cũ nếu đã tồn tại
-                    if ($.fn.DataTable.isDataTable('#assetsTable')) {
-                        $('#assetsTable').DataTable().destroy();
-                    }
-                    if ($.fn.DataTable.isDataTable('#historyTable')) {
-                        $('#historyTable').DataTable().destroy();
-                    }
-
-                    // Đổ dữ liệu Bảng Tài Sản
-                    const tableAssets = document.getElementById('tableAssets');
-                    tableAssets.innerHTML = '';
+                    let assetDataRows = [];
                     danhSachTS.forEach((item, index) => {
-                        tableAssets.innerHTML += `
-                            <tr>
-                                <td>${index + 1}</td>
-                                <td><span class="badge bg-secondary">${item.id}</span></td>
-                                <td class="fw-semibold">${item.name}</td>
-                                <td>${item.room}</td>
-                                <td class="text-center">
-                                    <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${item.id}', '${item.name}', '${item.room}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
-                                    <button class="btn btn-danger btn-sm" onclick="deleteAsset('${item.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                        `;
+                        assetDataRows.push([
+                            index + 1,
+                            `<span class="badge bg-secondary">${item.id}</span>`,
+                            `<span class="fw-semibold">${item.name}</span>`,
+                            item.room,
+                            `<div class="text-center">
+                                <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${item.id}', '${item.name}', '${item.room}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                                <button class="btn btn-danger btn-sm" onclick="deleteAsset('${item.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                             </div>`
+                        ]);
                     });
+                    assetsTableInstance.clear();
+                    assetsTableInstance.rows.add(assetDataRows);
+                    assetsTableInstance.draw();
 
-                    // Đổ dữ liệu Bảng Lịch Sử
-                    const tableHistory = document.getElementById('tableHistory');
-                    tableHistory.innerHTML = '';
-                    if (result.lich_su.length === 0) {
-                        tableHistory.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-3">Chưa có tài sản nào được kiểm kê.</td></tr>`;
-                    } else {
-                        result.lich_su.forEach((item, index) => {
-                            tableHistory.innerHTML += `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td><span class="badge bg-secondary">${item.tsId}</span></td>
-                                    <td class="fw-semibold text-dark">${item.tsName}</td>
-                                    <td>${item.nguoiKK}</td>
-                                    <td class="text-muted small">${item.thoiGian}</td>
-                                    <td><span class="badge bg-success-subtle text-success border border-success-subtle">${item.ghiChu}</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteHistory(${item.id})" title="Xóa lịch sử"><i class="fa-solid fa-xmark"></i></button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
-                    }
-
-                    // Khởi tạo DataTables kèm nút xuất Excel/PDF và Responsive
-                    $('#assetsTable').DataTable({
-                        responsive: true,
-                        dom: '<"row mb-3"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
-                        buttons: [
-                            { extend: 'excel', text: '<i class="fa-solid fa-file-excel me-1"></i> Excel', className: 'btn btn-success btn-sm' },
-                            { extend: 'pdf', text: '<i class="fa-solid fa-file-pdf me-1"></i> PDF', className: 'btn btn-danger btn-sm' }
-                        ],
-                        language: {
-                            search: "Tìm kiếm:",
-                            lengthMenu: "Hiển thị _MENU_ dòng",
-                            info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-                            paginate: { first: "Đầu", last: "Cuối", next: "Sau", previous: "Trước" },
-                            zeroRecords: "Không tìm thấy dữ liệu phù hợp",
-                            infoEmpty: "Hiển thị 0 đến 0 của 0 dòng"
-                        }
+                    let historyDataRows = [];
+                    result.lich_su.forEach((item, index) => {
+                        historyDataRows.push([
+                            index + 1,
+                            `<span class="badge bg-secondary">${item.tsId}</span>`,
+                            `<span class="fw-semibold text-dark">${item.tsName}</span>`,
+                            item.nguoiKK,
+                            `<span class="text-muted small">${item.thoiGian}</span>`,
+                            `<span class="badge bg-success-subtle text-success border border-success-subtle">${item.ghiChu}</span>`,
+                            `<div class="text-center">
+                                <button class="btn btn-outline-danger btn-sm" onclick="deleteHistory(${item.id})" title="Xóa lịch sử"><i class="fa-solid fa-xmark"></i></button>
+                             </div>`
+                        ]);
                     });
+                    historyTableInstance.clear();
+                    historyTableInstance.rows.add(historyDataRows);
+                    historyTableInstance.draw();
 
-                    $('#historyTable').DataTable({
-                        responsive: true,
-                        dom: '<"row mb-3"<"col-md-6"B><"col-md-6"f>>rt<"row"<"col-md-6"i><"col-md-6"p>>',
-                        buttons: [
-                            { extend: 'excel', text: '<i class="fa-solid fa-file-excel me-1"></i> Excel', className: 'btn btn-success btn-sm' },
-                            { extend: 'pdf', text: '<i class="fa-solid fa-file-pdf me-1"></i> PDF', className: 'btn btn-danger btn-sm' }
-                        ],
-                        language: {
-                            search: "Tìm kiếm:",
-                            lengthMenu: "Hiển thị _MENU_ dòng",
-                            info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
-                            paginate: { first: "Đầu", last: "Cuối", next: "Sau", previous: "Trước" },
-                            zeroRecords: "Không tìm thấy dữ liệu phù hợp",
-                            infoEmpty: "Hiển thị 0 đến 0 của 0 dòng"
-                        },
-                        order: [[0, "desc"]]
-                    });
+                } else {
+                    Swal.fire('Lỗi', result.error || 'Không thể tải dữ liệu từ server', 'error');
                 }
             } catch (err) {
-                console.error('Lỗi tải dữ liệu:', err);
+                console.error('Lỗi kết nối:', err);
+                Swal.fire('Lỗi kết nối', 'Không thể giao tiếp với API Vercel!', 'error');
             }
         }
 
@@ -326,13 +308,7 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Thành công!',
-                        text: 'Đã lưu tài sản vào Database.',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
+                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã lưu tài sản vào Database.', timer: 1500, showConfirmButton: false });
                     resetForm();
                     loadData();
                 } else {
@@ -468,8 +444,6 @@
             "reader", { fps: 15, qrbox: 250 }, false
         );
         html5QrcodeScanner.render(onScanSuccess, (err) => {});
-
-        loadData();
     </script>
 </body>
-        </html>
+</html>
