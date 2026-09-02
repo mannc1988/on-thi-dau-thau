@@ -18,7 +18,7 @@
         .card { border: none; border-radius: 10px; box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075); }
         .card-stats { border-left: 4px solid var(--primary-color); transition: transform 0.2s; }
         .card-stats:hover { transform: translateY(-3px); }
-        #reader { width: 100%; max-width: 450px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 2px dashed #0d6efd; }
+        #reader { width: 100%; max-width: 450px; margin: 0 auto; border-radius: 12px; overflow: hidden; border: 2px dashed #0d6efd; background: #000; }
         .table th { font-weight: 600; color: #495057; background-color: #f8f9fa !important; }
         .badge { font-weight: 500; padding: 0.5em 0.75em; }
     </style>
@@ -47,7 +47,7 @@
                 <i class="fa-solid fa-bullhorn me-1"></i> Đợt kiểm kê đang hoạt động: <strong id="lblDotHienTai" class="text-dark">Chưa chọn đợt</strong>
             </div>
             <button class="btn btn-danger btn-sm px-3 shadow-sm" onclick="moModalQuetQR()">
-                <i class="fa-solid fa-camera-retro me-1"></i> Mở Máy Quét QR
+                <i class="fa-solid fa-camera-retro me-1"></i> Mở Máy Quét QR Liên Tục
             </button>
         </div>
 
@@ -76,12 +76,12 @@
         <!-- Tabs Điều Hướng -->
         <ul class="nav nav-pills mb-3 shadow-sm p-1 bg-white rounded" id="myTab" role="tablist">
             <li class="nav-item flex-fill text-center" role="presentation">
-                <button class="nav-link active w-100" id="danhmuc-tab" data-bs-toggle="tab" data-bs-target="#danhmuc" type="user">
+                <button class="nav-link active w-100" id="danhmuc-tab" data-bs-toggle="tab" data-bs-target="#danhmuc" type="button">
                     <i class="fa-solid fa-list-check me-1"></i> Danh Sách Tài Sản & Trạng Thái
                 </button>
             </li>
             <li class="nav-item flex-fill text-center" role="presentation">
-                <button class="nav-link w-100" id="lichsu-tab" data-bs-toggle="tab" data-bs-target="#lichsu" type="user">
+                <button class="nav-link w-100" id="lichsu-tab" data-bs-toggle="tab" data-bs-target="#lichsu" type="button">
                     <i class="fa-solid fa-clock-rotate-left me-1"></i> Lịch Sử Quét Kiểm Kê
                 </button>
             </li>
@@ -141,15 +141,15 @@
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
                 <div class="modal-header bg-primary text-white">
-                    <h5 class="modal-title"><i class="fa-solid fa-camera me-1"></i> Quét Mã QR Tài Sản</h5>
+                    <h5 class="modal-title"><i class="fa-solid fa-camera me-1"></i> Quét Mã QR Liên Tục</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" onclick="dungQuetQR()"></button>
                 </div>
                 <div class="modal-body text-center p-4">
                     <div id="reader"></div>
-                    <div id="qr-result" class="mt-3 text-muted small">Đang khởi động camera...</div>
+                    <div id="qr-status-indicator" class="mt-3 text-success fw-bold"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang sẵn sàng quét mã tiếp theo...</div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal" onclick="dungQuetQR()">Đóng Camera</button>
+                    <button type="button" class="btn btn-secondary w-100" data-bs-dismiss="modal" onclick="dungQuetQR()">Đóng Máy Quét</button>
                 </div>
             </div>
         </div>
@@ -203,6 +203,7 @@
         }
 
         let html5QrCode = null;
+        let isProcessingScan = false; // Biến chống quét đè/trùng lặp liên tục trong tích tắc
 
         function getData(key) { return JSON.parse(localStorage.getItem(key)); }
         function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
@@ -329,7 +330,7 @@
             });
         }
 
-        // --- QUÉT QR & SWEETALERT2 NHẬP LIỆU ---
+        // --- MỞ CAMERA QUÉT LIÊN TỤC ---
         function moModalQuetQR() {
             let dot = getDotHienTai();
             if (!dot) {
@@ -345,6 +346,7 @@
             if (html5QrCode) {
                 try { html5QrCode.clear(); } catch(e) {}
             }
+            isProcessingScan = false;
             html5QrCode = new Html5Qrcode("reader");
             html5QrCode.start(
                 { facingMode: "environment" },
@@ -353,85 +355,79 @@
                 onScanFailure
             ).catch(err => {
                 console.error("Lỗi camera:", err);
-                document.getElementById('qr-result').innerHTML = `<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Không mở được camera. Hãy đảm bảo cấp quyền hoặc chạy trên HTTPS/Localhost.</span>`;
+                document.getElementById('qr-status-indicator').innerHTML = `<span class="text-danger"><i class="fa-solid fa-triangle-exclamation"></i> Không mở được camera. Hãy đảm bảo cấp quyền hoặc chạy trên HTTPS/Localhost.</span>`;
             });
         }
 
+        // --- XỬ LÝ KHI QUÉT TRÚNG MÃ QR ---
         async function onScanSuccess(decodedText, decodedResult) {
+            if (isProcessingScan) return; // Chặn quét chồng chéo nhiều khung hình liên tiếp
+            isProcessingScan = true;
+
             let danhSachTS = getData('ts_danh_sach');
             let ts = danhSachTS.find(item => item.id === decodedText);
 
+            // 1. Kiểm tra tồn tại theo Mã Tài Sản
             if (!ts) {
-                Swal.fire({ icon: 'error', title: 'Mã không hợp lệ', text: `Mã QR "${decodedText}" không tồn tại trong danh mục tài sản!`, timer: 2000 });
+                document.getElementById('qr-status-indicator').innerHTML = `<span class="text-danger"><i class="fa-solid fa-circle-xmark"></i> Mã QR "${decodedText}" không tồn tại trong hệ thống!</span>`;
+                await playSoundAlert('error');
+                setTimeout(() => { isProcessingScan = false; }, 2500);
                 return;
             }
 
             let dot = getDotHienTai();
             let lichSu = getData('ts_lich_su');
 
+            // 2. Kiểm tra tồn tại theo Mã TS và Đợt Kiểm Kê hiện tại
             let daQuyet = lichSu.some(l => l.dotId === dot.id && l.tsId === ts.id);
             if (daQuyet) {
-                Swal.fire({ icon: 'warning', title: 'Đã kiểm kê rồi', text: `Tài sản ${ts.name} (${ts.id}) đã được ghi nhận trước đó trong đợt này!`, timer: 2500 });
+                document.getElementById('qr-status-indicator').innerHTML = `<span class="text-warning"><i class="fa-solid fa-triangle-exclamation"></i> TS ${ts.id} (${ts.name}) đã được kiểm kê trước đó trong đợt này!</span>`;
+                await playSoundAlert('warning');
+                setTimeout(() => { isProcessingScan = false; }, 2500);
                 return;
             }
 
-            // Tạm dừng quét khi hiện popup SweetAlert2
-            if (html5QrCode && html5QrCode.isScanning) {
-                await html5QrCode.pause();
-            }
+            // Ghi nhận thành công & Lưu vào Lịch sử cho đợt hiện tại
+            document.getElementById('qr-status-indicator').innerHTML = `<span class="text-success"><i class="fa-solid fa-circle-check"></i> Đã nhận mã: ${ts.id} - Đang lưu...</span>`;
+            
+            let now = new Date();
+            let timeString = now.toLocaleDateString('vi-VN') + ' ' + now.toLocaleTimeString('vi-VN');
+            
+            // Lấy tên người thực hiện mặc định hoặc yêu cầu nhanh
+            let nguoiKiemKe = "Nguyễn Cao Mẫn"; // Bạn có thể thay đổi hoặc giữ định danh cá nhân
 
-            // Hộp thoại SweetAlert2 chuyên nghiệp để nhập người thực hiện
-            const { value: nguoiKiemKe } = await Swal.fire({
-                title: 'Quét thành công mã tài sản!',
-                html: `<div class="text-start bg-light p-3 rounded mb-2">
-                    <div><strong>Mã TS:</strong> ${ts.id}</div>
-                    <div><strong>Tên:</strong> ${ts.name}</div>
-                    <div><strong>Phòng:</strong> ${ts.room}</div>
-                </div>`,
-                input: 'text',
-                inputLabel: 'Nhập tên người thực hiện kiểm kê:',
-                inputValue: 'Nguyễn Cao Mẫn',
-                inputValidator: (value) => {
-                    if (!value) return 'Bạn cần nhập tên người thực hiện!';
-                },
-                allowOutsideClick: false,
-                confirmButtonText: '<i class="fa-solid fa-check"></i> Lưu kết quả'
+            lichSu.push({
+                dotId: dot.id,
+                tsId: ts.id,
+                tsName: ts.name,
+                nguoiKK: nguoiKiemKe,
+                thoiGian: timeString,
+                ghiChu: "Quét QR liên tục thành công"
             });
 
-            if (nguoiKiemKe) {
-                let now = new Date();
-                let timeString = now.toLocaleDateString('vi-VN') + ' ' + now.toLocaleTimeString('vi-VN');
+            saveData('ts_lich_su', lichSu);
+            renderApp();
 
-                lichSu.push({
-                    dotId: dot.id,
-                    tsId: ts.id,
-                    tsName: ts.name,
-                    nguoiKK: nguoiKiemKe,
-                    thoiGian: timeString,
-                    ghiChu: "Quét QR thành công"
-                });
+            // Bật thông báo Toast nhanh gọn phía góc màn hình, camera vẫn chạy ngầm tiếp tục
+            Swal.fire({
+                toast: true,
+                position: 'top-end',
+                icon: 'success',
+                title: `Đã quét: ${ts.name} (${ts.id})`,
+                showConfirmButton: false,
+                timer: 1500,
+                timerProgressBar: true
+            });
 
-                saveData('ts_lich_su', lichSu);
-                renderApp();
-
-                Swal.fire({ icon: 'success', title: 'Đã lưu!', text: `Đã cập nhật trạng thái cho ${ts.name}`, timer: 1500, showConfirmButton: false });
-
-                // Tắt Modal Quét QR sau khi thành công
-                setTimeout(() => {
-                    dungQuetQR();
-                    let modalEl = document.getElementById('modalQuetQR');
-                    let modal = bootstrap.Modal.getInstance(modalEl);
-                    if (modal) modal.hide();
-                }, 1000);
-            } else {
-                if (html5QrCode && html5QrCode.isScanning) {
-                    await html5QrCode.resume();
-                }
-            }
+            // Đợi 2 giây để người dùng quét tiếp mã tiếp theo mà không cần tắt popup hay bật lại camera
+            setTimeout(() => {
+                document.getElementById('qr-status-indicator').innerHTML = `<span class="text-success"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang sẵn sàng quét mã tiếp theo...</span>`;
+                isProcessingScan = false;
+            }, 2000);
         }
 
         function onScanFailure(error) {
-            // Bỏ qua lỗi quét khung hình liên tục
+            // Bỏ qua lỗi quét khung hình liên tục (khi chưa bắt được mã QR trong khung)
         }
 
         function dungQuetQR() {
@@ -440,7 +436,27 @@
                     html5QrCode.clear();
                 }).catch(err => console.error(err));
             }
-            document.getElementById('qr-result').innerText = 'Camera đã dừng.';
+            isProcessingScan = false;
+        }
+
+        // Tạo tiếng bíp nhẹ giả lập thông báo qua Web Audio API
+        function playSoundAlert(type) {
+            try {
+                let ctx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc = ctx.createOscillator();
+                let gain = ctx.createGain();
+                osc.connect(gain);
+                gain.connect(ctx.destination);
+                if (type === 'error') {
+                    osc.frequency.value = 200; // Trầm cảnh báo
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                } else {
+                    osc.frequency.value = 600; // Thanh nhẹ
+                    gain.gain.setValueAtTime(0.05, ctx.currentTime);
+                }
+                osc.start();
+                osc.stop(ctx.currentTime + 0.15);
+            } catch(e) {}
         }
 
         // --- XUẤT BÁO CÁO EXCEL (CSV) ---
