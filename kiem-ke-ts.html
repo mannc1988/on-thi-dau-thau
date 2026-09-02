@@ -44,14 +44,20 @@
             </div>
         </div>
 
-        <!-- Thông báo Đợt Kiểm Kê hiện tại -->
-        <div class="alert alert-primary d-flex flex-column flex-sm-row justify-content-between align-items-center shadow-sm" role="alert">
+        <!-- Thông báo Đợt Kiểm Kê hiện tại & Nút chọn tính năng quét -->
+        <div class="alert alert-primary d-flex flex-column flex-sm-row justify-content-between align-items-center shadow-sm gap-2" role="alert">
             <div class="mb-2 mb-sm-0">
                 <i class="fa-solid fa-bullhorn me-1"></i> Đợt kiểm kê đang hoạt động: <strong id="lblDotHienTai" class="text-dark">Đang tải...</strong>
             </div>
-            <button class="btn btn-danger btn-sm px-3 shadow-sm" onclick="moModalQuetQR()">
-                <i class="fa-solid fa-camera-retro me-1"></i> Mở Máy Quét QR Liên Tục
-            </button>
+            <div class="d-flex gap-2">
+                <button class="btn btn-danger btn-sm px-3 shadow-sm" onclick="moModalQuetQR()">
+                    <i class="fa-solid fa-camera-retro me-1"></i> Mở Camera Quét
+                </button>
+                <label class="btn btn-warning btn-sm px-3 shadow-sm mb-0 text-dark fw-bold" style="cursor: pointer;">
+                    <i class="fa-solid fa-image me-1"></i> Quét QR Từ Ảnh
+                    <input type="file" id="qrFileInput" accept="image/*" class="d-none" onchange="xuLyQuetQRTuAnh(event)">
+                </label>
+            </div>
         </div>
 
         <!-- Thống kê nhanh -->
@@ -91,7 +97,7 @@
         </ul>
 
         <div class="tab-content" id="myTabContent">
-            <!-- Tab Danh Sách Tài Sản (Chỉ Đọc - Không có nút Thêm/Sửa/Xóa) -->
+            <!-- Tab Danh Sách Tài Sản -->
             <div class="tab-pane fade show active" id="danhmuc" role="tabpanel">
                 <div class="card p-3 shadow-sm">
                     <div class="table-responsive">
@@ -139,7 +145,7 @@
         </div>
     </div>
 
-    <!-- MODAL QUÉT QR -->
+    <!-- MODAL QUÉT QR CAMERA -->
     <div class="modal fade" id="modalQuetQR" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
@@ -182,7 +188,7 @@
         let html5QrCode = null;
         let isProcessingScan = false;
 
-        // Nạp dữ liệu từ file data.json đi kèm (Chế độ đọc)
+        // Nạp dữ liệu từ file data.json đi kèm
         async function loadDataJSON() {
             try {
                 let res = await fetch('data.json');
@@ -217,7 +223,6 @@
             let daKKCount = 0;
             let htmlTS = "";
 
-            // Chỉ hiển thị danh sách dạng xem (Read-only)
             appData.danh_sach.forEach(ts => {
                 let record = appData.lich_su.find(l => l.dotId === dotId && l.tsId === ts.id);
                 let trangThaiHTML = `<span class="badge bg-warning text-dark"><i class="fa-solid fa-hourglass-half me-1"></i> Chưa kiểm kê</span>`;
@@ -278,7 +283,7 @@
         async function themDotKK() {
             let ten = document.getElementById('txtTenDot').value.trim();
             if (!ten) return;
-            appData.dot_kiem_ke.forEach(d => d.active = false);
+            appdata.dot_kiem_ke.forEach(d => d.active = false);
             appData.dot_kiem_ke.push({ id: 'DOT_' + Date.now(), name: ten, active: true });
             renderApp();
             taiFileJSON();
@@ -298,7 +303,7 @@
             taiFileJSON();
         }
 
-        // Quét QR liên tục và cập nhật lịch sử
+        // --- XỬ LÝ QUÉT QR QUA CAMERA ---
         function moModalQuetQR() {
             let dot = getDotHienTai();
             if (!dot) return Swal.fire('Chưa chọn đợt', 'Vui lòng chọn đợt kiểm kê trước!', 'error');
@@ -321,19 +326,62 @@
         async function onScanSuccess(decodedText) {
             if (isProcessingScan) return;
             isProcessingScan = true;
+            XuLyMaQRTungKham(decodedText);
+            setTimeout(() => { isProcessingScan = false; }, 2000);
+        }
 
+        function dungQuetQR() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => html5QrCode.clear()).catch(err => {});
+            }
+            isProcessingScan = false;
+        }
+
+        // --- XỬ LÝ QUÉT QR TỪ FILE ẢNH TẢI LÊN ---
+        async function xuLyQuetQRTuAnh(event) {
+            let dot = getDotHienTai();
+            if (!dot) {
+                Swal.fire('Chưa chọn đợt', 'Vui lòng chọn đợt kiểm kê trước khi tải ảnh QR!', 'error');
+                event.target.value = '';
+                return;
+            }
+
+            let file = event.target.files[0];
+            if (!file) return;
+
+            // Hiển thị loading chờ giải mã ảnh
+            Swal.fire({
+                title: 'Đang đọc mã QR từ ảnh...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            // Sử dụng thư viện Html5Qrcode để quét file ảnh cục bộ
+            let html5QrCodeScanner = new Html5Qrcode("qr-temp-reader-div");
+            try {
+                let decodedText = await html5QrCodeScanner.scanFile(file, true);
+                Swal.close();
+                event.target.value = ''; // Reset input file
+                XuLyMaQRTungKham(decodedText);
+            } catch (err) {
+                Swal.close();
+                event.target.value = '';
+                Swal.fire('Không tìm thấy QR', 'Không thể đọc được mã QR từ tấm ảnh này. Vui lòng thử lại với ảnh rõ nét hơn!', 'error');
+            }
+        }
+
+        // --- HÀM XỬ LÝ CHUNG KHI NHẬN ĐƯỢC MÃ QR (TỪ CAMERA HOẶC ẢNH) ---
+        function XuLyMaQRTungKham(decodedText) {
             let ts = appData.danh_sach.find(item => item.id === decodedText);
             if (!ts) {
-                document.getElementById('qr-status-indicator').innerHTML = `<span class="text-danger">Mã QR "${decodedText}" không tồn tại trong hệ thống!</span>`;
-                setTimeout(() => { isProcessingScan = false; }, 2500);
+                Swal.fire({ icon: 'error', title: 'Mã không tồn tại', text: `Mã QR "${decodedText}" không có trong hệ thống danh mục!`, timer: 2500 });
                 return;
             }
 
             let dot = getDotHienTai();
             let daQuyet = appData.lich_su.some(l => l.dotId === dot.id && l.tsId === ts.id);
             if (daQuyet) {
-                document.getElementById('qr-status-indicator').innerHTML = `<span class="text-warning">TS ${ts.id} (${ts.name}) đã được kiểm kê trước đó!</span>`;
-                setTimeout(() => { isProcessingScan = false; }, 2500);
+                Swal.fire({ icon: 'warning', title: 'Đã kiểm kê rồi', text: `TS ${ts.id} (${ts.name}) đã được ghi nhận trước đó trong đợt này!`, timer: 2500 });
                 return;
             }
 
@@ -346,25 +394,19 @@
                 tsName: ts.name,
                 nguoiKK: 'Nguyễn Cao Mẫn',
                 thoiGian: timeString,
-                ghiChu: 'Quét QR Kiểm Kê'
+                ghiChu: 'Quét QR Thành Công'
             });
 
             renderApp();
-            taiFileJSON(); // Tự động tải file data.json mới chứa lịch sử quét
+            taiFileJSON(); // Tự động tải file data.json mới chứa lịch sử cập nhật
 
-            Swal.fire({ toast: true, position: 'top-end', icon: 'success', title: `Đã quét: ${ts.name}`, showConfirmButton: false, timer: 1500 });
-
-            setTimeout(() => {
-                document.getElementById('qr-status-indicator').innerHTML = `<span class="text-success">Đang sẵn sàng quét tiếp...</span>`;
-                isProcessingScan = false;
-            }, 2000);
-        }
-
-        function dungQuetQR() {
-            if (html5QrCode && html5QrCode.isScanning) {
-                html5QrCode.stop().then(() => html5QrCode.clear()).catch(err => {});
-            }
-            isProcessingScan = false;
+            Swal.fire({
+                icon: 'success',
+                title: 'Thành công!',
+                html: `Đã ghi nhận tài sản: <b>${ts.name}</b> (${ts.id})<br><small class="text-muted">File data.json mới đã được tải về.</small>`,
+                timer: 2000,
+                showConfirmButton: false
+            });
         }
 
         function exportExcel() {
@@ -383,5 +425,7 @@
         // Khởi chạy nạp dữ liệu
         loadDataJSON();
     </script>
+    <!-- Thêm div ẩn phục vụ quét file ảnh -->
+    <div id="qr-temp-reader-div" style="display: none;"></div>
 </body>
 </html>
