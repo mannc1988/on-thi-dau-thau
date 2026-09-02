@@ -22,6 +22,9 @@
     <!-- Crypto-JS dùng để mã hóa AES phía Client trước khi gửi lên Aiven MySQL -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
+    <!-- Thư viện SheetJS để đọc file Excel (.xlsx, .xls) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
     <!-- QR Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     
@@ -68,8 +71,17 @@
 
         <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD) -->
         <div class="card shadow-sm">
-            <div class="card-header bg-success text-white py-3">
+            <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
                 <h5 class="mb-0"><i class="fa-solid fa-laptop me-2"></i> 1. Quản Lý Danh Mục Tài Sản (Mã Hóa AES)</h5>
+                <div>
+                    <label for="excelFile" class="btn btn-light btn-sm text-success fw-bold mb-0 cursor-pointer shadow-sm">
+                        <i class="fa-solid fa-file-excel me-1"></i> Import Excel
+                    </label>
+                    <input type="file" id="excelFile" accept=".xlsx, .xls" class="d-none" onchange="importExcelData(event)">
+                    <a href="#" onclick="downloadTemplate(event)" class="btn btn-outline-light btn-sm ms-1" title="Tải file mẫu Excel">
+                        <i class="fa-solid fa-download"></i> Tải Mẫu
+                    </a>
+                </div>
             </div>
             <div class="card-body">
                 <form id="assetForm" onsubmit="saveAsset(event)" class="mb-4 pb-3 border-bottom">
@@ -179,7 +191,7 @@
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
 
-    <!-- Script Logic tích hợp mã hóa AES -->
+    <!-- Script Logic tích hợp mã hóa AES & Import Excel -->
     <script>
         const API_URL = 'https://kiem-ke-tai-san-vercel.vercel.app/api';
         const SECRET_KEY = 'ManNC@2026_SecureKeyAivenMySQL!'; // Khóa bí mật dùng chung mã hóa/giải mã
@@ -474,6 +486,95 @@
             "reader", { fps: 15, qrbox: 250 }, false
         );
         html5QrcodeScanner.render(onScanSuccess, (err) => {});
+
+        // --- CÁC HÀM XỬ LÝ IMPORT EXCEL THEO LÔ ---
+        function downloadTemplate(e) {
+            e.preventDefault();
+            const templateData = [
+                { "Mã Tài Sản": "TS001", "Tên Tài Sản": "Máy chiếu Sony", "Phòng Ban": "Phòng Họp A" },
+                { "Mã Tài Sản": "TS002", "Tên Tài Sản": "Laptop Dell Core i5", "Phòng Ban": "Phòng Kế Toán" }
+            ];
+            const ws = XLSX.utils.json_to_sheet(templateData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "DanhSachTaiSan");
+            XLSX.writeFile(wb, "Template_KiemKe_TaiSan.xlsx");
+        }
+
+        async function importExcelData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = async function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    const rows = XLSX.utils.sheet_to_json(worksheet);
+
+                    if (rows.length === 0) {
+                        Swal.fire('Cảnh báo', 'File Excel không có dữ liệu!', 'warning');
+                        return;
+                    }
+
+                    Swal.fire({
+                        title: 'Đang mã hóa & đồng bộ...',
+                        text: `Đang xử lý ${rows.length} tài sản từ file Excel. Vui lòng chờ...`,
+                        allowOutsideClick: false,
+                        didOpen: () => { Swal.showLoading(); }
+                    });
+
+                    let successCount = 0;
+                    let failCount = 0;
+
+                    for (let row of rows) {
+                        const id = String(row['Mã Tài Sản'] || row['MaTaiSan'] || row['id'] || '').trim();
+                        const rawName = String(row['Tên Tài Sản'] || row['TenTaiSan'] || row['name'] || '').trim();
+                        const rawRoom = String(row['Phòng Ban'] || row['PhongBan'] || row['room'] || '').trim();
+
+                        if (!id || !rawName) {
+                            failCount++;
+                            continue;
+                        }
+
+                        // Mã hóa AES từng dòng dữ liệu trước khi đẩy lên Aiven MySQL
+                        const name = encryptData(rawName);
+                        const room = encryptData(rawRoom);
+
+                        try {
+                            const response = await fetch(`${API_URL}?action=save_asset`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({ id, name, room })
+                            });
+                            const result = await response.json();
+                            if (result.success) {
+                                successCount++;
+                            } else {
+                                failCount++;
+                            }
+                        } catch (err) {
+                            failCount++;
+                        }
+                    }
+
+                    document.getElementById('excelFile').value = '';
+                    refreshData();
+
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Hoàn tất nhập dữ liệu lô!',
+                        html: `Thành công: <b>${successCount}</b> tài sản đã mã hóa AES.<br>${failCount > 0 ? `<span class="text-danger">Thất bại/Bỏ qua: ${failCount} dòng</span>` : ''}`
+                    });
+
+                } catch (error) {
+                    Swal.fire('Lỗi', 'Không thể đọc file Excel. Vui lòng kiểm tra lại định dạng!', 'error');
+                    document.getElementById('excelFile').value = '';
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
     </script>
 </body>
 </html>
