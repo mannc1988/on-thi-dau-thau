@@ -1,5 +1,11 @@
 {
-  "danh_sach": [],
-  "dot_kiem_ke": [],
+  "danh_sach": [
+    { "id": "TS001", "name": "Máy tính Dell Latitude", "room": "Phòng Kế Toán" },
+    { "id": "TS002", "name": "Máy in HP LaserJet", "room": "Phòng Hành Chính" },
+    { "id": "TS003", "name": "Bàn làm việc gỗ", "room": "Phòng Giám Đốc" }
+  ],
+  "dot_kiem_ke": [
+    { "id": "DOT_01", "name": "Kiểm kê Quý 1/2026", "active": true }
+  ],
   "lich_su": []
 }
