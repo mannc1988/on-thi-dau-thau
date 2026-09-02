@@ -28,22 +28,22 @@
             <p class="text-muted">Hệ thống Full CRUD kết hợp quét mã liên tục thời gian thực</p>
         </div>
 
-        <!-- Tab Điều Hướng Chức Năng -->
+        <!-- Tab Điều Hướng -->
         <ul class="nav nav-pills justify-content-center mb-4 gap-2" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
-                <button class="nav-link active shadow-sm" id="pills-scan-tab" data-bs-toggle="pill" data-bs-target="#pills-scan" type="button" role="tab"><i class="fa-solid fa-camera me-1"></i> Quét QR Kiểm Kê</button>
+                <button class="nav-link active shadow-sm" id="pills-scan-tab" data-bs-toggle="pill" data-bs-target="#pills-scan" type="button"><i class="fa-solid fa-camera me-1"></i> Quét QR Kiểm Kê</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link shadow-sm" id="pills-assets-tab" data-bs-toggle="pill" data-bs-target="#pills-assets" type="button" role="tab"><i class="fa-solid fa-laptop me-1"></i> Quản Lý Danh Mục Tài Sản</button>
+                <button class="nav-link shadow-sm" id="pills-assets-tab" data-bs-toggle="pill" data-bs-target="#pills-assets" type="button"><i class="fa-solid fa-laptop me-1"></i> Quản Lý Danh Mục Tài Sản</button>
             </li>
             <li class="nav-item" role="presentation">
-                <button class="nav-link shadow-sm" id="pills-history-tab" data-bs-toggle="pill" data-bs-target="#pills-history" type="button" role="tab"><i class="fa-solid fa-clock-rotate-left me-1"></i> Lịch Sử Kiểm Kê</button>
+                <button class="nav-link shadow-sm" id="pills-history-tab" data-bs-toggle="pill" data-bs-target="#pills-history" type="button"><i class="fa-solid fa-clock-rotate-left me-1"></i> Lịch Sử Kiểm Kê</button>
             </li>
         </ul>
 
         <div class="tab-content" id="pills-tabContent">
             
-            <!-- TAB 1: QUÉT QR LIÊN TỤC -->
+            <!-- TAB 1: QUÉT QR -->
             <div class="tab-pane fade show active" id="pills-scan" role="tabpanel">
                 <div class="row">
                     <div class="col-lg-5 mb-4">
@@ -59,7 +59,7 @@
                                     <input type="text" id="txtNguoiKK" class="form-control border-primary-subtle" value="Nguyễn Cao Mẫn">
                                 </div>
                                 <div class="alert alert-info py-2 small mb-0">
-                                    <i class="fa-solid fa-circle-info me-1"></i> Camera sẽ tự động nhận diện liên tục. Mỗi mã quét thành công sẽ phát âm thanh báo hiệu.
+                                    <i class="fa-solid fa-circle-info me-1"></i> Camera tự động nhận diện liên tục và phát âm thanh khi quét thành công.
                                 </div>
                             </div>
                         </div>
@@ -76,7 +76,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD) -->
+            <!-- TAB 2: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD THẬT) -->
             <div class="tab-pane fade" id="pills-assets" role="tabpanel">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
@@ -99,7 +99,7 @@
                                 </div>
                                 <div class="col-12 text-end">
                                     <button type="button" class="btn btn-secondary px-4 me-2" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i> Làm mới</button>
-                                    <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu Tài Sản</button>
+                                    <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu Vào Database</button>
                                 </div>
                             </div>
                         </form>
@@ -164,14 +164,13 @@
         </div>
     </div>
 
-    <!-- Script xử lý Logic & CRUD -->
+    <!-- Script xử lý CRUD Thật -->
     <script>
         // THAY ĐƯỜNG DẪN API VERCEL CỦA BẠN VÀO ĐÂY (Có đuôi /api)
         const API_URL = 'https://kiem-ke-tai-san-vercel.vercel.app/api';
         let danhSachTS = [];
         let isScanning = true;
 
-        // Âm thanh báo quét thành công (Web Audio API)
         function playBeep() {
             try {
                 const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -184,10 +183,9 @@
                 gain.connect(ctx.destination);
                 osc.start();
                 osc.stop(ctx.currentTime + 0.15);
-            } catch (e) { console.log(e); }
+            } catch (e) {}
         }
 
-        // 1. Tải toàn bộ dữ liệu từ API
         async function loadData() {
             try {
                 const response = await fetch(`${API_URL}?action=data`);
@@ -195,14 +193,12 @@
                 if (result.success) {
                     danhSachTS = result.danh_sach;
                     
-                    // Đổ dữ liệu Select Đợt
                     const selectDot = document.getElementById('selectDot');
                     selectDot.innerHTML = '';
                     result.dot_kiem_ke.forEach(d => {
                         selectDot.innerHTML += `<option value="${d.id}">${d.name}</option>`;
                     });
 
-                    // Đổ dữ liệu Bảng Tài Sản (CRUD)
                     const tableAssets = document.getElementById('tableAssets');
                     tableAssets.innerHTML = '';
                     danhSachTS.forEach((item, index) => {
@@ -220,7 +216,6 @@
                         `;
                     });
 
-                    // Đổ dữ liệu Bảng Lịch Sử
                     const tableHistory = document.getElementById('tableHistory');
                     tableHistory.innerHTML = '';
                     if (result.lich_su.length === 0) {
@@ -248,7 +243,84 @@
             }
         }
 
-        // 2. Quét QR Liên Tục
+        // Gửi lệnh Lưu/Sửa Tài Sản xuống Database qua action=save_asset
+        async function saveAsset(e) {
+            e.preventDefault();
+            const id = document.getElementById('assetId').value.trim();
+            const name = document.getElementById('assetName').value.trim();
+            const room = document.getElementById('assetRoom').value.trim();
+
+            try {
+                const response = await fetch(`${API_URL}?action=save_asset`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ id, name, room })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    alert('Lưu tài sản thành công vào Database!');
+                    resetForm();
+                    loadData();
+                } else {
+                    alert('Lỗi: ' + result.error);
+                }
+            } catch (err) {
+                alert('Không thể kết nối máy chủ để lưu!');
+            }
+        }
+
+        function editAsset(id, name, room) {
+            document.getElementById('assetId').value = id;
+            document.getElementById('assetId').setAttribute('readonly', true);
+            document.getElementById('assetName').value = name;
+            document.getElementById('assetRoom').value = room;
+        }
+
+        function resetForm() {
+            document.getElementById('assetForm').reset();
+            document.getElementById('assetId').removeAttribute('readonly');
+        }
+
+        // Xóa Tài Sản khỏi Database qua action=delete_asset
+        async function deleteAsset(id) {
+            if (confirm(`Bạn có chắc muốn xóa tài sản [${id}] khỏi hệ thống?`)) {
+                try {
+                    const response = await fetch(`${API_URL}?action=delete_asset`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        loadData();
+                    } else {
+                        alert('Xóa thất bại!');
+                    }
+                } catch (err) {
+                    alert('Lỗi kết nối máy chủ!');
+                }
+            }
+        }
+
+        // Xóa Lịch sử kiểm kê qua action=delete_history
+        async function deleteHistory(id) {
+            if (confirm('Bạn có chắc muốn xóa dòng lịch sử này?')) {
+                try {
+                    const response = await fetch(`${API_URL}?action=delete_history`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ id })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        loadData();
+                    }
+                } catch (err) {
+                    alert('Lỗi kết nối máy chủ!');
+                }
+            }
+        }
+
         async function onScanSuccess(decodedText) {
             if (!isScanning) return;
             isScanning = false;
@@ -294,49 +366,15 @@
             }, 2500);
         }
 
-        function saveAsset(e) {
-            e.preventDefault();
-            alert('Tính năng lưu danh mục tài sản đã sẵn sàng giao tiếp API!');
-            resetForm();
-        }
-
-        function editAsset(id, name, room) {
-            document.getElementById('assetId').value = id;
-            document.getElementById('assetId').setAttribute('readonly', true);
-            document.getElementById('assetName').value = name;
-            document.getElementById('assetRoom').value = room;
-        }
-
-        function resetForm() {
-            document.getElementById('assetForm').reset();
-            document.getElementById('assetId').removeAttribute('readonly');
-        }
-
-        async function deleteAsset(id) {
-            if (confirm(`Bạn có chắc muốn xóa tài sản ${id}?`)) {
-                alert('Đã gửi yêu cầu xóa tài sản.');
-                loadData();
-            }
-        }
-
-        async function deleteHistory(id) {
-            if (confirm('Bạn có chắc muốn xóa dòng lịch sử này?')) {
-                alert('Đã xóa lịch sử kiểm kê.');
-                loadData();
-            }
-        }
-
-        // Khởi động Camera quét mã
         const html5QrcodeScanner = new Html5QrcodeScanner(
             "reader", { fps: 15, qrbox: 250 }, false
         );
-        html5QrcodeScanner.render(onScanSuccess, (err) => { /* Bỏ qua lỗi khung hình */ });
+        html5QrcodeScanner.render(onScanSuccess, (err) => {});
 
-        // Tải dữ liệu ban đầu
         loadData();
     </script>
 
-    <!-- Bootstrap JS Bundle (Bắt buộc để chuyển Tab) -->
+    <!-- Bootstrap JS Bundle (Bắt buộc để chạy Tab) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
