@@ -151,7 +151,7 @@
                                 <input type="text" id="txtNguoiKK" class="form-control border-primary-subtle" value="Nguyễn Cao Mẫn">
                             </div>
                             <div class="alert alert-info py-2 small mb-0">
-                                <i class="fa-solid fa-circle-info me-1"></i> Dữ liệu quét mã QR sẽ tự động đối soát theo `ma_tai_san` và mã hóa AES lịch sử.
+                                <i class="fa-solid fa-circle-info me-1"></i> Dữ liệu quét mã QR sẽ tự động đối soát và mã hóa AES lịch sử.
                             </div>
                         </div>
                     </div>
@@ -212,7 +212,7 @@
 
         // Mã hóa & Giải mã AES chuẩn
         function encryptData(plainText) {
-            if (!plainText) return '';
+            if (plainText === undefined || plainText === null || plainText === '') return '';
             return CryptoJS.AES.encrypt(plainText.toString(), SECRET_KEY).toString();
         }
 
@@ -243,7 +243,7 @@
         }
 
         $(document).ready(function() {
-            // DataTables Assets (Server-side theo cấu trúc mới)
+            // DataTables Assets (Server-side)
             assetsTable = $('#assetsTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -253,18 +253,18 @@
                 },
                 columns: [
                     { data: null, render: (data, type, row, meta) => meta.settings._iDisplayStart + meta.row + 1 },
-                    { data: 'ma_tai_san', render: data => `<span class="badge bg-secondary">${data || ''}</span>` },
+                    { data: 'ma_tai_san', render: data => `<span class="badge bg-secondary">${decryptData(data)}</span>` },
                     { data: 'ten_tai_san', render: data => `<span class="fw-semibold text-dark">${decryptData(data)}</span>` },
-                    { data: 'nhom_tai_san', render: data => `<small class="text-muted">${data || ''}</small>` },
+                    { data: 'nhom_tai_san', render: data => `<small class="text-muted">${decryptData(data)}</small>` },
                     { data: 'phong_ban_quan_ly', render: data => decryptData(data) },
                     { data: 'can_bo_su_dung', render: data => decryptData(data) },
-                    { data: 'nguyen_gia', render: data => data ? Number(data).toLocaleString('vi-VN') + ' đ' : '0' },
-                    { data: 'so_serial', render: data => `<span class="badge bg-light text-dark border">${data || ''}</span>` },
+                    { data: 'nguyen_gia', render: data => { let v = decryptData(data); return v ? Number(v).toLocaleString('vi-VN') + ' đ' : '0'; } },
+                    { data: 'so_serial', render: data => `<span class="badge bg-light text-dark border">${decryptData(data)}</span>` },
                     { 
                         data: 'id', 
                         className: 'text-center',
                         render: (data, type, row) => `
-                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${row.ma_tai_san || ''}', '${decryptData(row.ten_tai_san)}', '${decryptData(row.phong_ban_quan_ly)}', '${decryptData(row.can_bo_su_dung)}', '${row.nguyen_gia || 0}', '${row.so_serial || ''}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${decryptData(row.ma_tai_san)}', '${decryptData(row.ten_tai_san)}', '${decryptData(row.phong_ban_quan_ly)}', '${decryptData(row.can_bo_su_dung)}', '${decryptData(row.nguyen_gia)}', '${decryptData(row.so_serial)}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn btn-danger btn-sm" onclick="deleteAsset('${row.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                         `
                     }
@@ -320,6 +320,7 @@
                 if (result.success) {
                     danhSachTS = result.danh_sach.map(item => ({
                         ...item,
+                        ma_tai_san: decryptData(item.ma_tai_san),
                         ten_tai_san: decryptData(item.ten_tai_san),
                         phong_ban_quan_ly: decryptData(item.phong_ban_quan_ly),
                         can_bo_su_dung: decryptData(item.can_bo_su_dung)
@@ -347,17 +348,25 @@
             const rawTen = document.getElementById('ten_tai_san').value.trim();
             const rawPhong = document.getElementById('phong_ban_quan_ly').value.trim();
             const rawCanBo = document.getElementById('can_bo_su_dung').value.trim();
-            const nguyen_gia = document.getElementById('nguyen_gia').value || 0;
-            const so_serial = document.getElementById('so_serial').value.trim();
+            const rawNguyenGia = document.getElementById('nguyen_gia').value || 0;
+            const rawSerial = document.getElementById('so_serial').value.trim();
 
+            // MÃ HÓA 100% CÁC CỘT (NGOẠI TRỪ ID ĐỊNH DANH)
             const payload = {
                 id: editingId || ma_tai_san,
-                ma_tai_san: ma_tai_san,
+                ma_tai_san: encryptData(ma_tai_san),
+                don_vi: encryptData("00745 - ĐB SÔNG CỬU LONG"),
                 ten_tai_san: encryptData(rawTen),
-                phong_ban_quan_ly: encryptData(rawPhong),
+                nhom_tai_san: encryptData("403010301 - Quản lý tài sản"),
+                nguyen_gia: encryptData(rawNguyenGia),
+                hao_mon_luy_ke: encryptData(0),
+                gia_tri_con_lai: encryptData(rawNguyenGia),
+                ngay_dua_vao_sd: encryptData(new Date().toISOString().split('T')[0]),
+                trang_thai_sd: encryptData("Đang sử dụng"),
+                bo_so: encryptData("BIDV_CCLD"),
                 can_bo_su_dung: encryptData(rawCanBo),
-                nguyen_gia: nguyen_gia,
-                so_serial: so_serial
+                phong_ban_quan_ly: encryptData(rawPhong),
+                so_serial: encryptData(rawSerial)
             };
 
             try {
@@ -368,7 +377,7 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu vào hệ thống.', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa toàn bộ dữ liệu lưu vào Aiven MySQL.', timer: 1500, showConfirmButton: false });
                     resetForm();
                     refreshData();
                 } else {
@@ -455,7 +464,7 @@
             }
         }
 
-        // Quét QR Code tự động tra cứu theo mã tài sản
+        // Quét QR Code đối soát theo mã tài sản
         async function onScanSuccess(decodedText) {
             if (!isScanning) return;
             isScanning = false;
@@ -468,9 +477,9 @@
             const rawTsName = asset ? asset.ten_tai_san : `Tài sản quét (${scannedCode})`;
             const thoiGian = new Date().toLocaleString('vi-VN');
 
-            const tsId = asset ? asset.ma_tai_san : scannedCode;
+            const tsId = asset ? (asset.ma_tai_san || asset.id) : scannedCode;
             const tsName = encryptData(rawTsName);
-            const ghiChu = encryptData('Quét QR hệ thống mới');
+            const ghiChu = encryptData('Quét QR hệ thống bảo mật');
 
             const resultDiv = document.getElementById('scan-result');
             resultDiv.className = 'mt-3 fw-bold fs-6 p-2 bg-warning-subtle text-warning border border-warning rounded';
@@ -510,7 +519,7 @@
         );
         html5QrcodeScanner.render(onScanSuccess, (err) => {});
 
-        // --- TÍNH NĂNG IMPORT EXCEL THEO CẤU TRÚC MỚI ---
+        // --- TẢI MẪU & IMPORT EXCEL VỚI MÃ HÓA TOÀN BỘ CỘT ---
         function downloadTemplate(e) {
             e.preventDefault();
             const templateData = [
@@ -533,7 +542,7 @@
             const ws = XLSX.utils.json_to_sheet(templateData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "DanhSachTaiSan");
-            XLSX.writeFile(wb, "Template_KiemKe_TaiSan_Moi.xlsx");
+            XLSX.writeFile(wb, "Template_KiemKe_TaiSan_BaoMat.xlsx");
         }
 
         async function importExcelData(event) {
@@ -554,7 +563,7 @@
                     }
 
                     Swal.fire({
-                        title: 'Đang mã hóa & đồng bộ dữ liệu...',
+                        title: 'Đang mã hóa 100% dữ liệu...',
                         text: `Đang xử lý ${rows.length} tài sản từ file Excel. Vui lòng chờ...`,
                         allowOutsideClick: false,
                         didOpen: () => { Swal.showLoading(); }
@@ -574,21 +583,22 @@
                             continue;
                         }
 
+                        // MÃ HÓA TOÀN BỘ CÁC CỘT TRƯỚC KHI ĐẨY LÊN AIVEN MYSQL
                         const payload = {
                             id: ma_tai_san,
-                            ma_tai_san: ma_tai_san,
-                            don_vi: row['don_vi'] || row['DonVi'] || '',
+                            ma_tai_san: encryptData(ma_tai_san),
+                            don_vi: encryptData(row['don_vi'] || row['DonVi'] || ''),
                             ten_tai_san: encryptData(rawTen),
-                            nhom_tai_san: row['nhom_tai_san'] || row['NhomTaiSan'] || '',
-                            nguyen_gia: row['nguyen_gia'] || row['NguyenGia'] || 0,
-                            hao_mon_luy_ke: row['hao_mon_luy_ke'] || 0,
-                            gia_tri_con_lai: row['gia_tri_con_lai'] || 0,
-                            ngay_dua_vao_sd: row['ngay_dua_vao_sd'] || '',
-                            trang_thai_sd: row['trang_thai_sd'] || 'Đang sử dụng',
-                            bo_so: row['bo_so'] || '',
+                            nhom_tai_san: encryptData(row['nhom_tai_san'] || row['NhomTaiSan'] || ''),
+                            nguyen_gia: encryptData(row['nguyen_gia'] || row['NguyenGia'] || 0),
+                            hao_mon_luy_ke: encryptData(row['hao_mon_luy_ke'] || 0),
+                            gia_tri_con_lai: encryptData(row['gia_tri_con_lai'] || 0),
+                            ngay_dua_vao_sd: encryptData(row['ngay_dua_vao_sd'] || ''),
+                            trang_thai_sd: encryptData(row['trang_thai_sd'] || 'Đang sử dụng'),
+                            bo_so: encryptData(row['bo_so'] || ''),
                             can_bo_su_dung: encryptData(rawCanBo),
                             phong_ban_quan_ly: encryptData(rawPhong),
-                            so_serial: String(row['so_serial'] || row['SoSerial'] || '')
+                            so_serial: encryptData(String(row['so_serial'] || row['SoSerial'] || ''))
                         };
 
                         try {
@@ -614,7 +624,7 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Hoàn tất nhập dữ liệu hàng loạt!',
-                        html: `Thành công: <b>${successCount}</b> tài sản đã mã hóa AES vào hệ thống.<br>${failCount > 0 ? `<span class="text-danger">Thất bại/Bỏ qua: ${failCount} dòng</span>` : ''}`
+                        html: `Thành công: <b>${successCount}</b> tài sản đã được mã hóa bảo mật toàn bộ các cột.<br>${failCount > 0 ? `<span class="text-danger">Thất bại/Bỏ qua: ${failCount} dòng</span>` : ''}`
                     });
 
                 } catch (error) {
