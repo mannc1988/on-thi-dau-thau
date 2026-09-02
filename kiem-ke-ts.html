@@ -1,1 +1,408 @@
 
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phần Mềm Kiểm Kê Tài Sản QR</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Thư viện quét QR -->
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <style>
+        body { background-color: #f8f9fa; }
+        .card-stats { border-left: 4px solid #0d6efd; }
+        #reader { width: 100%; max-width: 500px; margin: 0 auto; border-radius: 8px; overflow: hidden; }
+    </style>
+</head>
+<body>
+
+    <div class="container py-4">
+        <!-- Tiêu đề -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="fa-solid fa-qrcode text-primary"></i> Kiểm Kê Tài Sản Theo Đợt</h2>
+            <div>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#modalDotKK">
+                    <i class="fa-solid fa-calendar-days"></i> Quản Lý Đợt Kiểm Kê
+                </button>
+                <button class="btn btn-outline-secondary" onclick="exportExcel()">
+                    <i class="fa-solid fa-file-excel"></i> Xuất Excel
+                </button>
+            </div>
+        </div>
+
+        <!-- Thông báo Đợt Kiểm Kê hiện tại -->
+        <div class="alert alert-info d-flex justify-content-between align-items-center" role="alert">
+            <div>
+                <i class="fa-solid fa-circle-info"></i> Đợt kiểm kê đang chọn: <strong id="lblDotHienTai">Chưa chọn đợt</strong>
+            </div>
+            <button class="btn btn-sm btn-primary" onclick="moModalQuetQR()">
+                <i class="fa-solid fa-camera"></i> Quét QR Kiểm Kê Ngay
+            </button>
+        </div>
+
+        <!-- Thống kê nhanh -->
+        <div class="row g-3 mb-4">
+            <div class="col-md-4">
+                <div class="card card-stats shadow-sm p-3">
+                    <div class="text-muted">Tổng số tài sản</div>
+                    <h3 id="statTong" class="fw-bold">0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-stats border-success shadow-sm p-3" style="border-left-color: #198754;">
+                    <div class="text-muted">Đã kiểm kê</div>
+                    <h3 id="statDaKK" class="fw-bold text-success">0</h3>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card card-stats border-warning shadow-sm p-3" style="border-left-color: #ffc107;">
+                    <div class="text-muted">Chưa kiểm kê</div>
+                    <h3 id="statChuaKK" class="fw-bold text-warning">0</h3>
+                </div>
+            </div>
+        </div>
+
+        <!-- Danh sách tài sản & Lịch sử -->
+        <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="danhmuc-tab" data-bs-toggle="tab" data-bs-target="#danhmuc" type="button">Danh Sách & Trạng Thái</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="lichsu-tab" data-bs-toggle="tab" data-bs-target="#lichsu" type="button">Lịch Sử Kiểm Kê</button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="myTabContent">
+            <!-- Tab Danh Sách Tài Sản -->
+            <div class="tab-pane fade show active" id="danhmuc" role="tabpanel">
+                <div class="card shadow-sm p-3">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã TS</th>
+                                    <th>Tên Tài Sản</th>
+                                    <th>Phòng Ban</th>
+                                    <th>Trạng Thái Đợt Này</th>
+                                    <th>Người KK</th>
+                                    <th>Thời Gian</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblDanhSachTaiSan">
+                                <!-- Dữ liệu render bằng JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Lịch Sử Kiểm Kê -->
+            <div class="tab-pane fade" id="lichsu" role="tabpanel">
+                <div class="card shadow-sm p-3">
+                    <div class="table-responsive">
+                        <table class="table table-striped align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Đợt Kiểm Kê</th>
+                                    <th>Mã TS</th>
+                                    <th>Tên Tài Sản</th>
+                                    <th>Người Thực Hiện</th>
+                                    <th>Thời Gian Quét</th>
+                                    <th>Ghi Chú</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblLichSu">
+                                <!-- Dữ liệu render bằng JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL QUÉT QR -->
+    <div class="modal fade" id="modalQuetQR" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fa-solid fa-camera"></i> Quét Mã QR Tài Sản</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" onclick="dungQuetQR()"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <div id="reader"></div>
+                    <div id="qr-result" class="mt-3 fw-bold text-success"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL QUẢN LÝ ĐỢT KIỂM KÊ -->
+    <div class="modal fade" id="modalDotKK" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Quản Lý Đợt Kiểm Kê</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="input-group mb-3">
+                        <input type="text" id="txtTenDot" class="form-control" placeholder="Tên đợt kiểm kê mới (VD: Đợt 1 - 2026)">
+                        <button class="btn btn-primary" onclick="themDotKK()">Tạo Đợt</button>
+                    </div>
+                    <ul class="list-group" id="listDotKK">
+                        <!-- Danh sách đợt -->
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // --- KHỞI TẠO DỮ LIỆU MẪU NẾU CHƯA CÓ ---
+        if (!localStorage.getItem('ts_danh_sach')) {
+            const sampleTS = [
+                { id: "TS001", name: "Máy tính Dell Latitude", room: "Phòng Kế Toán" },
+                { id: "TS002", name: "Máy in HP LaserJet", room: "Phòng Hành Chính" },
+                { id: "TS003", name: "Bàn làm việc gỗ", room: "Phòng Giám Đốc" },
+                { id: "TS004", name: "Ghế xoay văn phòng", room: "Phòng Kế Toán" }
+            ];
+            localStorage.setItem('ts_danh_sach', JSON.stringify(sampleTS));
+        }
+
+        if (!localStorage.getItem('ts_dot_kiem_ke')) {
+            const sampleDot = [
+                { id: "DOT_01", name: "Kiểm kê Quý 1/2026", active: true }
+            ];
+            localStorage.setItem('ts_dot_kiem_ke', JSON.stringify(sampleDot));
+        }
+
+        if (!localStorage.getItem('ts_lich_su')) {
+            localStorage.setItem('ts_lich_su', JSON.stringify([]));
+        }
+
+        let html5QrCode = null;
+
+        // --- CÁC HÀM XỬ LÝ CHÍNH ---
+        function getData(key) { return JSON.parse(localStorage.getItem(key)); }
+        function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
+
+        function getDotHienTai() {
+            let dots = getData('ts_dot_kiem_ke');
+            return dots.find(d => d.active) || null;
+        }
+
+        function renderApp() {
+            let dotActive = getDotHienTai();
+            document.getElementById('lblDotHienTai').innerText = dotActive ? dotActive.name : "Chưa chọn đợt nào!";
+
+            let danhSachTS = getData('ts_danh_sach');
+            let lichSu = getData('ts_lich_su');
+            let dotId = dotActive ? dotActive.id : null;
+
+            let daKKCount = 0;
+            let htmlTS = "";
+
+            danhSachTS.forEach(ts => {
+                // Kiểm tra xem tài sản này đã được quét trong đợt hiện tại chưa
+                let record = lichSu.find(l => l.dotId === dotId && l.tsId === ts.id);
+                let trangThaiHTML = `<span class="badge bg-warning">Chưa kiểm kê</span>`;
+                let nguoiKK = "-";
+                let thoiGian = "-";
+
+                if (record) {
+                    daKKCount++;
+                    trangThaiHTML = `<span class="badge bg-success"><i class="fa-solid fa-check"></i> Đã kiểm kê</span>`;
+                    nguoiKK = record.nguoiKK;
+                    thoiGian = record.thoiGian;
+                }
+
+                htmlTS += `<tr>
+                    <td><strong>${ts.id}</strong></td>
+                    <td>${ts.name}</td>
+                    <td>${ts.room}</td>
+                    <td>${trangThaiHTML}</td>
+                    <td>${nguoiKK}</td>
+                    <td>${thoiGian}</td>
+                </tr>`;
+            });
+
+            document.getElementById('tblDanhSachTaiSan').innerHTML = htmlTS;
+            document.getElementById('statTong').innerText = danhSachTS.length;
+            document.getElementById('statDaKK').innerText = daKKCount;
+            document.getElementById('statChuaKK').innerText = danhSachTS.length - daKKCount;
+
+            // Render Lịch Sử
+            let htmlLS = "";
+            lichSu.slice().reverse().forEach(l => {
+                let dot = getData('ts_dot_kiem_ke').find(d => d.id === l.dotId);
+                htmlLS += `<tr>
+                    <td><span class="badge bg-secondary">${dot ? dot.name : l.dotId}</span></td>
+                    <td><strong>${l.tsId}</strong></td>
+                    <td>${l.tsName}</td>
+                    <td>${l.nguoiKK}</td>
+                    <td>${l.thoiGian}</td>
+                    <td>${l.ghiChu || ''}</td>
+                </tr>`;
+            });
+            document.getElementById('tblLichSu').innerHTML = htmlLS;
+
+            // Render Modal Đợt
+            let htmlDotModal = "";
+            getData('ts_dot_kiem_ke').forEach(d => {
+                htmlDotModal += `<li class="list-group-item d-flex justify-content-between align-items-center">
+                    ${d.name} ${d.active ? '<span class="badge bg-primary">Đang chọn</span>' : ''}
+                    <div>
+                        ${!d.active ? `<button class="btn btn-sm btn-outline-primary me-2" onclick="chonDot('${d.id}')">Chọn</button>` : ''}
+                        <button class="btn btn-sm btn-outline-danger" onclick="xoaDot('${d.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </div>
+                </li>`;
+            });
+            document.getElementById('listDotKK').innerHTML = htmlDotModal;
+        }
+
+        // --- QUẢN LÝ ĐỢT ---
+        function themDotKK() {
+            let ten = document.getElementById('txtTenDot').value.trim();
+            if (!ten) return alert('Vui lòng nhập tên đợt!');
+            let dots = getData('ts_dot_kiem_ke');
+            let newId = 'DOT_' + Date.now();
+            dots.forEach(d => d.active = false); // Tắt active cũ
+            dots.push({ id: newId, name: ten, active: true });
+            saveData('ts_dot_kiem_ke', dots);
+            document.getElementById('txtTenDot').value = '';
+            renderApp();
+        }
+
+        function chonDot(id) {
+            let dots = getData('ts_dot_kiem_ke');
+            dots.forEach(d => d.active = (d.id === id));
+            saveData('ts_dot_kiem_ke', dots);
+            renderApp();
+        }
+
+        function xoaDot(id) {
+            if (!confirm('Bạn có chắc muốn xóa đợt này?')) return;
+            let dots = getData('ts_dot_kiem_ke').filter(d => d.id !== id);
+            if (dots.length > 0 && !dots.some(d => d.active)) dots[0].active = true;
+            saveData('ts_dot_kiem_ke', dots);
+            renderApp();
+        }
+
+        // --- QUÉT QR & LƯU LỊCH SỬ ---
+        function moModalQuetQR() {
+            let dot = getDotHienTai();
+            if (!dot) {
+                alert('Vui lòng tạo hoặc chọn một Đợt Kiểm Kê trước khi quét!');
+                return;
+            }
+            let myModal = new bootstrap.Modal(document.getElementById('modalQuetQR'));
+            myModal.show();
+            khoiTaoScanner();
+        }
+
+        function khoiTaoScanner() {
+            if (html5QrCode) {
+                try { html5QrCode.clear(); } catch(e) {}
+            }
+            html5QrCode = new Html5Qrcode("reader");
+            html5QrCode.start(
+                { facingMode: "environment" },
+                { fps: 10, qrbox: { width: 250, height: 250 } },
+                onScanSuccess,
+                onScanFailure
+            ).catch(err => {
+                console.error("Không thể mở camera:", err);
+                document.getElementById('qr-result').innerHTML = `<span class="text-danger">Không mở được camera. Hãy chắc chắn bạn cấp quyền hoặc dùng HTTPS/Localhost.</span>`;
+            });
+        }
+
+        function onScanSuccess(decodedText, decodedResult) {
+            let danhSachTS = getData('ts_danh_sach');
+            let ts = danhSachTS.find(item => item.id === decodedText);
+
+            if (!ts) {
+                document.getElementById('qr-result').innerHTML = `<span class="text-danger">Mã QR "${decodedText}" không tồn tại trong hệ thống!</span>`;
+                return;
+            }
+
+            let dot = getDotHienTai();
+            let lichSu = getData('ts_lich_su');
+
+            // Kiểm tra xem đã quét trong đợt này chưa
+            let daQuyet = lichSu.some(l => l.dotId === dot.id && l.tsId === ts.id);
+            if (daQuyet) {
+                document.getElementById('qr-result').innerHTML = `<span class="text-warning">Tài sản ${ts.name} (${ts.id}) ĐÃ ĐƯỢC QUÉT trước đó trong đợt này!</span>`;
+                return;
+            }
+
+            // Ghi nhận lịch sử kiểm kê
+            let nguoiKiemKe = prompt("Nhập tên người thực hiện kiểm kê:", "Nguyễn Cao Mẫn");
+            if (!nguoiKiemKe) return;
+
+            let now = new Date();
+            let timeString = now.toLocaleDateString('vi-VN') + ' ' + now.toLocaleTimeString('vi-VN');
+
+            lichSu.push({
+                dotId: dot.id,
+                tsId: ts.id,
+                tsName: ts.name,
+                nguoiKK: nguoiKiemKe,
+                thoiGian: timeString,
+                ghiChu: "Quét QR thành công"
+            });
+
+            saveData('ts_lich_su', lichSu);
+            document.getElementById('qr-result').innerHTML = `<span class="text-success">Thành công! Đã ghi nhận tài sản: ${ts.name}</span>`;
+            
+            renderApp();
+
+            // Tự động tắt camera sau 2 giây quét thành công
+            setTimeout(() => {
+                dungQuetQR();
+                let modalEl = document.getElementById('modalQuetQR');
+                let modal = bootstrap.Modal.getInstance(modalEl);
+                modal.hide();
+            }, 1500);
+        }
+
+        function onScanFailure(error) {
+            // Bỏ qua lỗi quét liên tục khung hình
+        }
+
+        function dungQuetQR() {
+            if (html5QrCode && html5QrCode.isScanning) {
+                html5QrCode.stop().then(() => {
+                    html5QrCode.clear();
+                }).catch(err => console.error(err));
+            }
+            document.getElementById('qr-result').innerText = '';
+        }
+
+        // --- XUẤT EXCEL ĐƠN GIẢN (CSV) ---
+        function exportExcel() {
+            let lichSu = getData('ts_lich_su');
+            let csvContent = "\uFEFFMã Đợt,Mã TS,Tên Tài Sản,Người Kiểm Kê,Thời Gian,Ghi Chú\n";
+            
+            lichSu.forEach(l => {
+                csvContent += `"${l.dotId}","${l.tsId}","${l.tsName}","${l.nguoiKK}","${l.thoiGian}","${l.ghiChu}"\n`;
+            });
+
+            let blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            let url = URL.createObjectURL(blob);
+            let a = document.createElement('a');
+            a.href = url;
+            a.download = `Bao_Cao_Kiem_Ke_${Date.now()}.csv`;
+            a.click();
+        }
+
+        // Chạy khởi tạo giao diện lần đầu
+        renderApp();
+    </script>
+</body>
+  </html>
