@@ -31,7 +31,10 @@
             <h2 class="fw-bold text-primary mb-2 mb-md-0">
                 <i class="fa-solid fa-boxes-stacked me-2"></i> Hệ Thống Kiểm Kê Tài Sản QR
             </h2>
-            <div class="d-flex gap-2">
+            <div class="d-flex gap-2 flex-wrap">
+                <button class="btn btn-warning shadow-sm text-dark fw-bold" data-bs-toggle="modal" data-bs-target="#modalQuanLyTS">
+                    <i class="fa-solid fa-list me-1"></i> Quản Lý Danh Mục TS
+                </button>
                 <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#modalDotKK">
                     <i class="fa-solid fa-calendar-check me-1"></i> Quản Lý Đợt
                 </button>
@@ -136,6 +139,79 @@
         </div>
     </div>
 
+    <!-- MODAL QUẢN LÝ DANH MỤC TÀI SẢN (CRUD & BATCH) -->
+    <div class="modal fade" id="modalQuanLyTS" tabindex="-1">
+        <div class="modal-dialog modal-xl modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header bg-warning text-dark">
+                    <h5 class="modal-title fw-bold"><i class="fa-solid fa-screwdriver-wrench me-1"></i> Quản Lý Danh Mục Tài Sản (Thêm, Sửa, Xóa & Nhập Batch)</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Form Thêm mới đơn lẻ / Batch -->
+                    <ul class="nav nav-tabs mb-3" id="tabCrudTS" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="add-don-tab" data-bs-toggle="tab" data-bs-target="#addDon" type="button">Thêm Đơn Lẻ</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="add-batch-tab" data-bs-toggle="tab" data-bs-target="#addBatch" type="button">Thêm Hàng Loạt (Batch Text)</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content mb-4 border p-3 rounded bg-light" id="tabContentCrudTS">
+                        <!-- Thêm đơn lẻ -->
+                        <div class="tab-pane fade show active" id="addDon" role="tabpanel">
+                            <div class="row g-2 align-items-end">
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Mã Tài Sản</label>
+                                    <input type="text" id="txtNewId" class="form-control" placeholder="VD: TS005">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label small fw-bold">Tên Tài Sản</label>
+                                    <input type="text" id="txtNewName" class="form-control" placeholder="VD: Màn hình LG 27 inch">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label small fw-bold">Phòng Ban</label>
+                                    <input type="text" id="txtNewRoom" class="form-control" placeholder="VD: Phòng CNTT">
+                                </div>
+                                <div class="col-md-2">
+                                    <button class="btn btn-primary w-100" onclick="themTaiSanDonLe()"><i class="fa-solid fa-plus"></i> Thêm</button>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Thêm hàng loạt Batch -->
+                        <div class="tab-pane fade" id="addBatch" role="tabpanel">
+                            <div class="mb-2">
+                                <label class="form-label small fw-bold">Nhập danh sách theo định dạng: <code class="text-danger">MãTS | TênTàiSản | PhòngBan</code> (Mỗi dòng 1 tài sản)</label>
+                                <textarea id="txtBatchData" class="form-control font-monospace" rows="4" placeholder="TS005 | Màn hình LG 27 | Phòng CNTT&#10;TS006 | Ghế Giám Đốc | Phòng GĐ"></textarea>
+                            </div>
+                            <button class="btn btn-success" onclick="themTaiSanBatch()"><i class="fa-solid fa-file-arrow-down"></i> Lưu Hàng Loạt Batch</button>
+                        </div>
+                    </div>
+
+                    <!-- Bảng danh sách quản lý CRUD -->
+                    <div class="table-responsive">
+                        <table class="table table-bordered table-hover align-middle bg-white">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Mã TS</th>
+                                    <th>Tên Tài Sản</th>
+                                    <th>Phòng Ban</th>
+                                    <th class="text-center" style="width: 150px;">Thao Tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tblCrudTaiSan">
+                                <!-- Render JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- MODAL QUÉT QR -->
     <div class="modal fade" id="modalQuetQR" tabindex="-1" data-bs-backdrop="static">
         <div class="modal-dialog modal-dialog-centered">
@@ -203,7 +279,7 @@
         }
 
         let html5QrCode = null;
-        let isProcessingScan = false; // Biến chống quét đè/trùng lặp liên tục trong tích tắc
+        let isProcessingScan = false;
 
         function getData(key) { return JSON.parse(localStorage.getItem(key)); }
         function saveData(key, data) { localStorage.setItem(key, JSON.stringify(data)); }
@@ -267,6 +343,21 @@
             });
             document.getElementById('tblLichSu').innerHTML = htmlLS || `<tr><td colspan="6" class="text-center text-muted py-3">Chưa có lịch sử quét nào trong hệ thống</td></tr>`;
 
+            // Render Modal Quản Lý Danh Mục CRUD
+            let htmlCrud = "";
+            danhSachTS.forEach(ts => {
+                htmlCrud += `<tr>
+                    <td><strong>${ts.id}</strong></td>
+                    <td>${ts.name}</td>
+                    <td>${ts.room}</td>
+                    <td class="text-center">
+                        <button class="btn btn-sm btn-outline-primary me-1" onclick="suaTaiSan('${ts.id}')"><i class="fa-solid fa-pen"></i></button>
+                        <button class="btn btn-sm btn-outline-danger" onclick="xoaTaiSan('${ts.id}')"><i class="fa-solid fa-trash"></i></button>
+                    </td>
+                </tr>`;
+            });
+            document.getElementById('tblCrudTaiSan').innerHTML = htmlCrud;
+
             // Render Modal Đợt
             let htmlDotModal = "";
             getData('ts_dot_kiem_ke').forEach(d => {
@@ -284,7 +375,136 @@
             document.getElementById('listDotKK').innerHTML = htmlDotModal;
         }
 
-        // --- QUẢN LÝ ĐỢT ---
+        // --- CHỨC NĂNG CRUD DANH MỤC TÀI SẢN ---
+        function themTaiSanDonLe() {
+            let id = document.getElementById('txtNewId').value.trim();
+            let name = document.getElementById('txtNewName').value.trim();
+            let room = document.getElementById('txtNewRoom').value.trim();
+
+            if (!id || !name || !room) {
+                Swal.fire('Cảnh báo', 'Vui lòng nhập đầy đủ Mã TS, Tên TS và Phòng ban!', 'warning');
+                return;
+            }
+
+            let danhSach = getData('ts_danh_sach');
+            if (danhSach.some(item => item.id === id)) {
+                Swal.fire('Trùng mã', `Mã tài sản "${id}" đã tồn tại trong hệ thống!`, 'error');
+                return;
+            }
+
+            danhSach.push({ id, name, room });
+            saveData('ts_danh_sach', danhSach);
+
+            document.getElementById('txtNewId').value = '';
+            document.getElementById('txtNewName').value = '';
+            document.getElementById('txtNewRoom').value = '';
+
+            renderApp();
+            Swal.fire({ icon: 'success', title: 'Thành công', text: 'Đã thêm tài sản mới!', timer: 1200, showConfirmButton: false });
+        }
+
+        function themTaiSanBatch() {
+            let rawText = document.getElementById('txtBatchData').value.trim();
+            if (!rawText) {
+                Swal.fire('Cảnh báo', 'Vui lòng nhập nội dung danh sách batch!', 'warning');
+                return;
+            }
+
+            let lines = rawText.split('\n');
+            let danhSach = getData('ts_danh_sach');
+            let countAdded = 0;
+            let countSkipped = 0;
+
+            lines.forEach(line => {
+                let parts = line.split('|').map(p => p.trim());
+                if (parts.length >= 3) {
+                    let id = parts[0];
+                    let name = parts[1];
+                    let room = parts[2];
+
+                    if (id && name && room) {
+                        if (!danhSach.some(item => item.id === id)) {
+                            danhSach.push({ id, name, room });
+                            countAdded++;
+                        } else {
+                            countSkipped++;
+                        }
+                    }
+                }
+            });
+
+            saveData('ts_danh_sach', danhSach);
+            document.getElementById('txtBatchData').value = '';
+            renderApp();
+
+            Swal.fire({
+                icon: 'success',
+                title: 'Hoàn tất nhập batch',
+                text: `Đã thêm thành công ${countAdded} tài sản. Bỏ qua ${countSkipped} mã bị trùng.`
+            });
+        }
+
+        function suaTaiSan(id) {
+            let danhSach = getData('ts_danh_sach');
+            let ts = danhSach.find(item => item.id === id);
+            if (!ts) return;
+
+            Swal.fire({
+                title: `Sửa thông tin tài sản: ${id}`,
+                html: `
+                    <div class="text-start">
+                        <label class="form-label small fw-bold">Tên tài sản</label>
+                        <input type="text" id="swalEditName" class="form-control mb-2" value="${ts.name}">
+                        <label class="form-label small fw-bold">Phòng ban</label>
+                        <input type="text" id="swalEditRoom" class="form-control" value="${ts.room}">
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Lưu thay đổi',
+                cancelButtonText: 'Hủy',
+                preConfirm: () => {
+                    return {
+                        name: document.getElementById('swalEditName').value.trim(),
+                        room: document.getElementById('swalEditRoom').value.trim()
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let newName = result.value.name;
+                    let newRoom = result.value.room;
+                    if (!newName || !newRoom) {
+                        Swal.showValidationMessage('Vui lòng điền đầy đủ thông tin');
+                        return;
+                    }
+                    ts.name = newName;
+                    ts.room = newRoom;
+                    saveData('ts_danh_sach', danhSach);
+                    renderApp();
+                    Swal.fire({ icon: 'success', title: 'Đã cập nhật!', timer: 1200, showConfirmButton: false });
+                }
+            });
+        }
+
+        function xoaTaiSan(id) {
+            Swal.fire({
+                title: 'Xác nhận xóa tài sản?',
+                text: `Bạn có chắc muốn xóa mã tài sản ${id} khỏi danh mục không?`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                confirmButtonText: 'Xóa ngay',
+                cancelButtonText: 'Hủy'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    let danhSach = getData('ts_danh_sach').filter(item => item.id !== id);
+                    saveData('ts_danh_sach', danhSach);
+                    renderApp();
+                    Swal.fire({ icon: 'success', title: 'Đã xóa!', timer: 1200, showConfirmButton: false });
+                }
+            });
+        }
+
+        // --- QUẢN LÝ ĐỢT KIỂM KÊ ---
         function themDotKK() {
             let ten = document.getElementById('txtTenDot').value.trim();
             if (!ten) {
@@ -359,18 +579,16 @@
             });
         }
 
-        // --- XỬ LÝ KHI QUÉT TRÚNG MÃ QR ---
         async function onScanSuccess(decodedText, decodedResult) {
-            if (isProcessingScan) return; // Chặn quét chồng chéo nhiều khung hình liên tiếp
+            if (isProcessingScan) return;
             isProcessingScan = true;
 
             let danhSachTS = getData('ts_danh_sach');
             let ts = danhSachTS.find(item => item.id === decodedText);
 
-            // 1. Kiểm tra tồn tại theo Mã Tài Sản
             if (!ts) {
                 document.getElementById('qr-status-indicator').innerHTML = `<span class="text-danger"><i class="fa-solid fa-circle-xmark"></i> Mã QR "${decodedText}" không tồn tại trong hệ thống!</span>`;
-                await playSoundAlert('error');
+                playSoundAlert('error');
                 setTimeout(() => { isProcessingScan = false; }, 2500);
                 return;
             }
@@ -378,23 +596,19 @@
             let dot = getDotHienTai();
             let lichSu = getData('ts_lich_su');
 
-            // 2. Kiểm tra tồn tại theo Mã TS và Đợt Kiểm Kê hiện tại
             let daQuyet = lichSu.some(l => l.dotId === dot.id && l.tsId === ts.id);
             if (daQuyet) {
                 document.getElementById('qr-status-indicator').innerHTML = `<span class="text-warning"><i class="fa-solid fa-triangle-exclamation"></i> TS ${ts.id} (${ts.name}) đã được kiểm kê trước đó trong đợt này!</span>`;
-                await playSoundAlert('warning');
+                playSoundAlert('warning');
                 setTimeout(() => { isProcessingScan = false; }, 2500);
                 return;
             }
 
-            // Ghi nhận thành công & Lưu vào Lịch sử cho đợt hiện tại
             document.getElementById('qr-status-indicator').innerHTML = `<span class="text-success"><i class="fa-solid fa-circle-check"></i> Đã nhận mã: ${ts.id} - Đang lưu...</span>`;
             
             let now = new Date();
             let timeString = now.toLocaleDateString('vi-VN') + ' ' + now.toLocaleTimeString('vi-VN');
-            
-            // Lấy tên người thực hiện mặc định hoặc yêu cầu nhanh
-            let nguoiKiemKe = "Nguyễn Cao Mẫn"; // Bạn có thể thay đổi hoặc giữ định danh cá nhân
+            let nguoiKiemKe = "Nguyễn Cao Mẫn";
 
             lichSu.push({
                 dotId: dot.id,
@@ -408,7 +622,6 @@
             saveData('ts_lich_su', lichSu);
             renderApp();
 
-            // Bật thông báo Toast nhanh gọn phía góc màn hình, camera vẫn chạy ngầm tiếp tục
             Swal.fire({
                 toast: true,
                 position: 'top-end',
@@ -419,16 +632,13 @@
                 timerProgressBar: true
             });
 
-            // Đợi 2 giây để người dùng quét tiếp mã tiếp theo mà không cần tắt popup hay bật lại camera
             setTimeout(() => {
                 document.getElementById('qr-status-indicator').innerHTML = `<span class="text-success"><i class="fa-solid fa-circle-notch fa-spin"></i> Đang sẵn sàng quét mã tiếp theo...</span>`;
                 isProcessingScan = false;
             }, 2000);
         }
 
-        function onScanFailure(error) {
-            // Bỏ qua lỗi quét khung hình liên tục (khi chưa bắt được mã QR trong khung)
-        }
+        function onScanFailure(error) {}
 
         function dungQuetQR() {
             if (html5QrCode && html5QrCode.isScanning) {
@@ -439,7 +649,6 @@
             isProcessingScan = false;
         }
 
-        // Tạo tiếng bíp nhẹ giả lập thông báo qua Web Audio API
         function playSoundAlert(type) {
             try {
                 let ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -448,10 +657,10 @@
                 osc.connect(gain);
                 gain.connect(ctx.destination);
                 if (type === 'error') {
-                    osc.frequency.value = 200; // Trầm cảnh báo
+                    osc.frequency.value = 200;
                     gain.gain.setValueAtTime(0.1, ctx.currentTime);
                 } else {
-                    osc.frequency.value = 600; // Thanh nhẹ
+                    osc.frequency.value = 600;
                     gain.gain.setValueAtTime(0.05, ctx.currentTime);
                 }
                 osc.start();
@@ -486,4 +695,4 @@
         renderApp();
     </script>
 </body>
-</html>
+    </html>
