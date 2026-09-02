@@ -164,7 +164,7 @@
         </div>
     </div>
 
-    <!-- 1. jQuery (Bắt buộc đầu tiên) -->
+    <!-- 1. jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     <!-- 2. SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
@@ -177,7 +177,7 @@
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
 
-    <!-- 6. Script logic & Khởi tạo DataTables Server-side -->
+    <!-- 6. Script logic -->
     <script>
         const API_URL = 'https://kiem-ke-tai-san-vercel.vercel.app/api';
         let danhSachTS = [];
@@ -200,7 +200,7 @@
         }
 
         $(document).ready(function() {
-            // Khởi tạo DataTables Tài Sản (Server-side)
+            // DataTables Assets (Server-side)
             assetsTable = $('#assetsTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -228,11 +228,11 @@
                     info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
                     paginate: { first: "Đầu", last: "Cuối", next: "Sau", previous: "Trước" },
                     zeroRecords: "Không tìm thấy dữ liệu",
-                    processing: "Đang tải dữ liệu từ server..."
+                    processing: "Đang tải dữ liệu..."
                 }
             });
 
-            // Khởi tạo DataTables Lịch Sử (Server-side)
+            // DataTables History (Server-side)
             historyTable = $('#historyTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -261,19 +261,19 @@
                     info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
                     paginate: { first: "Đầu", last: "Cuối", next: "Sau", previous: "Trước" },
                     zeroRecords: "Không tìm thấy dữ liệu",
-                    processing: "Đang tải dữ liệu từ server..."
+                    processing: "Đang tải dữ liệu..."
                 }
             });
 
-            loadInitialData();
+            loadInitialCache();
         });
 
-        async function loadInitialData() {
+        async function loadInitialCache() {
             try {
                 const response = await fetch(`${API_URL}?action=data`);
                 const result = await response.json();
                 if (result.success) {
-                    danhSachTS = result.danh_sach; // Cache phục vụ quét mã QR
+                    danhSachTS = result.danh_sach; // Cache dùng để đối soát khi quét QR
                     const selectDot = document.getElementById('selectDot');
                     selectDot.innerHTML = '';
                     result.dot_kiem_ke.forEach(d => {
@@ -286,7 +286,7 @@
         function refreshData() {
             if (assetsTable) assetsTable.ajax.reload(null, false);
             if (historyTable) historyTable.ajax.reload(null, false);
-            loadInitialData();
+            loadInitialCache();
         }
 
         async function saveAsset(e) {
