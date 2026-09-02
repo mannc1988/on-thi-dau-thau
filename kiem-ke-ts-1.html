@@ -8,8 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- SweetAlert2 CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- QR Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
@@ -78,7 +76,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD) -->
+            <!-- TAB 2: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD THẬT) -->
             <div class="tab-pane fade" id="pills-assets" role="tabpanel">
                 <div class="card shadow-sm mb-4">
                     <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
@@ -166,13 +164,9 @@
         </div>
     </div>
 
-    <!-- SweetAlert2 JS -->
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Bootstrap JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-    <!-- Script xử lý Logic & SweetAlert2 -->
+    <!-- Script xử lý CRUD Thật -->
     <script>
+        // THAY ĐƯỜNG DẪN API VERCEL CỦA BẠN VÀO ĐÂY (Có đuôi /api)
         const API_URL = 'https://kiem-ke-tai-san-vercel.vercel.app/api';
         let danhSachTS = [];
         let isScanning = true;
@@ -249,7 +243,7 @@
             }
         }
 
-        // Lưu/Sửa Tài Sản với SweetAlert2
+        // Gửi lệnh Lưu/Sửa Tài Sản xuống Database qua action=save_asset
         async function saveAsset(e) {
             e.preventDefault();
             const id = document.getElementById('assetId').value.trim();
@@ -264,20 +258,14 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({
-                        icon: 'success',
-                        title: 'Thành công!',
-                        text: 'Đã lưu tài sản vào Database.',
-                        timer: 1500,
-                        showConfirmButton: false
-                    });
+                    alert('Lưu tài sản thành công vào Database!');
                     resetForm();
                     loadData();
                 } else {
-                    Swal.fire('Lỗi', result.error, 'error');
+                    alert('Lỗi: ' + result.error);
                 }
             } catch (err) {
-                Swal.fire('Lỗi', 'Không thể kết nối máy chủ!', 'error');
+                alert('Không thể kết nối máy chủ để lưu!');
             }
         }
 
@@ -286,9 +274,6 @@
             document.getElementById('assetId').setAttribute('readonly', true);
             document.getElementById('assetName').value = name;
             document.getElementById('assetRoom').value = room;
-            // Chuyển sang tab danh mục để dễ nhìn
-            const tab = new bootstrap.Tab(document.querySelector('#pills-assets-tab'));
-            tab.show();
         }
 
         function resetForm() {
@@ -296,34 +281,9 @@
             document.getElementById('assetId').removeAttribute('readonly');
         }
 
-        // Xóa Tài Sản với SweetAlert2 Confirm
+        // Xóa Tài Sản khỏi Database qua action=delete_asset
         async function deleteAsset(id) {
-            Swal.fire({
-                title: 'Xác nhận xóa?',
-                text: `Bạn có chắc muốn xóa tài sản [${id}] khỏi hệ thống?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Đồng ý xóa',
-                cancelButtonText: 'Hủy'
-            }).asyncConfirm ? await ... : null // standard swal then syntax below:
-        }.bind(this)); // let's write standard clean promise syntax:
-        */
-        
-        async function deleteAsset(id) {
-            const confirmRes = await Swal.fire({
-                title: 'Xác nhận xóa?',
-                text: `Bạn có chắc muốn xóa tài sản [${id}]?`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Xóa',
-                cancelButtonText: 'Hủy'
-            });
-
-            if (confirmRes.isConfirmed) {
+            if (confirm(`Bạn có chắc muốn xóa tài sản [${id}] khỏi hệ thống?`)) {
                 try {
                     const response = await fetch(`${API_URL}?action=delete_asset`, {
                         method: 'POST',
@@ -332,31 +292,19 @@
                     });
                     const result = await response.json();
                     if (result.success) {
-                        Swal.fire({ icon: 'success', title: 'Đã xóa!', timer: 1200, showConfirmButton: false });
                         loadData();
                     } else {
-                        Swal.fire('Lỗi', 'Xóa thất bại!', 'error');
+                        alert('Xóa thất bại!');
                     }
                 } catch (err) {
-                    Swal.fire('Lỗi', 'Không thể kết nối máy chủ!', 'error');
+                    alert('Lỗi kết nối máy chủ!');
                 }
             }
         }
 
-        // Xóa Lịch sử kiểm kê với SweetAlert2 Confirm
+        // Xóa Lịch sử kiểm kê qua action=delete_history
         async function deleteHistory(id) {
-            const confirmRes = await Swal.fire({
-                title: 'Xóa lịch sử?',
-                text: 'Bạn có chắc muốn xóa dòng lịch sử này?',
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#d33',
-                cancelButtonColor: '#6c757d',
-                confirmButtonText: 'Xóa',
-                cancelButtonText: 'Hủy'
-            });
-
-            if (confirmRes.isConfirmed) {
+            if (confirm('Bạn có chắc muốn xóa dòng lịch sử này?')) {
                 try {
                     const response = await fetch(`${API_URL}?action=delete_history`, {
                         method: 'POST',
@@ -365,11 +313,10 @@
                     });
                     const result = await response.json();
                     if (result.success) {
-                        Swal.fire({ icon: 'success', title: 'Đã xóa!', timer: 1000, showConfirmButton: false });
                         loadData();
                     }
                 } catch (err) {
-                    Swal.fire('Lỗi', 'Không thể kết nối máy chủ!', 'error');
+                    alert('Lỗi kết nối máy chủ!');
                 }
             }
         }
@@ -426,5 +373,8 @@
 
         loadData();
     </script>
+
+    <!-- Bootstrap JS Bundle (Bắt buộc để chạy Tab) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
