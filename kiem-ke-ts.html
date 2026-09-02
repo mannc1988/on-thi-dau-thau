@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Phần Mềm Kiểm Kê Tài Sản QR</title>
+    <title>Phần Mềm Kiểm Kê Tài Sản QR (GitHub Sync)</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -29,11 +29,11 @@
         <!-- Tiêu đề Header -->
         <div class="d-flex flex-column flex-md-row justify-content-between align-items-center mb-4 pb-3 border-bottom">
             <h2 class="fw-bold text-primary mb-2 mb-md-0">
-                <i class="fa-solid fa-qrcode me-2"></i> Kiểm Kê Tài Sản QR (Chế Độ Quét)
+                <i class="fa-brands fa-github me-2"></i> Kiểm Kê Tài Sản QR (Đồng Bộ GitHub)
             </h2>
             <div class="d-flex gap-2 flex-wrap">
-                <button class="btn btn-outline-success shadow-sm fw-bold" onclick="taiFileJSON()">
-                    <i class="fa-solid fa-download me-1"></i> Tải File data.json Mới (Chứa LS)
+                <button class="btn btn-outline-secondary shadow-sm" onclick="cauHinhGitHub()">
+                    <i class="fa-solid fa-key me-1"></i> Cấu Hình GitHub
                 </button>
                 <button class="btn btn-success shadow-sm" data-bs-toggle="modal" data-bs-target="#modalDotKK">
                     <i class="fa-solid fa-calendar-check me-1"></i> Quản Lý Đợt
@@ -44,10 +44,10 @@
             </div>
         </div>
 
-        <!-- Thông báo Đợt Kiểm Kê hiện tại & Nút chọn tính năng quét -->
+        <!-- Thông báo Đợt Kiểm Kê hiện tại & Nút quét -->
         <div class="alert alert-primary d-flex flex-column flex-sm-row justify-content-between align-items-center shadow-sm gap-2" role="alert">
             <div class="mb-2 mb-sm-0">
-                <i class="fa-solid fa-bullhorn me-1"></i> Đợt kiểm kê đang hoạt động: <strong id="lblDotHienTai" class="text-dark">Đang tải...</strong>
+                <i class="fa-solid fa-bullhorn me-1"></i> Đợt kiểm kê đang hoạt động: <strong id="lblDotHienTai" class="text-dark">Đang kết nối GitHub...</strong>
             </div>
             <div class="d-flex gap-2">
                 <button class="btn btn-danger btn-sm px-3 shadow-sm" onclick="moModalQuetQR()">
@@ -64,7 +64,7 @@
         <div class="row g-3 mb-4">
             <div class="col-md-4">
                 <div class="card card-stats p-3 bg-white">
-                    <div class="text-muted small text-uppercase fw-bold"><i class="fa-solid fa-database text-primary me-1"></i> Tổng số tài sản (Chỉ đọc)</div>
+                    <div class="text-muted small text-uppercase fw-bold"><i class="fa-solid fa-database text-primary me-1"></i> Tổng số tài sản</div>
                     <h2 id="statTong" class="fw-bold mt-2 mb-0 text-primary">0</h2>
                 </div>
             </div>
@@ -86,7 +86,7 @@
         <ul class="nav nav-pills mb-3 shadow-sm p-1 bg-white rounded" id="myTab" role="tablist">
             <li class="nav-item flex-fill text-center" role="presentation">
                 <button class="nav-link active w-100" id="danhmuc-tab" data-bs-toggle="tab" data-bs-target="#danhmuc" type="button">
-                    <i class="fa-solid fa-list-check me-1"></i> Danh Sách Tài Sản & Trạng Thái (Chỉ Đọc)
+                    <i class="fa-solid fa-list-check me-1"></i> Danh Sách Tài Sản & Trạng Thái
                 </button>
             </li>
             <li class="nav-item flex-fill text-center" role="presentation">
@@ -184,31 +184,101 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
+        // Cấu hình GitHub lấy từ localStorage của trình duyệt
+        let ghConfig = JSON.parse(localStorage.getItem('gh_config')) || { owner: '', repo: '', token: '' };
         let appData = { danh_sach: [], dot_kiem_ke: [], lich_su: [] };
+        let fileSha = ''; // Mã SHA của file trên GitHub (bắt buộc khi update file qua API)
         let html5QrCode = null;
         let isProcessingScan = false;
 
-        // Nạp dữ liệu từ file data.json đi kèm
-        async function loadDataJSON() {
+        function cauHinhGitHub() {
+            Swal.fire({
+                title: 'Cấu hình kết nối GitHub',
+                html: `
+                    <div class="text-start">
+                        <label class="form-label small fw-bold">Tài khoản GitHub (Owner / Username)</label>
+                        <input type="text" id="ghOwner" class="form-control mb-2" value="${ghConfig.owner}" placeholder="VD: nguoiclaoman">
+                        <label class="form-label small fw-bold">Tên Repository</label>
+                        <input type="text" id="ghRepo" class="form-control mb-2" value="${ghConfig.repo}" placeholder="VD: kiem-ke-tai-san">
+                        <label class="form-label small fw-bold">GitHub Personal Access Token (PAT)</label>
+                        <input type="password" id="ghToken" class="form-control" value="${ghConfig.token}" placeholder="ghp_xxxxxxxxxxxx">
+                    </div>
+                `,
+                showCancelButton: true,
+                confirmButtonText: 'Lưu cấu hình',
+                preConfirm: () => {
+                    return {
+                        owner: document.getElementById('ghOwner').value.trim(),
+                        repo: document.getElementById('ghRepo').value.trim(),
+                        token: document.getElementById('ghToken').value.trim()
+                    }
+                }
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    ghConfig = result.value;
+                    localStorage.setItem('gh_config', JSON.stringify(ghConfig));
+                    loadDataFromGitHub();
+                }
+            });
+        }
+
+        // Tải file data.json trực tiếp từ GitHub API
+        async function loadDataFromGitHub() {
+            if (!ghConfig.owner || !ghConfig.repo || !ghConfig.token) {
+                cauHinhGitHub();
+                return;
+            }
+
             try {
-                let res = await fetch('data.json');
-                if (!res.ok) throw new Error('Không tìm thấy file data.json');
-                appData = await res.json();
+                let url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json`;
+                let res = await fetch(url, {
+                    headers: { 'Authorization': `token ${ghConfig.token}` }
+                });
+
+                if (!res.ok) throw new Error('Không thể kết nối GitHub. Vui lòng kiểm tra lại cấu hình Owner, Repo hoặc Token!');
+
+                let json = await res.json();
+                fileSha = json.sha; // Lưu SHA hiện tại
+                let decodedContent = decodeURIComponent(escape(atob(json.content)));
+                appData = JSON.parse(decodedContent);
                 renderApp();
             } catch (err) {
-                Swal.fire('Lỗi tải dữ liệu', 'Hãy chắc chắn file data.json nằm cùng thư mục với index.html và chạy qua Local Server (Live Server / XAMPP).', 'error');
+                Swal.fire('Lỗi kết nối GitHub', err.message, 'error');
             }
         }
 
-        // Tải xuống file data.json mới nhất khi có kết quả quét hoặc đổi đợt
-        function taiFileJSON() {
-            let dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appData, null, 2));
-            let downloadAnchor = document.createElement('a');
-            downloadAnchor.setAttribute("href", dataStr);
-            downloadAnchor.setAttribute("download", "data.json");
-            document.body.appendChild(downloadAnchor);
-            downloadAnchor.click();
-            downloadAnchor.remove();
+        // Đồng bộ và lưu ngầm file data.json lên GitHub API
+        async function saveDataToGitHub() {
+            if (!ghConfig.owner || !ghConfig.repo || !ghConfig.token) {
+                cauHinhGitHub();
+                return false;
+            }
+
+            try {
+                let url = `https://api.github.com/repos/${ghConfig.owner}/${ghConfig.repo}/contents/data.json`;
+                let contentEncoded = btoa(unescape(encodeURIComponent(JSON.stringify(appData, null, 2)))); // Mã hóa Base64
+
+                let res = await fetch(url, {
+                    method: 'PUT',
+                    headers: {
+                        'Authorization': `token ${ghConfig.token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: "Cập nhật kết quả kiểm kê tài sản tự động",
+                        content: contentEncoded,
+                        sha: fileSha // Bắt buộc truyền SHA để ghi đè file
+                    })
+                });
+
+                if (!res.ok) throw new Error('Không thể ghi đè file data.json lên GitHub!');
+                let json = await res.json();
+                fileSha = json.content.sha; // Cập nhật SHA mới cho lần ghi tiếp theo
+                return true;
+            } catch (err) {
+                Swal.fire('Lỗi đồng bộ GitHub', err.message, 'error');
+                return false;
+            }
         }
 
         function getDotHienTai() {
@@ -283,24 +353,31 @@
         async function themDotKK() {
             let ten = document.getElementById('txtTenDot').value.trim();
             if (!ten) return;
-            appdata.dot_kiem_ke.forEach(d => d.active = false);
+            appData.dot_kiem_ke.forEach(d => d.active = false);
             appData.dot_kiem_ke.push({ id: 'DOT_' + Date.now(), name: ten, active: true });
-            renderApp();
-            taiFileJSON();
-            document.getElementById('txtTenDot').value = '';
+            
+            Swal.fire({ title: 'Đang đồng bộ đợt mới lên GitHub...', allowOutsideClick: false, didOpen: () => Swal.showLoading() });
+            let ok = await saveDataToGitHub();
+            Swal.close();
+
+            if (ok) {
+                renderApp();
+                document.getElementById('txtTenDot').value = '';
+                Swal.fire({ icon: 'success', title: 'Đã tạo đợt mới!', timer: 1200, showConfirmButton: false });
+            }
         }
 
         async function chonDot(id) {
             appData.dot_kiem_ke.forEach(d => d.active = (d.id === id));
+            await saveDataToGitHub();
             renderApp();
-            taiFileJSON();
         }
 
         async function xoaDot(id) {
             appData.dot_kiem_ke = appData.dot_kiem_ke.filter(d => d.id !== id);
             if (appData.dot_kiem_ke.length > 0 && !appData.dot_kiem_ke.some(d => d.active)) appData.dot_kiem_ke[0].active = true;
+            await saveDataToGitHub();
             renderApp();
-            taiFileJSON();
         }
 
         // --- XỬ LÝ QUÉT QR QUA CAMERA ---
@@ -326,7 +403,7 @@
         async function onScanSuccess(decodedText) {
             if (isProcessingScan) return;
             isProcessingScan = true;
-            XuLyMaQRTungKham(decodedText);
+            await XuLyMaQRTungKham(decodedText);
             setTimeout(() => { isProcessingScan = false; }, 2000);
         }
 
@@ -349,20 +426,18 @@
             let file = event.target.files[0];
             if (!file) return;
 
-            // Hiển thị loading chờ giải mã ảnh
             Swal.fire({
                 title: 'Đang đọc mã QR từ ảnh...',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
 
-            // Sử dụng thư viện Html5Qrcode để quét file ảnh cục bộ
             let html5QrCodeScanner = new Html5Qrcode("qr-temp-reader-div");
             try {
                 let decodedText = await html5QrCodeScanner.scanFile(file, true);
                 Swal.close();
-                event.target.value = ''; // Reset input file
-                XuLyMaQRTungKham(decodedText);
+                event.target.value = '';
+                await XuLyMaQRTungKham(decodedText);
             } catch (err) {
                 Swal.close();
                 event.target.value = '';
@@ -370,8 +445,8 @@
             }
         }
 
-        // --- HÀM XỬ LÝ CHUNG KHI NHẬN ĐƯỢC MÃ QR (TỪ CAMERA HOẶC ẢNH) ---
-        function XuLyMaQRTungKham(decodedText) {
+        // --- HÀM XỬ LÝ CHUNG KHI NHẬN ĐƯỢC MÃ QR VÀ GỬI NGẦM LÊN GITHUB ---
+        async function XuLyMaQRTungKham(decodedText) {
             let ts = appData.danh_sach.find(item => item.id === decodedText);
             if (!ts) {
                 Swal.fire({ icon: 'error', title: 'Mã không tồn tại', text: `Mã QR "${decodedText}" không có trong hệ thống danh mục!`, timer: 2500 });
@@ -394,19 +469,30 @@
                 tsName: ts.name,
                 nguoiKK: 'Nguyễn Cao Mẫn',
                 thoiGian: timeString,
-                ghiChu: 'Quét QR Thành Công'
+                ghiChu: 'Quét QR Đồng Bộ GitHub'
             });
 
-            renderApp();
-            taiFileJSON(); // Tự động tải file data.json mới chứa lịch sử cập nhật
-
+            // Hiển thị trạng thái đang đẩy ngầm lên GitHub
             Swal.fire({
-                icon: 'success',
-                title: 'Thành công!',
-                html: `Đã ghi nhận tài sản: <b>${ts.name}</b> (${ts.id})<br><small class="text-muted">File data.json mới đã được tải về.</small>`,
-                timer: 2000,
-                showConfirmButton: false
+                title: 'Đang lưu kết quả lên GitHub...',
+                text: `Đang cập nhật tài sản: ${ts.name}`,
+                allowOutsideClick: false,
+                didOpen: () => Swal.showLoading()
             });
+
+            let ok = await saveDataToGitHub();
+            Swal.close();
+
+            if (ok) {
+                renderApp();
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Đã đồng bộ thành công!',
+                    html: `Ghi nhận tài sản: <b>${ts.name}</b> (${ts.id}) lên GitHub thành công.`,
+                    timer: 1500,
+                    showConfirmButton: false
+                });
+            }
         }
 
         function exportExcel() {
@@ -422,10 +508,9 @@
             a.click();
         }
 
-        // Khởi chạy nạp dữ liệu
-        loadDataJSON();
+        // Tải dữ liệu ban đầu từ GitHub khi mở ứng dụng
+        loadDataFromGitHub();
     </script>
-    <!-- Thêm div ẩn phục vụ quét file ảnh -->
     <div id="qr-temp-reader-div" style="display: none;"></div>
 </body>
 </html>
