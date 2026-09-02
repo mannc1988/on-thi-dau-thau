@@ -39,68 +39,74 @@
             color: #334155;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.75rem;
+            font-size: 0.7rem;
             letter-spacing: 0.5px;
-            padding: 12px;
+            padding: 10px;
             border-bottom: 2px solid #e2e8f0;
+            white-space: nowrap;
             position: relative;
         }
         table.dataTable thead th.sorting, 
         table.dataTable thead th.sorting_asc, 
         table.dataTable thead th.sorting_desc {
-            padding-right: 30px !important;
-        }
-        table.dataTable thead th.sorting:before, 
-        table.dataTable thead th.sorting:after,
-        table.dataTable thead th.sorting_asc:before, 
-        table.dataTable thead th.sorting_asc:after,
-        table.dataTable thead th.sorting_desc:before, 
-        table.dataTable thead th.sorting_desc:after {
-            bottom: 12px !important;
+            padding-right: 25px !important;
         }
     </style>
 </head>
 <body class="py-4">
 
-    <div class="container">
+    <div class="container-fluid px-4">
         <!-- Header -->
         <div class="text-center mb-4">
             <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN QR (AES ENCRYPTED)</h2>
-            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối trước khi lưu vào Aiven MySQL</p>
+            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối theo danh mục tài sản mới</p>
         </div>
 
-        <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN (CRUD) -->
+        <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN -->
         <div class="card shadow-sm">
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
-                <h5 class="mb-0"><i class="fa-solid fa-laptop me-2"></i> 1. Quản Lý Danh Mục Tài Sản (Mã Hóa AES)</h5>
+                <h5 class="mb-0"><i class="fa-solid fa-laptop me-2"></i> 1. Quản Lý Danh Mục Tài Sản (Bảo Mật AES)</h5>
                 <div>
                     <label for="excelFile" class="btn btn-light btn-sm text-success fw-bold mb-0 cursor-pointer shadow-sm">
-                        <i class="fa-solid fa-file-excel me-1"></i> Import Excel
+                        <i class="fa-solid fa-file-excel me-1"></i> Import Excel Mới
                     </label>
-                    <input type="file" id="excelFile" accept=".xlsx, .xls" class="d-none" onchange="importExcelData(event)">
+                    <input type="file" id="excelFile" accept=".xlsx, .xls, .csv" class="d-none" onchange="importExcelData(event)">
                     <a href="#" onclick="downloadTemplate(event)" class="btn btn-outline-light btn-sm ms-1" title="Tải file mẫu Excel">
                         <i class="fa-solid fa-download"></i> Tải Mẫu
                     </a>
                 </div>
             </div>
             <div class="card-body">
+                <!-- Form thêm/sửa tài sản nhanh -->
                 <form id="assetForm" onsubmit="saveAsset(event)" class="mb-4 pb-3 border-bottom">
                     <div class="row g-3">
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Mã Tài Sản (ID):</label>
-                            <input type="text" id="assetId" class="form-control" placeholder="VD: TS004" required>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Mã Tài Sản:</label>
+                            <input type="text" id="ma_tai_san" class="form-control form-control-sm" placeholder="VD: CC00000144981" required>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Tên Tài Sản:</label>
-                            <input type="text" id="assetName" class="form-control" placeholder="VD: Máy chiếu Sony" required>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Tên Tài Sản:</label>
+                            <input type="text" id="ten_tai_san" class="form-control form-control-sm" placeholder="VD: Switch CISCO" required>
                         </div>
-                        <div class="col-md-4">
-                            <label class="form-label fw-semibold">Phòng Ban / Vị Trí:</label>
-                            <input type="text" id="assetRoom" class="form-control" placeholder="VD: Phòng Họp A" required>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Phòng Ban Quản Lý:</label>
+                            <input type="text" id="phong_ban_quan_ly" class="form-control form-control-sm" placeholder="VD: 340 - TRUNG TÂM..." required>
                         </div>
-                        <div class="col-12 text-end">
-                            <button type="button" class="btn btn-secondary px-4 me-2" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i> Làm mới</button>
-                            <button type="submit" class="btn btn-success px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu Đã Mã Hóa</button>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Cán Bộ Sử Dụng:</label>
+                            <input type="text" id="can_bo_su_dung" class="form-control form-control-sm" placeholder="VD: Nguyễn Văn A">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Nguyên Giá:</label>
+                            <input type="number" id="nguyen_gia" class="form-control form-control-sm" placeholder="0">
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Số Serial:</label>
+                            <input type="text" id="so_serial" class="form-control form-control-sm" placeholder="Serial máy">
+                        </div>
+                        <div class="col-md-6 text-end d-flex align-items-end justify-content-end">
+                            <button type="button" class="btn btn-secondary btn-sm px-3 me-2" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i> Làm mới</button>
+                            <button type="submit" class="btn btn-success btn-sm px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu & Mã Hóa AES</button>
                         </div>
                     </div>
                 </form>
@@ -110,9 +116,13 @@
                         <thead class="table-light">
                             <tr>
                                 <th>STT</th>
-                                <th>Mã TS</th>
+                                <th>Mã Tài Sản</th>
                                 <th>Tên Tài Sản (Giải Mã)</th>
+                                <th>Nhóm Tài Sản</th>
                                 <th>Phòng Ban (Giải Mã)</th>
+                                <th>Cán Bộ SD (Giải Mã)</th>
+                                <th>Nguyên Giá</th>
+                                <th>Serial</th>
                                 <th class="text-center">Thao Tác</th>
                             </tr>
                         </thead>
@@ -141,7 +151,7 @@
                                 <input type="text" id="txtNguoiKK" class="form-control border-primary-subtle" value="Nguyễn Cao Mẫn">
                             </div>
                             <div class="alert alert-info py-2 small mb-0">
-                                <i class="fa-solid fa-circle-info me-1"></i> Dữ liệu quét sẽ được mã hóa AES trước khi ghi nhận lịch sử.
+                                <i class="fa-solid fa-circle-info me-1"></i> Dữ liệu quét mã QR sẽ tự động đối soát theo `ma_tai_san` và mã hóa AES lịch sử.
                             </div>
                         </div>
                     </div>
@@ -168,7 +178,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>STT</th>
-                                <th>Mã TS</th>
+                                <th>Mã Tài Sản</th>
                                 <th>Tên Tài Sản (Giải Mã)</th>
                                 <th>Cán Bộ KK</th>
                                 <th>Thời Gian</th>
@@ -191,16 +201,16 @@
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
 
-    <!-- Script Logic tích hợp mã hóa AES & Import Excel -->
+    <!-- Script Logic ứng dụng -->
     <script>
         const API_URL = 'https://kiem-ke-tai-san-vercel.vercel.app/api';
-        const SECRET_KEY = 'ManNC@2026_SecureKeyAivenMySQL!'; // Khóa bí mật dùng chung mã hóa/giải mã
+        const SECRET_KEY = 'ManNC@2026_SecureKeyAivenMySQL!'; 
         
         let danhSachTS = [];
         let isScanning = true;
         let assetsTable, historyTable;
 
-        // Các hàm Mã hóa & Giải mã AES sử dụng thư viện CryptoJS
+        // Mã hóa & Giải mã AES chuẩn
         function encryptData(plainText) {
             if (!plainText) return '';
             return CryptoJS.AES.encrypt(plainText.toString(), SECRET_KEY).toString();
@@ -211,9 +221,9 @@
             try {
                 const bytes = CryptoJS.AES.decrypt(cipherText, SECRET_KEY);
                 const originalText = bytes.toString(CryptoJS.enc.Utf8);
-                return originalText || cipherText; // Trả về chuỗi gốc nếu giải mã thành công, không thì trả nguyên bản
+                return originalText || cipherText; 
             } catch (e) {
-                return cipherText; // Trả về text gốc nếu dữ liệu cũ chưa mã hóa
+                return cipherText; 
             }
         }
 
@@ -233,25 +243,28 @@
         }
 
         $(document).ready(function() {
-            // DataTables Assets (Server-side)
+            // DataTables Assets (Server-side theo cấu trúc mới)
             assetsTable = $('#assetsTable').DataTable({
                 serverSide: true,
                 processing: true,
                 ajax: {
                     url: `${API_URL}?action=server_assets`,
-                    type: 'GET',
-                    dataDcs: function(d) { return d; }
+                    type: 'GET'
                 },
                 columns: [
                     { data: null, render: (data, type, row, meta) => meta.settings._iDisplayStart + meta.row + 1 },
-                    { data: 'id', render: data => `<span class="badge bg-secondary">${data}</span>` },
-                    { data: 'name', render: data => `<span class="fw-semibold">${decryptData(data)}</span>` }, // Tự động giải mã tên tài sản
-                    { data: 'room', render: data => decryptData(data) }, // Tự động giải mã phòng ban
+                    { data: 'ma_tai_san', render: data => `<span class="badge bg-secondary">${data || ''}</span>` },
+                    { data: 'ten_tai_san', render: data => `<span class="fw-semibold text-dark">${decryptData(data)}</span>` },
+                    { data: 'nhom_tai_san', render: data => `<small class="text-muted">${data || ''}</small>` },
+                    { data: 'phong_ban_quan_ly', render: data => decryptData(data) },
+                    { data: 'can_bo_su_dung', render: data => decryptData(data) },
+                    { data: 'nguyen_gia', render: data => data ? Number(data).toLocaleString('vi-VN') + ' đ' : '0' },
+                    { data: 'so_serial', render: data => `<span class="badge bg-light text-dark border">${data || ''}</span>` },
                     { 
                         data: 'id', 
                         className: 'text-center',
                         render: (data, type, row) => `
-                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${decryptData(row.name)}', '${decryptData(row.room)}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${row.ma_tai_san || ''}', '${decryptData(row.ten_tai_san)}', '${decryptData(row.phong_ban_quan_ly)}', '${decryptData(row.can_bo_su_dung)}', '${row.nguyen_gia || 0}', '${row.so_serial || ''}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn btn-danger btn-sm" onclick="deleteAsset('${row.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                         `
                     }
@@ -266,7 +279,7 @@
                 }
             });
 
-            // DataTables History (Server-side)
+            // DataTables History
             historyTable = $('#historyTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -277,16 +290,14 @@
                 columns: [
                     { data: null, render: (data, type, row, meta) => meta.settings._iDisplayStart + meta.row + 1 },
                     { data: 'tsId', render: data => `<span class="badge bg-secondary">${data}</span>` },
-                    { data: 'tsName', render: data => `<span class="fw-semibold text-dark">${decryptData(data)}</span>` }, // Giải mã tên tài sản lịch sử
+                    { data: 'tsName', render: data => `<span class="fw-semibold text-dark">${decryptData(data)}</span>` },
                     { data: 'nguoiKK' },
                     { data: 'thoiGian', render: data => `<span class="text-muted small">${data}</span>` },
-                    { data: 'ghiChu', render: data => `<span class="badge bg-success-subtle text-success border border-success-subtle">${decryptData(data)}</span>` }, // Giải mã ghi chú lịch sử
+                    { data: 'ghiChu', render: data => `<span class="badge bg-success-subtle text-success border border-success-subtle">${decryptData(data)}</span>` },
                     { 
                         data: 'id', 
                         className: 'text-center',
-                        render: data => `
-                            <button class="btn btn-outline-danger btn-sm" onclick="deleteHistory(${data})" title="Xóa lịch sử"><i class="fa-solid fa-xmark"></i></button>
-                        `
+                        render: data => `<button class="btn btn-outline-danger btn-sm" onclick="deleteHistory(${data})" title="Xóa lịch sử"><i class="fa-solid fa-xmark"></i></button>`
                     }
                 ],
                 language: {
@@ -307,11 +318,11 @@
                 const response = await fetch(`${API_URL}?action=data`);
                 const result = await response.json();
                 if (result.success) {
-                    // Giải mã ngầm cache để đối soát QR chính xác
                     danhSachTS = result.danh_sach.map(item => ({
                         ...item,
-                        name: decryptData(item.name),
-                        room: decryptData(item.room)
+                        ten_tai_san: decryptData(item.ten_tai_san),
+                        phong_ban_quan_ly: decryptData(item.phong_ban_quan_ly),
+                        can_bo_su_dung: decryptData(item.can_bo_su_dung)
                     }));
                     
                     const selectDot = document.getElementById('selectDot');
@@ -329,25 +340,35 @@
             loadInitialCache();
         }
 
+        let editingId = null;
         async function saveAsset(e) {
             e.preventDefault();
-            const id = document.getElementById('assetId').value.trim();
-            const rawName = document.getElementById('assetName').value.trim();
-            const rawRoom = document.getElementById('assetRoom').value.trim();
+            const ma_tai_san = document.getElementById('ma_tai_san').value.trim();
+            const rawTen = document.getElementById('ten_tai_san').value.trim();
+            const rawPhong = document.getElementById('phong_ban_quan_ly').value.trim();
+            const rawCanBo = document.getElementById('can_bo_su_dung').value.trim();
+            const nguyen_gia = document.getElementById('nguyen_gia').value || 0;
+            const so_serial = document.getElementById('so_serial').value.trim();
 
-            // MÃ HÓA AES DỮ LIỆU TRƯỚC KHI GỬI LÊN DATABASE AIVEN MYSQL
-            const name = encryptData(rawName);
-            const room = encryptData(rawRoom);
+            const payload = {
+                id: editingId || ma_tai_san,
+                ma_tai_san: ma_tai_san,
+                ten_tai_san: encryptData(rawTen),
+                phong_ban_quan_ly: encryptData(rawPhong),
+                can_bo_su_dung: encryptData(rawCanBo),
+                nguyen_gia: nguyen_gia,
+                so_serial: so_serial
+            };
 
             try {
                 const response = await fetch(`${API_URL}?action=save_asset`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ id, name, room })
+                    body: JSON.stringify(payload)
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu vào Aiven MySQL.', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu vào hệ thống.', timer: 1500, showConfirmButton: false });
                     resetForm();
                     refreshData();
                 } else {
@@ -358,23 +379,26 @@
             }
         }
 
-        function editAsset(id, name, room) {
-            document.getElementById('assetId').value = id;
-            document.getElementById('assetId').setAttribute('readonly', true);
-            document.getElementById('assetName').value = name;
-            document.getElementById('assetRoom').value = room;
+        function editAsset(id, ma_tai_san, ten_tai_san, phong_ban_quan_ly, can_bo_su_dung, nguyen_gia, so_serial) {
+            editingId = id;
+            document.getElementById('ma_tai_san').value = ma_tai_san;
+            document.getElementById('ten_tai_san').value = ten_tai_san;
+            document.getElementById('phong_ban_quan_ly').value = phong_ban_quan_ly;
+            document.getElementById('can_bo_su_dung').value = can_bo_su_dung;
+            document.getElementById('nguyen_gia').value = nguyen_gia;
+            document.getElementById('so_serial').value = so_serial;
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetForm() {
             document.getElementById('assetForm').reset();
-            document.getElementById('assetId').removeAttribute('readonly');
+            editingId = null;
         }
 
         async function deleteAsset(id) {
             const confirmRes = await Swal.fire({
                 title: 'Xác nhận xóa?',
-                text: `Bạn có chắc muốn xóa tài sản [${id}]?`,
+                text: `Bạn có chắc muốn xóa tài sản này?`,
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#d33',
@@ -394,8 +418,6 @@
                     if (result.success) {
                         Swal.fire({ icon: 'success', title: 'Đã xóa!', timer: 1200, showConfirmButton: false });
                         refreshData();
-                    } else {
-                        Swal.fire('Lỗi', 'Xóa thất bại!', 'error');
                     }
                 } catch (err) {
                     Swal.fire('Lỗi', 'Không thể kết nối máy chủ!', 'error');
@@ -433,25 +455,26 @@
             }
         }
 
+        // Quét QR Code tự động tra cứu theo mã tài sản
         async function onScanSuccess(decodedText) {
             if (!isScanning) return;
             isScanning = false;
 
-            const tsId = decodedText.trim();
+            const scannedCode = decodedText.trim();
             const dotId = document.getElementById('selectDot').value;
             const nguoiKK = document.getElementById('txtNguoiKK').value || 'Nhân viên';
 
-            const asset = danhSachTS.find(t => t.id === tsId);
-            const rawTsName = asset ? asset.name : `Tài sản quét (${tsId})`;
+            const asset = danhSachTS.find(t => t.ma_tai_san === scannedCode || t.id === scannedCode);
+            const rawTsName = asset ? asset.ten_tai_san : `Tài sản quét (${scannedCode})`;
             const thoiGian = new Date().toLocaleString('vi-VN');
 
-            // Mã hóa tên tài sản và ghi chú kiểm kê trước khi đẩy lên server lịch sử
+            const tsId = asset ? asset.ma_tai_san : scannedCode;
             const tsName = encryptData(rawTsName);
-            const ghiChu = encryptData('Quét QR Liên Tục');
+            const ghiChu = encryptData('Quét QR hệ thống mới');
 
             const resultDiv = document.getElementById('scan-result');
             resultDiv.className = 'mt-3 fw-bold fs-6 p-2 bg-warning-subtle text-warning border border-warning rounded';
-            resultDiv.innerText = `Đang xử lý mã: ${tsId}...`;
+            resultDiv.innerText = `Đang xử lý mã: ${scannedCode}...`;
 
             try {
                 const response = await fetch(`${API_URL}?action=history`, {
@@ -487,17 +510,30 @@
         );
         html5QrcodeScanner.render(onScanSuccess, (err) => {});
 
-        // --- CÁC HÀM XỬ LÝ IMPORT EXCEL THEO LÔ ---
+        // --- TÍNH NĂNG IMPORT EXCEL THEO CẤU TRÚC MỚI ---
         function downloadTemplate(e) {
             e.preventDefault();
             const templateData = [
-                { "Mã Tài Sản": "TS001", "Tên Tài Sản": "Máy chiếu Sony", "Phòng Ban": "Phòng Họp A" },
-                { "Mã Tài Sản": "TS002", "Tên Tài Sản": "Laptop Dell Core i5", "Phòng Ban": "Phòng Kế Toán" }
+                { 
+                    "ma_tai_san": "CC00000144981", 
+                    "don_vi": "00745 - ĐB SÔNG CỬU LONG", 
+                    "ten_tai_san": "Switch CISCO Catalyst 2960", 
+                    "nhom_tai_san": "403010301 - TB chuyển mạch", 
+                    "nguyen_gia": 13750000, 
+                    "hao_mon_luy_ke": 9614344, 
+                    "gia_tri_con_lai": 4135656, 
+                    "ngay_dua_vao_sd": "2024-06-08", 
+                    "trang_thai_sd": "Đang sử dụng", 
+                    "bo_so": "BIDV_CCLD", 
+                    "can_bo_su_dung": "Lê Duy Phúc", 
+                    "phong_ban_quan_ly": "340 - TRUNG TÂM XỬ LÝ NỢ", 
+                    "so_serial": "4CE514BGHZ" 
+                }
             ];
             const ws = XLSX.utils.json_to_sheet(templateData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "DanhSachTaiSan");
-            XLSX.writeFile(wb, "Template_KiemKe_TaiSan.xlsx");
+            XLSX.writeFile(wb, "Template_KiemKe_TaiSan_Moi.xlsx");
         }
 
         async function importExcelData(event) {
@@ -509,17 +545,16 @@
                 try {
                     const data = new Uint8Array(e.target.result);
                     const workbook = XLSX.read(data, { type: 'array' });
-                    const firstSheetName = workbook.SheetNames[0];
-                    const worksheet = workbook.Sheets[firstSheetName];
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                     const rows = XLSX.utils.sheet_to_json(worksheet);
 
                     if (rows.length === 0) {
-                        Swal.fire('Cảnh báo', 'File Excel không có dữ liệu!', 'warning');
+                        Swal.fire('Cảnh báo', 'File dữ liệu không có dòng nào!', 'warning');
                         return;
                     }
 
                     Swal.fire({
-                        title: 'Đang mã hóa & đồng bộ...',
+                        title: 'Đang mã hóa & đồng bộ dữ liệu...',
                         text: `Đang xử lý ${rows.length} tài sản từ file Excel. Vui lòng chờ...`,
                         allowOutsideClick: false,
                         didOpen: () => { Swal.showLoading(); }
@@ -529,24 +564,38 @@
                     let failCount = 0;
 
                     for (let row of rows) {
-                        const id = String(row['Mã Tài Sản'] || row['MaTaiSan'] || row['id'] || '').trim();
-                        const rawName = String(row['Tên Tài Sản'] || row['TenTaiSan'] || row['name'] || '').trim();
-                        const rawRoom = String(row['Phòng Ban'] || row['PhongBan'] || row['room'] || '').trim();
-
-                        if (!id || !rawName) {
+                        const ma_tai_san = String(row['ma_tai_san'] || row['Mã Tài Sản'] || row['ma_ts'] || '').trim();
+                        const rawTen = String(row['ten_tai_san'] || row['Tên Tài Sản'] || '').trim();
+                        const rawPhong = String(row['phong_ban_quan_ly'] || row['Phòng Ban Quản Lý'] || '').trim();
+                        const rawCanBo = String(row['can_bo_su_dung'] || row['Cán Bộ Sử Dụng'] || '').trim();
+                        
+                        if (!ma_tai_san || !rawTen) {
                             failCount++;
                             continue;
                         }
 
-                        // Mã hóa AES từng dòng dữ liệu trước khi đẩy lên Aiven MySQL
-                        const name = encryptData(rawName);
-                        const room = encryptData(rawRoom);
+                        const payload = {
+                            id: ma_tai_san,
+                            ma_tai_san: ma_tai_san,
+                            don_vi: row['don_vi'] || row['DonVi'] || '',
+                            ten_tai_san: encryptData(rawTen),
+                            nhom_tai_san: row['nhom_tai_san'] || row['NhomTaiSan'] || '',
+                            nguyen_gia: row['nguyen_gia'] || row['NguyenGia'] || 0,
+                            hao_mon_luy_ke: row['hao_mon_luy_ke'] || 0,
+                            gia_tri_con_lai: row['gia_tri_con_lai'] || 0,
+                            ngay_dua_vao_sd: row['ngay_dua_vao_sd'] || '',
+                            trang_thai_sd: row['trang_thai_sd'] || 'Đang sử dụng',
+                            bo_so: row['bo_so'] || '',
+                            can_bo_su_dung: encryptData(rawCanBo),
+                            phong_ban_quan_ly: encryptData(rawPhong),
+                            so_serial: String(row['so_serial'] || row['SoSerial'] || '')
+                        };
 
                         try {
                             const response = await fetch(`${API_URL}?action=save_asset`, {
                                 method: 'POST',
                                 headers: { 'Content-Type': 'application/json' },
-                                body: JSON.stringify({ id, name, room })
+                                body: JSON.stringify(payload)
                             });
                             const result = await response.json();
                             if (result.success) {
@@ -564,12 +613,12 @@
 
                     Swal.fire({
                         icon: 'success',
-                        title: 'Hoàn tất nhập dữ liệu lô!',
-                        html: `Thành công: <b>${successCount}</b> tài sản đã mã hóa AES.<br>${failCount > 0 ? `<span class="text-danger">Thất bại/Bỏ qua: ${failCount} dòng</span>` : ''}`
+                        title: 'Hoàn tất nhập dữ liệu hàng loạt!',
+                        html: `Thành công: <b>${successCount}</b> tài sản đã mã hóa AES vào hệ thống.<br>${failCount > 0 ? `<span class="text-danger">Thất bại/Bỏ qua: ${failCount} dòng</span>` : ''}`
                     });
 
                 } catch (error) {
-                    Swal.fire('Lỗi', 'Không thể đọc file Excel. Vui lòng kiểm tra lại định dạng!', 'error');
+                    Swal.fire('Lỗi', 'Không thể đọc file cấu trúc này. Vui lòng kiểm tra lại định dạng!', 'error');
                     document.getElementById('excelFile').value = '';
                 }
             };
