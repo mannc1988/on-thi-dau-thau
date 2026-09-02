@@ -10,6 +10,8 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- SweetAlert2 CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- DataTables Bootstrap 5 CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/dataTables.bootstrap5.min.css">
     <!-- QR Scanner Library -->
     <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
     <style>
@@ -27,7 +29,7 @@
         <!-- Header -->
         <div class="text-center mb-4">
             <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN QR</h2>
-            <p class="text-muted">Hệ thống Full CRUD kết hợp quét mã liên tục thời gian thực</p>
+            <p class="text-muted">Hệ thống Full CRUD kết hợp DataTables Ajax & Quét QR liên tục</p>
         </div>
 
         <!-- Tab Điều Hướng -->
@@ -114,7 +116,7 @@
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover align-middle w-100">
+                            <table id="assetsTable" class="table table-striped table-hover align-middle w-100">
                                 <thead class="table-light">
                                     <tr>
                                         <th>STT</th>
@@ -124,9 +126,7 @@
                                         <th class="text-center">Thao Tác</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableAssets">
-                                    <tr><td colspan="5" class="text-center text-muted">Đang tải dữ liệu...</td></tr>
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -138,11 +138,11 @@
                 <div class="card shadow-sm">
                     <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center py-3">
                         <h5 class="mb-0"><i class="fa-solid fa-clock-rotate-left me-2"></i> Lịch Sử Đã Kiểm Kê</h5>
-                        <button class="btn btn-light btn-sm fw-semibold" onclick="loadData()"><i class="fa-solid fa-rotate me-1"></i> Làm mới</button>
+                        <button class="btn btn-light btn-sm fw-semibold" onclick="refreshData()"><i class="fa-solid fa-rotate me-1"></i> Làm mới</button>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
-                            <table class="table table-striped table-hover align-middle w-100">
+                            <table id="historyTable" class="table table-striped table-hover align-middle w-100">
                                 <thead class="table-light">
                                     <tr>
                                         <th>STT</th>
@@ -154,9 +154,7 @@
                                         <th class="text-center">Xóa</th>
                                     </tr>
                                 </thead>
-                                <tbody id="tableHistory">
-                                    <tr><td colspan="7" class="text-center text-muted py-3">Đang tải dữ liệu...</td></tr>
-                                </tbody>
+                                <tbody></tbody>
                             </table>
                         </div>
                     </div>
@@ -166,19 +164,25 @@
         </div>
     </div>
 
-    <!-- Bootstrap 5 JS Bundle -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- SweetAlert2 JS -->
+    <!-- 1. jQuery (Bắt buộc đầu tiên) -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <!-- 2. SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <!-- Công cụ Eruda (Xem lỗi F12 trên điện thoại) -->
+    <!-- 3. Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- 4. DataTables Core & Bootstrap 5 JS -->
+    <script src="https://cdn.datatables.net/1.13.6/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/dataTables.bootstrap5.min.js"></script>
+    <!-- 5. Công cụ Eruda (Xem lỗi F12 trên điện thoại) -->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
 
-    <!-- Script Logic Ứng Dụng -->
+    <!-- 6. Script logic & Khởi tạo DataTables Ajax -->
     <script>
         const API_URL = 'https://kiem-ke-tai-san-vercel.vercel.app/api';
         let danhSachTS = [];
         let isScanning = true;
+        let assetsTable, historyTable;
 
         function playBeep() {
             try {
@@ -195,72 +199,91 @@
             } catch (e) {}
         }
 
-        async function loadData() {
-            try {
-                const response = await fetch(`${API_URL}?action=data`);
-                const result = await response.json();
-                
-                if (result.success) {
-                    danhSachTS = result.danh_sach;
-                    
-                    const selectDot = document.getElementById('selectDot');
-                    selectDot.innerHTML = '';
-                    result.dot_kiem_ke.forEach(d => {
-                        selectDot.innerHTML += `<option value="${d.id}">${d.name}</option>`;
-                    });
+        $(document).ready(function() {
+            // Khởi tạo DataTables cho danh mục tài sản qua Ajax
+            assetsTable = $('#assetsTable').DataTable({
+                processing: true,
+                ajax: {
+                    url: `${API_URL}?action=data`,
+                    dataSrc: function(json) {
+                        if (json.success) {
+                            danhSachTS = json.danh_sach; // Lưu cache để quét QR
+                            
+                            // Đổ dữ liệu đợt kiểm kê
+                            const selectDot = document.getElementById('selectDot');
+                            selectDot.innerHTML = '';
+                            json.dot_kiem_ke.forEach(d => {
+                                selectDot.innerHTML += `<option value="${d.id}">${d.name}</option>`;
+                            });
 
-                    // Đổ dữ liệu Bảng Tài Sản
-                    const tableAssets = document.getElementById('tableAssets');
-                    tableAssets.innerHTML = '';
-                    if (danhSachTS.length === 0) {
-                        tableAssets.innerHTML = `<tr><td colspan="5" class="text-center text-muted py-3">Chưa có tài sản nào.</td></tr>`;
-                    } else {
-                        danhSachTS.forEach((item, index) => {
-                            tableAssets.innerHTML += `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td><span class="badge bg-secondary">${item.id}</span></td>
-                                    <td class="fw-semibold">${item.name}</td>
-                                    <td>${item.room}</td>
-                                    <td class="text-center">
-                                        <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${item.id}', '${item.name}', '${item.room}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
-                                        <button class="btn btn-danger btn-sm" onclick="deleteAsset('${item.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
+                            return json.danh_sach;
+                        }
+                        return [];
                     }
-
-                    // Đổ dữ liệu Bảng Lịch Sử
-                    const tableHistory = document.getElementById('tableHistory');
-                    tableHistory.innerHTML = '';
-                    if (result.lich_su.length === 0) {
-                        tableHistory.innerHTML = `<tr><td colspan="7" class="text-center text-muted py-3">Chưa có tài sản nào được kiểm kê.</td></tr>`;
-                    } else {
-                        result.lich_su.forEach((item, index) => {
-                            tableHistory.innerHTML += `
-                                <tr>
-                                    <td>${index + 1}</td>
-                                    <td><span class="badge bg-secondary">${item.tsId}</span></td>
-                                    <td class="fw-semibold text-dark">${item.tsName}</td>
-                                    <td>${item.nguoiKK}</td>
-                                    <td class="text-muted small">${item.thoiGian}</td>
-                                    <td><span class="badge bg-success-subtle text-success border border-success-subtle">${item.ghiChu}</span></td>
-                                    <td class="text-center">
-                                        <button class="btn btn-outline-danger btn-sm" onclick="deleteHistory(${item.id})" title="Xóa lịch sử"><i class="fa-solid fa-xmark"></i></button>
-                                    </td>
-                                </tr>
-                            `;
-                        });
+                },
+                columns: [
+                    { data: null, render: (data, type, row, meta) => meta.row + 1 },
+                    { data: 'id', render: data => `<span class="badge bg-secondary">${data}</span>` },
+                    { data: 'name', render: data => `<span class="fw-semibold">${data}</span>` },
+                    { data: 'room' },
+                    { 
+                        data: null, 
+                        className: 'text-center',
+                        render: (data, type, row) => `
+                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${row.name}', '${row.room}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-danger btn-sm" onclick="deleteAsset('${row.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
+                        `
                     }
-
-                } else {
-                    Swal.fire('Lỗi', result.error || 'Không thể tải dữ liệu từ server', 'error');
+                ],
+                language: {
+                    search: "Tìm kiếm:",
+                    lengthMenu: "Hiển thị _MENU_ dòng",
+                    info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+                    paginate: { first: "Đầu", last: "Cuối", next: "Sau", previous: "Trước" },
+                    zeroRecords: "Không tìm thấy dữ liệu",
+                    infoEmpty: "Hiển thị 0 đến 0 của 0 dòng"
                 }
-            } catch (err) {
-                console.error('Lỗi kết nối:', err);
-                Swal.fire('Lỗi kết nối', 'Không thể giao tiếp với API Vercel!', 'error');
-            }
+            });
+
+            // Khởi tạo DataTables cho lịch sử kiểm kê qua Ajax
+            historyTable = $('#historyTable').DataTable({
+                processing: true,
+                ajax: {
+                    url: `${API_URL}?action=data`,
+                    dataSrc: function(json) {
+                        return json.success ? json.lich_su : [];
+                    }
+                },
+                columns: [
+                    { data: null, render: (data, type, row, meta) => meta.row + 1 },
+                    { data: 'tsId', render: data => `<span class="badge bg-secondary">${data}</span>` },
+                    { data: 'tsName', render: data => `<span class="fw-semibold text-dark">${data}</span>` },
+                    { data: 'nguoiKK' },
+                    { data: 'thoiGian', render: data => `<span class="text-muted small">${data}</span>` },
+                    { data: 'ghiChu', render: data => `<span class="badge bg-success-subtle text-success border border-success-subtle">${data}</span>` },
+                    { 
+                        data: 'id', 
+                        className: 'text-center',
+                        render: data => `
+                            <button class="btn btn-outline-danger btn-sm" onclick="deleteHistory(${data})" title="Xóa lịch sử"><i class="fa-solid fa-xmark"></i></button>
+                        `
+                    }
+                ],
+                order: [[0, "desc"]],
+                language: {
+                    search: "Tìm kiếm:",
+                    lengthMenu: "Hiển thị _MENU_ dòng",
+                    info: "Hiển thị _START_ đến _END_ của _TOTAL_ dòng",
+                    paginate: { first: "Đầu", last: "Cuối", next: "Sau", previous: "Trước" },
+                    zeroRecords: "Không tìm thấy dữ liệu",
+                    infoEmpty: "Hiển thị 0 đến 0 của 0 dòng"
+                }
+            });
+        });
+
+        function refreshData() {
+            if (assetsTable) assetsTable.ajax.reload(null, false);
+            if (historyTable) historyTable.ajax.reload(null, false);
         }
 
         async function saveAsset(e) {
@@ -279,7 +302,7 @@
                 if (result.success) {
                     Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã lưu tài sản vào Database.', timer: 1500, showConfirmButton: false });
                     resetForm();
-                    loadData();
+                    refreshData();
                 } else {
                     Swal.fire('Lỗi', result.error, 'error');
                 }
@@ -324,7 +347,7 @@
                     const result = await response.json();
                     if (result.success) {
                         Swal.fire({ icon: 'success', title: 'Đã xóa!', timer: 1200, showConfirmButton: false });
-                        loadData();
+                        refreshData();
                     } else {
                         Swal.fire('Lỗi', 'Xóa thất bại!', 'error');
                     }
@@ -356,7 +379,7 @@
                     const result = await response.json();
                     if (result.success) {
                         Swal.fire({ icon: 'success', title: 'Đã xóa!', timer: 1000, showConfirmButton: false });
-                        loadData();
+                        refreshData();
                     }
                 } catch (err) {
                     Swal.fire('Lỗi', 'Không thể kết nối máy chủ!', 'error');
@@ -392,7 +415,7 @@
                     playBeep();
                     resultDiv.className = 'mt-3 fw-bold fs-6 p-2 bg-success-subtle text-success border border-success rounded';
                     resultDiv.innerHTML = `<i class="fa-solid fa-circle-check me-1"></i> Ghi nhận thành công: ${tsName}!`;
-                    loadData();
+                    refreshData();
                 } else {
                     resultDiv.className = 'mt-3 fw-bold fs-6 p-2 bg-danger-subtle text-danger border border-danger rounded';
                     resultDiv.innerHTML = `<i class="fa-solid fa-triangle-exclamation me-1"></i> ${result.error}`;
@@ -413,9 +436,6 @@
             "reader", { fps: 15, qrbox: 250 }, false
         );
         html5QrcodeScanner.render(onScanSuccess, (err) => {});
-
-        // Tải dữ liệu ban đầu khi mở trang
-        loadData();
     </script>
 </body>
 </html>
