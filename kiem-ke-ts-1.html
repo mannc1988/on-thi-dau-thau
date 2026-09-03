@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Centered Multi-Image Preview & Google Drive)</title>
+    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Viewer.js & Google Drive)</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -13,6 +13,8 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
     <!-- DataTables Bootstrap 5 CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css">
+    <!-- Viewer.js CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.3/viewer.min.css">
     
     <!-- jQuery (BẮT BUỘC ĐỨNG ĐẦU TIÊN) -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
@@ -20,10 +22,13 @@
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     
-    <!-- DataTables JS (ĐỨNG SAU JQUERY) -->
+    <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
     
+    <!-- Viewer.js JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/viewerjs/1.11.3/viewer.min.js"></script>
+
     <!-- Crypto-JS dùng để mã hóa AES -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
@@ -282,6 +287,9 @@
 
     </div>
 
+    <!-- Container ẩn để Viewer.js gom nhóm và hiển thị toàn bộ ảnh khi bấm xem -->
+    <div id="viewerContainer" style="display: none;"></div>
+
     <!-- SweetAlert2 & Eruda Console Debug -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
@@ -338,8 +346,8 @@
                     const div = document.createElement('div');
                     div.className = 'temp-img-container';
                     div.innerHTML = `
-                        <img src="${imgSrc}" alt="Temp Preview" onclick="showFullImage('${imgSrc}')" title="Bấm để xem lớn">
-                        <button type="button" class="btn-view-temp" onclick="showFullImage('${imgSrc}')" title="Xem ảnh"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <img src="${imgSrc}" alt="Temp Preview" onclick="showViewer('${imgSrc}')" title="Bấm để xem lớn">
+                        <button type="button" class="btn-view-temp" onclick="showViewer('${imgSrc}')" title="Xem ảnh"><i class="fa-solid fa-magnifying-glass"></i></button>
                         <button type="button" class="btn-delete-temp" onclick="removeTempImage(${index})" title="Xóa ảnh này"><i class="fa-solid fa-xmark"></i></button>
                     `;
                     container.appendChild(div);
@@ -354,99 +362,33 @@
             renderTempPreviews();
         }
 
-        // --- HỆ THỐNG XEM ẢNH KÈM MENU ĐIỀU HƯỚNG ---
-        let currentViewingImages = [];
-        let currentImageIndex = 0;
-        let currentZoomLevel = 1;
+        // --- TÍCH HỢP VIEWER.JS XEM ẢNH CHUYÊN NGHIỆP ---
+        function showViewer(urlsString) {
+            const container = document.getElementById('viewerContainer');
+            container.innerHTML = ''; // Xóa ảnh cũ
 
-        function showFullImage(urlOrList, index = 0) {
-            if (typeof urlOrList === 'string') {
-                currentViewingImages = urlOrList.split(',').map(s => s.trim()).filter(Boolean);
-            } else if (Array.isArray(urlOrList)) {
-                currentViewingImages = urlOrList;
-            } else {
-                currentViewingImages = [urlOrList];
-            }
-            
-            currentImageIndex = (index >= 0 && index < currentViewingImages.length) ? index : 0;
-            renderImageViewerModal();
-        }
+            let urls = urlsString.split(',').map(s => s.trim()).filter(Boolean);
+            if (urls.length === 0) return;
 
-        function renderImageViewerModal() {
-            const currentUrl = currentViewingImages[currentImageIndex];
-            const hasMultiple = currentViewingImages.length > 1;
+            // Tạo các thẻ img bên trong container ẩn để Viewer.js nhận diện
+            urls.forEach(url => {
+                const img = document.createElement('img');
+                img.src = url;
+                container.appendChild(img);
+            });
 
-            const htmlContent = `
-                <div class="text-center position-relative">
-                    <div id="imgContainer" style="overflow: hidden; max-height: 65vh; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 8px;">
-                        <img id="viewerImage" src="${currentUrl}" style="max-width: 100%; max-height: 65vh; object-fit: contain; transition: transform 0.2s ease;">
-                    </div>
-                    
-                    ${hasMultiple ? `
-                        <div class="mt-2 text-muted small fw-semibold">
-                            Ảnh ${currentImageIndex + 1} / ${currentViewingImages.length}
-                        </div>
-                    ` : ''}
-
-                    <!-- Menu thanh công cụ điều hướng -->
-                    <div class="mt-3 d-flex justify-content-center align-items-center gap-2 flex-wrap bg-light p-2 rounded border">
-                        <button type="button" class="btn btn-dark btn-sm" onclick="zoomImage(0.2)" title="Phóng to"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
-                        <button type="button" class="btn btn-dark btn-sm" onclick="zoomImage(-0.2)" title="Thu nhỏ"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
-                        <button type="button" class="btn btn-dark btn-sm" onclick="resetZoom()" title="Đặt lại kích thước"><i class="fa-solid fa-rotate-right"></i></button>
-                        <span class="text-secondary mx-1">|</span>
-                        <a href="${currentUrl}" target="_blank" class="btn btn-primary btn-sm" title="Tải xuống / Mở tab mới" download><i class="fa-solid fa-download"></i> Tải về</a>
-                        
-                        ${hasMultiple ? `
-                            <span class="text-secondary mx-1">|</span>
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="prevImage()" ${currentImageIndex === 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i> Trước</button>
-                            <button type="button" class="btn btn-secondary btn-sm" onclick="nextImage()" ${currentImageIndex === currentViewingImages.length - 1 ? 'disabled' : ''}>Sau <i class="fa-solid fa-chevron-right"></i></button>
-                        ` : ''}
-                    </div>
-                </div>
-            `;
-
-            Swal.fire({
-                html: htmlContent,
-                width: '750px',
-                padding: '1rem',
-                showCloseButton: true,
-                showConfirmButton: false,
-                didOpen: () => {
-                    currentZoomLevel = 1;
+            // Khởi tạo Viewer và mở trực tiếp
+            const viewer = new Viewer(container, {
+                inline: false,
+                button: true,
+                navbar: urls.length > 1, // Hiện thanh thumbnail bên dưới nếu có nhiều hơn 1 ảnh
+                title: true,
+                toolbar: true,
+                hidden: function () {
+                    viewer.destroy(); // Hủy instance sau khi đóng để giải phóng bộ nhớ
                 }
             });
-        }
-
-        function zoomImage(amount) {
-            currentZoomLevel += amount;
-            if (currentZoomLevel < 0.5) currentZoomLevel = 0.5;
-            if (currentZoomLevel > 3) currentZoomLevel = 3;
-            const img = document.getElementById('viewerImage');
-            if (img) {
-                img.style.transform = `scale(${currentZoomLevel})`;
-            }
-        }
-
-        function resetZoom() {
-            currentZoomLevel = 1;
-            const img = document.getElementById('viewerImage');
-            if (img) {
-                img.style.transform = `scale(1)`;
-            }
-        }
-
-        function prevImage() {
-            if (currentImageIndex > 0) {
-                currentImageIndex--;
-                renderImageViewerModal();
-            }
-        }
-
-        function nextImage() {
-            if (currentImageIndex < currentViewingImages.length - 1) {
-                currentImageIndex++;
-                renderImageViewerModal();
-            }
+            viewer.show();
         }
 
         function playBeep() {
@@ -482,7 +424,7 @@
                             if (!decrypted) return '<span class="text-muted small">-</span>';
                             let urls = decrypted.split(',');
                             let firstImg = urls[0].trim();
-                            return `<img src="${firstImg}" alt="Img" class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;" onclick="showFullImage('${decrypted}')" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=Lỗi';">`;
+                            return `<img src="${firstImg}" alt="Img" class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;" onclick="showViewer('${decrypted}')" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=Lỗi';">`;
                         }
                     },
                     { data: 'ma_tai_san', render: data => `<span class="badge bg-secondary">${decryptData(data)}</span>` },
@@ -686,8 +628,8 @@
                         const div = document.createElement('div');
                         div.className = 'temp-img-container';
                         div.innerHTML = `
-                            <img src="${trimUrl}" alt="Old Img" onclick="showFullImage('${hinh_anh}')" title="Bấm để xem lớn">
-                            <button type="button" class="btn-view-temp" onclick="showFullImage('${hinh_anh}')"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <img src="${trimUrl}" alt="Old Img" onclick="showViewer('${hinh_anh}')" title="Bấm để xem lớn">
+                            <button type="button" class="btn-view-temp" onclick="showViewer('${hinh_anh}')"><i class="fa-solid fa-magnifying-glass"></i></button>
                         `;
                         container.appendChild(div);
                     }
@@ -898,7 +840,7 @@
                             ngay_dua_vao_sd: encryptData(row['ngay_dua_vao_sd'] || ''),
                             trang_thai_sd: encryptData(row['trang_thai_sd'] || 'Đang sử dụng'),
                             bo_so: encryptData(row['bo_so'] || ''),
-                            can_bo_su_dung: encryptData(rawCanBo),
+.can_bo_su_dung: encryptData(rawCanBo),
                             phong_ban_quan_ly: encryptData(rawPhong),
                             so_serial: encryptData(String(row['so_serial'] || '')),
                             hinh_anh: encryptData(rawImg)
