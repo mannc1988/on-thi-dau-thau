@@ -358,9 +358,16 @@
             Swal.fire({
                 imageUrl: url,
                 imageAlt: 'Hình ảnh tài sản',
+                imageWidth: 'auto',
+                imageHeight: 'auto',
+                width: '600px', // Giới hạn chiều rộng khung hiển thị tối đa là 600px
+                padding: '1rem',
                 showCloseButton: true,
                 showConfirmButton: false,
-                width: 'auto'
+                customClass: {
+                    image: 'rounded shadow-sm',
+                    popup: 'border-radius-12'
+                }
             });
         }
 
