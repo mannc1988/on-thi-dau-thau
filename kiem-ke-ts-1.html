@@ -50,7 +50,8 @@
             border-bottom: 2px solid #e2e8f0;
             white-space: nowrap;
         }
-        /* Style cho danh sách ảnh tạm */
+
+        /* Style cho danh sách ảnh tạm & nút xem/xóa */
         .temp-img-container {
             position: relative;
             display: inline-block;
@@ -63,6 +64,7 @@
             object-fit: cover;
             border-radius: 6px;
             border: 1px solid #dee2e6;
+            cursor: pointer;
         }
         .btn-delete-temp {
             position: absolute;
@@ -79,6 +81,23 @@
             align-items: center;
             justify-content: center;
             cursor: pointer;
+            z-index: 2;
+        }
+        .btn-view-temp {
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            width: 18px;
+            height: 18px;
+            font-size: 9px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -88,7 +107,7 @@
         <!-- Header -->
         <div class="text-center mb-4">
             <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KẾ TÀI SẢN (MULTI-IMAGE & GOOGLE DRIVE)</h2>
-            <p class="text-muted">Chọn nhiều ảnh tạm, preview trực tiếp và chỉ đẩy lên Google Drive khi bấm lưu</p>
+            <p class="text-muted">Chọn nhiều ảnh tạm, preview trực tiếp, xem lớn và chỉ đẩy lên Google Drive khi bấm lưu</p>
         </div>
 
         <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN -->
@@ -136,7 +155,7 @@
                         <div class="col-md-4">
                             <label class="form-label fw-semibold small">Chọn Ảnh Tạm (Nhiều ảnh):</label>
                             <input type="file" id="imageFiles" class="form-control form-control-sm" accept="image/*" multiple onchange="handleTempImagesSelect(event)">
-                            <!-- Khu vực hiển thị danh sách preview ảnh tạm & nút xóa -->
+                            <!-- Khu vực hiển thị danh sách preview ảnh tạm & nút xem/xóa -->
                             <div id="tempPreviewContainer" class="mt-2 d-flex flex-wrap"></div>
                             <input type="hidden" id="hinh_anh_url" value="">
                         </div>
@@ -245,7 +264,6 @@
         let isScanning = true;
         let assetsTable, historyTable;
         let tempFilesList = []; // Mảng chứa các đối tượng file tạm chọn trên máy
-        let uploadedImageLinks = []; // Mảng chứa các link sau khi đẩy lên Google Drive
 
         // Mã hóa & Giải mã AES
         function encryptData(plainText) {
@@ -273,11 +291,10 @@
                 tempFilesList.push(files[i]);
             }
             renderTempPreviews();
-            // Reset input file để có thể tiếp tục chọn thêm ảnh trùng tên nếu muốn
-            event.target.value = '';
+            event.target.value = ''; // Reset input file
         }
 
-        // 2. HIỂN THỊ DANH SÁCH PREVIEW KÈM NÚT XÓA TẠM
+        // 2. HIỂN THỊ DANH SÁCH PREVIEW KÈM NÚT XÓA VÀ NÚT KÍNH LÚP XEM LỚN
         function renderTempPreviews() {
             const container = document.getElementById('tempPreviewContainer');
             container.innerHTML = '';
@@ -285,10 +302,12 @@
             tempFilesList.forEach((file, index) => {
                 const reader = new FileReader();
                 reader.onload = function(e) {
+                    const imgSrc = e.target.result;
                     const div = document.createElement('div');
                     div.className = 'temp-img-container';
                     div.innerHTML = `
-                        <img src="${e.target.result}" alt="Temp Preview">
+                        <img src="${imgSrc}" alt="Temp Preview" onclick="showFullImage('${imgSrc}')" title="Bấm để xem lớn">
+                        <button type="button" class="btn-view-temp" onclick="showFullImage('${imgSrc}')" title="Xem ảnh"><i class="fa-solid fa-magnifying-glass"></i></button>
                         <button type="button" class="btn-delete-temp" onclick="removeTempImage(${index})" title="Xóa ảnh này"><i class="fa-solid fa-xmark"></i></button>
                     `;
                     container.appendChild(div);
@@ -344,7 +363,6 @@
                         render: data => {
                             let decrypted = decryptData(data);
                             if (!decrypted) return '<span class="text-muted small">-</span>';
-                            // Hỗ trợ hiển thị nhiều ảnh phân cách bằng dấu phẩy
                             let urls = decrypted.split(',');
                             let firstImg = urls[0].trim();
                             return `<img src="${firstImg}" alt="Img" class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;" onclick="showFullImage('${firstImg}')" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=Lỗi';">`;
@@ -439,7 +457,7 @@
 
         let editingId = null;
 
-        // 4. KHI BẤM LƯU: LÚC NÀY MỚI LOẠT GỬI TẤT CẢ ẢNH TẠM LÊN GOOGLE DRIVE RỒI MÃ HÓA LƯU DB
+        // 4. KHI BẤM LƯU: GỬI TẤT CẢ ẢNH TẠM LÊN GOOGLE DRIVE RỒI MÃ HÓA LƯU DB
         async function saveAsset(e) {
             e.preventDefault();
             const ma_tai_san = document.getElementById('ma_tai_san').value.trim();
@@ -457,13 +475,11 @@
             });
 
             let uploadedLinks = [];
-            // Giữ lại link ảnh cũ nếu đang sửa mà không chọn thêm ảnh mới
             const existingUrl = document.getElementById('hinh_anh_url').value;
             if (existingUrl && tempFilesList.length === 0) {
                 uploadedLinks.push(existingUrl);
             }
 
-            // Tiến hành tuần tự upload từng file tạm lên Google Drive qua Vercel
             for (let file of tempFilesList) {
                 try {
                     let base64String = await toBase64(file);
@@ -541,10 +557,8 @@
             document.getElementById('so_serial').value = so_serial;
             
             document.getElementById('hinh_anh_url').value = hinh_anh;
-            tempFilesList = []; // Xóa danh sách tạm
-            renderTempPreviews();
+            tempFilesList = []; 
 
-            // Hiển thị preview ảnh cũ nếu có
             const container = document.getElementById('tempPreviewContainer');
             container.innerHTML = '';
             if (hinh_anh) {
@@ -554,7 +568,10 @@
                     if (trimUrl) {
                         const div = document.createElement('div');
                         div.className = 'temp-img-container';
-                        div.innerHTML = `<img src="${trimUrl}" alt="Old Img">`;
+                        div.innerHTML = `
+                            <img src="${trimUrl}" alt="Old Img" onclick="showFullImage('${trimUrl}')" title="Bấm để xem lớn">
+                            <button type="button" class="btn-view-temp" onclick="showFullImage('${trimUrl}')"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        `;
                         container.appendChild(div);
                     }
                 });
@@ -567,7 +584,6 @@
             document.getElementById('assetForm').reset();
             document.getElementById('tempPreviewContainer').innerHTML = '';
             tempFilesList = [];
-            uploadedImageLinks = [];
             document.getElementById('hinh_anh_url').value = '';
             editingId = null;
         }
