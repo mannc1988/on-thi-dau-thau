@@ -37,7 +37,24 @@
         body { background-color: #f8f9fa; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         .card { border: none; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 1.5rem; }
         .card-header { border-radius: 12px 12px 0 0 !important; font-weight: 600; }
-        #reader { border: 2px dashed #0d6efd; border-radius: 8px; background: #fff; }
+        
+        /* --- THU NHỎ KHUNG QUÉT QR CHO GỌN GÀNG --- */
+        #reader { 
+            border: 2px dashed #0d6efd !important; 
+            border-radius: 8px; 
+            background: #fff; 
+            max-width: 260px !important; 
+            margin: auto;
+        }
+        #reader video {
+            max-height: 200px !important;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+        #reader__dashboard_section_csr button {
+            padding: 4px 10px;
+            font-size: 12px;
+        }
         
         .table thead th {
             background-color: #f1f5f9;
@@ -109,7 +126,7 @@
             justify-content: center;
             cursor: pointer;
         }
-    </style>
+</style>
 </head>
 <body class="py-4">
 
