@@ -131,7 +131,7 @@
             justify-content: center;
             cursor: pointer;
         }
-</style>
+    </style>
 </head>
 <body class="py-4">
 
@@ -354,21 +354,99 @@
             renderTempPreviews();
         }
 
-        function showFullImage(url) {
+        // --- HỆ THỐNG XEM ẢNH KÈM MENU ĐIỀU HƯỚNG ---
+        let currentViewingImages = [];
+        let currentImageIndex = 0;
+        let currentZoomLevel = 1;
+
+        function showFullImage(urlOrList, index = 0) {
+            if (typeof urlOrList === 'string') {
+                currentViewingImages = urlOrList.split(',').map(s => s.trim()).filter(Boolean);
+            } else if (Array.isArray(urlOrList)) {
+                currentViewingImages = urlOrList;
+            } else {
+                currentViewingImages = [urlOrList];
+            }
+            
+            currentImageIndex = (index >= 0 && index < currentViewingImages.length) ? index : 0;
+            renderImageViewerModal();
+        }
+
+        function renderImageViewerModal() {
+            const currentUrl = currentViewingImages[currentImageIndex];
+            const hasMultiple = currentViewingImages.length > 1;
+
+            const htmlContent = `
+                <div class="text-center position-relative">
+                    <div id="imgContainer" style="overflow: hidden; max-height: 65vh; display: flex; align-items: center; justify-content: center; background: #000; border-radius: 8px;">
+                        <img id="viewerImage" src="${currentUrl}" style="max-width: 100%; max-height: 65vh; object-fit: contain; transition: transform 0.2s ease;">
+                    </div>
+                    
+                    ${hasMultiple ? `
+                        <div class="mt-2 text-muted small fw-semibold">
+                            Ảnh ${currentImageIndex + 1} / ${currentViewingImages.length}
+                        </div>
+                    ` : ''}
+
+                    <!-- Menu thanh công cụ điều hướng -->
+                    <div class="mt-3 d-flex justify-content-center align-items-center gap-2 flex-wrap bg-light p-2 rounded border">
+                        <button type="button" class="btn btn-dark btn-sm" onclick="zoomImage(0.2)" title="Phóng to"><i class="fa-solid fa-magnifying-glass-plus"></i></button>
+                        <button type="button" class="btn btn-dark btn-sm" onclick="zoomImage(-0.2)" title="Thu nhỏ"><i class="fa-solid fa-magnifying-glass-minus"></i></button>
+                        <button type="button" class="btn btn-dark btn-sm" onclick="resetZoom()" title="Đặt lại kích thước"><i class="fa-solid fa-rotate-right"></i></button>
+                        <span class="text-secondary mx-1">|</span>
+                        <a href="${currentUrl}" target="_blank" class="btn btn-primary btn-sm" title="Tải xuống / Mở tab mới" download><i class="fa-solid fa-download"></i> Tải về</a>
+                        
+                        ${hasMultiple ? `
+                            <span class="text-secondary mx-1">|</span>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="prevImage()" ${currentImageIndex === 0 ? 'disabled' : ''}><i class="fa-solid fa-chevron-left"></i> Trước</button>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="nextImage()" ${currentImageIndex === currentViewingImages.length - 1 ? 'disabled' : ''}>Sau <i class="fa-solid fa-chevron-right"></i></button>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+
             Swal.fire({
-                imageUrl: url,
-                imageAlt: 'Hình ảnh tài sản',
-                imageWidth: 'auto',
-                imageHeight: 'auto',
-                width: '1024px', // Giới hạn chiều rộng khung hiển thị tối đa là 600px
+                html: htmlContent,
+                width: '750px',
                 padding: '1rem',
                 showCloseButton: true,
                 showConfirmButton: false,
-                customClass: {
-                    image: 'rounded shadow-sm',
-                    popup: 'border-radius-12'
+                didOpen: () => {
+                    currentZoomLevel = 1;
                 }
             });
+        }
+
+        function zoomImage(amount) {
+            currentZoomLevel += amount;
+            if (currentZoomLevel < 0.5) currentZoomLevel = 0.5;
+            if (currentZoomLevel > 3) currentZoomLevel = 3;
+            const img = document.getElementById('viewerImage');
+            if (img) {
+                img.style.transform = `scale(${currentZoomLevel})`;
+            }
+        }
+
+        function resetZoom() {
+            currentZoomLevel = 1;
+            const img = document.getElementById('viewerImage');
+            if (img) {
+                img.style.transform = `scale(1)`;
+            }
+        }
+
+        function prevImage() {
+            if (currentImageIndex > 0) {
+                currentImageIndex--;
+                renderImageViewerModal();
+            }
+        }
+
+        function nextImage() {
+            if (currentImageIndex < currentViewingImages.length - 1) {
+                currentImageIndex++;
+                renderImageViewerModal();
+            }
         }
 
         function playBeep() {
@@ -404,7 +482,7 @@
                             if (!decrypted) return '<span class="text-muted small">-</span>';
                             let urls = decrypted.split(',');
                             let firstImg = urls[0].trim();
-                            return `<img src="${firstImg}" alt="Img" class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;" onclick="showFullImage('${firstImg}')" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=Lỗi';">`;
+                            return `<img src="${firstImg}" alt="Img" class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;" onclick="showFullImage('${decrypted}')" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=Lỗi';">`;
                         }
                     },
                     { data: 'ma_tai_san', render: data => `<span class="badge bg-secondary">${decryptData(data)}</span>` },
@@ -608,8 +686,8 @@
                         const div = document.createElement('div');
                         div.className = 'temp-img-container';
                         div.innerHTML = `
-                            <img src="${trimUrl}" alt="Old Img" onclick="showFullImage('${trimUrl}')" title="Bấm để xem lớn">
-                            <button type="button" class="btn-view-temp" onclick="showFullImage('${trimUrl}')"><i class="fa-solid fa-magnifying-glass"></i></button>
+                            <img src="${trimUrl}" alt="Old Img" onclick="showFullImage('${hinh_anh}')" title="Bấm để xem lớn">
+                            <button type="button" class="btn-view-temp" onclick="showFullImage('${hinh_anh}')"><i class="fa-solid fa-magnifying-glass"></i></button>
                         `;
                         container.appendChild(div);
                     }
