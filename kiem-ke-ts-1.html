@@ -346,8 +346,8 @@
                     const div = document.createElement('div');
                     div.className = 'temp-img-container';
                     div.innerHTML = `
-                        <img src="${imgSrc}" alt="Temp Preview" onclick="showViewer('${imgSrc}')" title="Bấm để xem lớn">
-                        <button type="button" class="btn-view-temp" onclick="showViewer('${imgSrc}')" title="Xem ảnh"><i class="fa-solid fa-magnifying-glass"></i></button>
+                        <img src="${imgSrc}" alt="Temp Preview" onclick="showSingleViewer('${imgSrc}')" title="Bấm để xem lớn">
+                        <button type="button" class="btn-view-temp" onclick="showSingleViewer('${imgSrc}')" title="Xem ảnh"><i class="fa-solid fa-magnifying-glass"></i></button>
                         <button type="button" class="btn-delete-temp" onclick="removeTempImage(${index})" title="Xóa ảnh này"><i class="fa-solid fa-xmark"></i></button>
                     `;
                     container.appendChild(div);
@@ -362,30 +362,49 @@
             renderTempPreviews();
         }
 
-        // --- TÍCH HỢP VIEWER.JS XEM ẢNH CHUYÊN NGHIỆP ---
+        // --- HÀM XEM ẢNH TẠM (BASE64) AN TOÀN TRÁNH LỖI NETWORK ---
+        function showSingleViewer(imgSrc) {
+            const container = document.getElementById('viewerContainer');
+            container.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = imgSrc;
+            container.appendChild(img);
+
+            const viewer = new Viewer(container, {
+                inline: false,
+                button: true,
+                navbar: false,
+                title: true,
+                toolbar: true,
+                hidden: function () {
+                    viewer.destroy();
+                }
+            });
+            viewer.show();
+        }
+
+        // --- TÍCH HỢP VIEWER.JS XEM ẢNH TỪ GOOGLE DRIVE ---
         function showViewer(urlsString) {
             const container = document.getElementById('viewerContainer');
-            container.innerHTML = ''; // Xóa ảnh cũ
+            container.innerHTML = ''; 
 
             let urls = urlsString.split(',').map(s => s.trim()).filter(Boolean);
             if (urls.length === 0) return;
 
-            // Tạo các thẻ img bên trong container ẩn để Viewer.js nhận diện
             urls.forEach(url => {
                 const img = document.createElement('img');
                 img.src = url;
                 container.appendChild(img);
             });
 
-            // Khởi tạo Viewer và mở trực tiếp
             const viewer = new Viewer(container, {
                 inline: false,
                 button: true,
-                navbar: urls.length > 1, // Hiện thanh thumbnail bên dưới nếu có nhiều hơn 1 ảnh
+                navbar: urls.length > 1, 
                 title: true,
                 toolbar: true,
                 hidden: function () {
-                    viewer.destroy(); // Hủy instance sau khi đóng để giải phóng bộ nhớ
+                    viewer.destroy(); 
                 }
             });
             viewer.show();
