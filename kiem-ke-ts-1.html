@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Bảo Mật AES & OneDrive)</title>
+    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Bảo Mật AES & Google Drive)</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -57,8 +57,8 @@
     <div class="container-fluid px-4">
         <!-- Header -->
         <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN (AES & ONEDRIVE)</h2>
-            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối & lưu trữ ảnh trực tiếp lên OneDrive</p>
+            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN (AES & GOOGLE DRIVE)</h2>
+            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối & lưu trữ ảnh trực tiếp lên Google Drive</p>
         </div>
 
         <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN -->
@@ -104,8 +104,8 @@
                             <input type="text" id="so_serial" class="form-control form-control-sm" placeholder="Serial máy">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Hình Ảnh (Upload OneDrive):</label>
-                            <input type="file" id="imageFile" class="form-control form-control-sm" accept="image/*" onchange="handleOneDriveUpload(event)">
+                            <label class="form-label fw-semibold small">Hình Ảnh (Google Drive):</label>
+                            <input type="file" id="imageFile" class="form-control form-control-sm" accept="image/*" onchange="handleGoogleDriveUpload(event)">
                             <input type="hidden" id="hinh_anh_url" value="">
                             <div class="mt-1 text-center">
                                 <img id="imgPreview" src="" alt="" class="img-thumbnail d-none" style="max-height: 50px; object-fit: cover;">
@@ -234,13 +234,13 @@
             }
         }
 
-        // Tự động upload ảnh thẳng lên OneDrive qua Backend Vercel
-        async function handleOneDriveUpload(event) {
+        // Tự động upload ảnh thẳng lên Google Drive qua Backend Vercel
+        async function handleGoogleDriveUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             Swal.fire({
-                title: 'Đang đẩy ảnh lên OneDrive...',
+                title: 'Đang đẩy ảnh lên Google Drive...',
                 allowOutsideClick: false,
                 didOpen: () => { Swal.showLoading(); }
             });
@@ -249,7 +249,7 @@
             reader.onload = async function(e) {
                 const base64String = e.target.result;
                 try {
-                    const response = await fetch(`${API_URL}?action=upload_onedrive`, {
+                    const response = await fetch(`${API_URL}?action=upload_drive`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify({
@@ -270,7 +270,7 @@
 
                         Swal.close();
                     } else {
-                        Swal.fire('Lỗi', result.error || 'Không thể upload lên OneDrive!', 'error');
+                        Swal.fire('Lỗi', result.error || 'Không thể upload lên Google Drive!', 'error');
                     }
                 } catch (err) {
                     Swal.fire('Lỗi', 'Lỗi kết nối khi gửi ảnh lên server!', 'error');
@@ -446,7 +446,7 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu tài sản kèm ảnh OneDrive thành công.', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu tài sản kèm ảnh Google Drive thành công.', timer: 1500, showConfirmButton: false });
                     resetForm();
                     refreshData();
                 } else {
