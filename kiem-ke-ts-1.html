@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Bảo Mật AES & OneDrive)</title>
+    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Bảo Mật AES & Upload Ảnh)</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -52,8 +52,8 @@
     <div class="container-fluid px-4">
         <!-- Header -->
         <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN QR (AES + ONEDRIVE)</h2>
-            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối & lưu trữ ảnh qua OneDrive</p>
+            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN QR (AES & UPLOAD ẢNH)</h2>
+            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối & tích hợp tải ảnh trực tiếp</p>
         </div>
 
         <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN -->
@@ -99,10 +99,11 @@
                             <input type="text" id="so_serial" class="form-control form-control-sm" placeholder="Serial máy">
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Link Ảnh OneDrive:</label>
-                            <input type="text" id="onedrive_link" class="form-control form-control-sm" placeholder="Dán link chia sẻ OneDrive" oninput="previewOneDriveImage(this.value)">
+                            <label class="form-label fw-semibold small">Hình Ảnh Tài Sản:</label>
+                            <input type="file" id="imageFile" class="form-control form-control-sm" accept="image/*" onchange="handleImageUpload(event)">
+                            <input type="hidden" id="hinh_anh_url" value="">
                             <div class="mt-1 text-center">
-                                <img id="imgPreview" src="" alt="" class="img-thumbnail d-none" style="max-height: 50px;">
+                                <img id="imgPreview" src="" alt="" class="img-thumbnail d-none" style="max-height: 50px; object-fit: cover;">
                             </div>
                         </div>
                         <div class="col-md-3 text-end d-flex align-items-end justify-content-end">
@@ -210,6 +211,7 @@
         let danhSachTS = [];
         let isScanning = true;
         let assetsTable, historyTable;
+        let uploadedImageLink = '';
 
         // Mã hóa & Giải mã AES
         function encryptData(plainText) {
@@ -228,27 +230,41 @@
             }
         }
 
-        // Chuyển đổi link OneDrive sang link ảnh trực tiếp
-        function convertOneDriveLink(shareLink) {
-            if (!shareLink) return '';
-            let cleanLink = shareLink.trim();
-            try {
-                if (cleanLink.includes('1drv.ms') || cleanLink.includes('onedrive.live.com')) {
-                    return cleanLink.includes('?') ? cleanLink + '&download=1' : cleanLink + '?download=1';
-                }
-            } catch (e) {}
-            return cleanLink;
-        }
+        // Tự động upload ảnh khi chọn từ máy/điện thoại
+        async function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
 
-        function previewOneDriveImage(link) {
-            const directUrl = convertOneDriveLink(link);
-            const preview = document.getElementById('imgPreview');
-            if (directUrl) {
-                preview.src = directUrl;
-                preview.classList.remove('d-none');
-                preview.onerror = function() { preview.classList.add('d-none'); };
-            } else {
-                preview.classList.add('d-none');
+            Swal.fire({
+                title: 'Đang tải ảnh lên đám mây...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            const formData = new FormData();
+            formData.append("image", file);
+
+            try {
+                const response = await fetch('https://api.imgbb.com/1/upload?key=6d207e02194a847aa96d0a83901b08c9', {
+                    method: 'POST',
+                    body: formData
+                });
+                const result = await response.json();
+
+                if (result.success) {
+                    uploadedImageLink = result.data.url;
+                    document.getElementById('hinh_anh_url').value = uploadedImageLink;
+
+                    const preview = document.getElementById('imgPreview');
+                    preview.src = uploadedImageLink;
+                    preview.classList.remove('d-none');
+
+                    Swal.close();
+                } else {
+                    Swal.fire('Lỗi', 'Không thể tải ảnh lên!', 'error');
+                }
+            } catch (err) {
+                Swal.fire('Lỗi', 'Lỗi kết nối khi tải ảnh lên!', 'error');
             }
         }
 
@@ -392,9 +408,6 @@
             const rawCanBo = document.getElementById('can_bo_su_dung').value.trim();
             const rawNguyenGia = document.getElementById('nguyen_gia').value || 0;
             const rawSerial = document.getElementById('so_serial').value.trim();
-            
-            const rawOneDriveLink = document.getElementById('onedrive_link').value.trim();
-            const directImgUrl = convertOneDriveLink(rawOneDriveLink);
 
             const payload = {
                 id: editingId || ma_tai_san,
@@ -411,7 +424,7 @@
                 can_bo_su_dung: encryptData(rawCanBo),
                 phong_ban_quan_ly: encryptData(rawPhong),
                 so_serial: encryptData(rawSerial),
-                hinh_anh: encryptData(directImgUrl)
+                hinh_anh: encryptData(uploadedImageLink)
             };
 
             try {
@@ -422,7 +435,7 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu tài sản kèm ảnh OneDrive.', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu tài sản kèm ảnh thành công.', timer: 1500, showConfirmButton: false });
                     resetForm();
                     refreshData();
                 } else {
@@ -441,14 +454,24 @@
             document.getElementById('can_bo_su_dung').value = can_bo_su_dung;
             document.getElementById('nguyen_gia').value = nguyen_gia;
             document.getElementById('so_serial').value = so_serial;
-            document.getElementById('onedrive_link').value = hinh_anh;
-            previewOneDriveImage(hinh_anh);
+            
+            uploadedImageLink = hinh_anh;
+            document.getElementById('hinh_anh_url').value = hinh_anh;
+            const preview = document.getElementById('imgPreview');
+            if (hinh_anh) {
+                preview.src = hinh_anh;
+                preview.classList.remove('d-none');
+            } else {
+                preview.classList.add('d-none');
+            }
+
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetForm() {
             document.getElementById('assetForm').reset();
             document.getElementById('imgPreview').classList.add('d-none');
+            uploadedImageLink = '';
             editingId = null;
         }
 
@@ -585,13 +608,13 @@
                     "can_bo_su_dung": "Lê Duy Phúc", 
                     "phong_ban_quan_ly": "340 - TRUNG TÂM XỬ LÝ NỢ", 
                     "so_serial": "4CE514BGHZ",
-                    "hinh_anh": "https://1drv.ms/i/s!... (Link OneDrive)"
+                    "hinh_anh": "" 
                 }
             ];
             const ws = XLSX.utils.json_to_sheet(templateData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "DanhSachTaiSan");
-            XLSX.writeFile(wb, "Template_KiemKe_OneDrive.xlsx");
+            XLSX.writeFile(wb, "Template_KiemKe_TaiSan.xlsx");
         }
 
         async function importExcelData(event) {
@@ -626,7 +649,7 @@
                         const rawTen = String(row['ten_tai_san'] || row['Tên Tài Sản'] || '').trim();
                         const rawPhong = String(row['phong_ban_quan_ly'] || row['Phòng Ban Quản Lý'] || '').trim();
                         const rawCanBo = String(row['can_bo_su_dung'] || row['Cán Bộ Sử Dụng'] || '').trim();
-                        const rawImg = String(row['hinh_anh'] || row['Link Ảnh'] || '').trim();
+                        const rawImg = String(row['hinh_anh'] || '').trim();
                         
                         if (!ma_tai_san || !rawTen) {
                             failCount++;
@@ -648,7 +671,7 @@
                             can_bo_su_dung: encryptData(rawCanBo),
                             phong_ban_quan_ly: encryptData(rawPhong),
                             so_serial: encryptData(String(row['so_serial'] || '')),
-                            hinh_anh: encryptData(convertOneDriveLink(rawImg))
+                            hinh_anh: encryptData(rawImg)
                         };
 
                         try {
