@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Bảo Mật AES & Google Drive)</title>
+    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Multi-Image Preview & Google Drive)</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -50,6 +50,36 @@
             border-bottom: 2px solid #e2e8f0;
             white-space: nowrap;
         }
+        /* Style cho danh sách ảnh tạm */
+        .temp-img-container {
+            position: relative;
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+        }
+        .temp-img-container img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+            border: 1px solid #dee2e6;
+        }
+        .btn-delete-temp {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body class="py-4">
@@ -57,8 +87,8 @@
     <div class="container-fluid px-4">
         <!-- Header -->
         <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN (AES & GOOGLE DRIVE)</h2>
-            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối & lưu trữ ảnh trực tiếp lên Google Drive</p>
+            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KẾ TÀI SẢN (MULTI-IMAGE & GOOGLE DRIVE)</h2>
+            <p class="text-muted">Chọn nhiều ảnh tạm, preview trực tiếp và chỉ đẩy lên Google Drive khi bấm lưu</p>
         </div>
 
         <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN -->
@@ -103,17 +133,16 @@
                             <label class="form-label fw-semibold small">Số Serial:</label>
                             <input type="text" id="so_serial" class="form-control form-control-sm" placeholder="Serial máy">
                         </div>
-                        <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Hình Ảnh (Google Drive):</label>
-                            <input type="file" id="imageFile" class="form-control form-control-sm" accept="image/*" onchange="handleGoogleDriveUpload(event)">
+                        <div class="col-md-4">
+                            <label class="form-label fw-semibold small">Chọn Ảnh Tạm (Nhiều ảnh):</label>
+                            <input type="file" id="imageFiles" class="form-control form-control-sm" accept="image/*" multiple onchange="handleTempImagesSelect(event)">
+                            <!-- Khu vực hiển thị danh sách preview ảnh tạm & nút xóa -->
+                            <div id="tempPreviewContainer" class="mt-2 d-flex flex-wrap"></div>
                             <input type="hidden" id="hinh_anh_url" value="">
-                            <div class="mt-1 text-center">
-                                <img id="imgPreview" src="" alt="" class="img-thumbnail d-none" style="max-height: 50px; object-fit: cover;">
-                            </div>
                         </div>
-                        <div class="col-md-3 text-end d-flex align-items-end justify-content-end">
+                        <div class="col-md-2 text-end d-flex align-items-end justify-content-end">
                             <button type="button" class="btn btn-secondary btn-sm px-3 me-2" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i> Làm mới</button>
-                            <button type="submit" class="btn btn-success btn-sm px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu & Mã Hóa</button>
+                            <button type="submit" class="btn btn-success btn-sm px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu & Đẩy Drive</button>
                         </div>
                     </div>
                 </form>
@@ -215,7 +244,8 @@
         let danhSachTS = [];
         let isScanning = true;
         let assetsTable, historyTable;
-        let uploadedImageLink = '';
+        let tempFilesList = []; // Mảng chứa các đối tượng file tạm chọn trên máy
+        let uploadedImageLinks = []; // Mảng chứa các link sau khi đẩy lên Google Drive
 
         // Mã hóa & Giải mã AES
         function encryptData(plainText) {
@@ -234,49 +264,43 @@
             }
         }
 
-        // Tự động upload ảnh thẳng lên Google Drive qua Backend Vercel
-        async function handleGoogleDriveUpload(event) {
-            const file = event.target.files[0];
-            if (!file) return;
+        // 1. CHỌN NHIỀU ẢNH TẠM VÀ RENDER PREVIEW NGAY LẬP TỨC (CHƯA ĐẨY LÊN DRIVE)
+        function handleTempImagesSelect(event) {
+            const files = event.target.files;
+            if (!files || files.length === 0) return;
 
-            Swal.fire({
-                title: 'Đang đẩy ảnh lên Google Drive...',
-                allowOutsideClick: false,
-                didOpen: () => { Swal.showLoading(); }
+            for (let i = 0; i < files.length; i++) {
+                tempFilesList.push(files[i]);
+            }
+            renderTempPreviews();
+            // Reset input file để có thể tiếp tục chọn thêm ảnh trùng tên nếu muốn
+            event.target.value = '';
+        }
+
+        // 2. HIỂN THỊ DANH SÁCH PREVIEW KÈM NÚT XÓA TẠM
+        function renderTempPreviews() {
+            const container = document.getElementById('tempPreviewContainer');
+            container.innerHTML = '';
+
+            tempFilesList.forEach((file, index) => {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const div = document.createElement('div');
+                    div.className = 'temp-img-container';
+                    div.innerHTML = `
+                        <img src="${e.target.result}" alt="Temp Preview">
+                        <button type="button" class="btn-delete-temp" onclick="removeTempImage(${index})" title="Xóa ảnh này"><i class="fa-solid fa-xmark"></i></button>
+                    `;
+                    container.appendChild(div);
+                };
+                reader.readAsDataURL(file);
             });
+        }
 
-            const reader = new FileReader();
-            reader.onload = async function(e) {
-                const base64String = e.target.result;
-                try {
-                    const response = await fetch(`${API_URL}?action=upload_drive`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({
-                            fileName: `Asset_${Date.now()}_${file.name}`,
-                            fileData: base64String,
-                            mimeType: file.type
-                        })
-                    });
-                    const result = await response.json();
-
-                    if (result.success) {
-                        uploadedImageLink = result.url;
-                        document.getElementById('hinh_anh_url').value = uploadedImageLink;
-
-                        const preview = document.getElementById('imgPreview');
-                        preview.src = uploadedImageLink;
-                        preview.classList.remove('d-none');
-
-                        Swal.close();
-                    } else {
-                        Swal.fire('Lỗi', result.error || 'Không thể upload lên Google Drive!', 'error');
-                    }
-                } catch (err) {
-                    Swal.fire('Lỗi', 'Lỗi kết nối khi gửi ảnh lên server!', 'error');
-                }
-            };
-            reader.readAsDataURL(file);
+        // 3. XÓA ẢNH TẠM KHỎI DANH SÁCH TRƯỚC KHI LƯU
+        function removeTempImage(index) {
+            tempFilesList.splice(index, 1);
+            renderTempPreviews();
         }
 
         function showFullImage(url) {
@@ -318,9 +342,12 @@
                         data: 'hinh_anh', 
                         className: 'text-center',
                         render: data => {
-                            let imgUrl = decryptData(data);
-                            if (!imgUrl) return '<span class="text-muted small">-</span>';
-                            return `<img src="${imgUrl}" alt="Img" class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;" onclick="showFullImage('${imgUrl}')" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=Lỗi';">`;
+                            let decrypted = decryptData(data);
+                            if (!decrypted) return '<span class="text-muted small">-</span>';
+                            // Hỗ trợ hiển thị nhiều ảnh phân cách bằng dấu phẩy
+                            let urls = decrypted.split(',');
+                            let firstImg = urls[0].trim();
+                            return `<img src="${firstImg}" alt="Img" class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;" onclick="showFullImage('${firstImg}')" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=Lỗi';">`;
                         }
                     },
                     { data: 'ma_tai_san', render: data => `<span class="badge bg-secondary">${decryptData(data)}</span>` },
@@ -411,6 +438,8 @@
         }
 
         let editingId = null;
+
+        // 4. KHI BẤM LƯU: LÚC NÀY MỚI LOẠT GỬI TẤT CẢ ẢNH TẠM LÊN GOOGLE DRIVE RỒI MÃ HÓA LƯU DB
         async function saveAsset(e) {
             e.preventDefault();
             const ma_tai_san = document.getElementById('ma_tai_san').value.trim();
@@ -419,6 +448,42 @@
             const rawCanBo = document.getElementById('can_bo_su_dung').value.trim();
             const rawNguyenGia = document.getElementById('nguyen_gia').value || 0;
             const rawSerial = document.getElementById('so_serial').value.trim();
+
+            Swal.fire({
+                title: 'Đang đẩy ảnh lên Google Drive & lưu dữ liệu...',
+                text: 'Vui lòng chờ trong giây lát...',
+                allowOutsideClick: false,
+                didOpen: () => { Swal.showLoading(); }
+            });
+
+            let uploadedLinks = [];
+            // Giữ lại link ảnh cũ nếu đang sửa mà không chọn thêm ảnh mới
+            const existingUrl = document.getElementById('hinh_anh_url').value;
+            if (existingUrl && tempFilesList.length === 0) {
+                uploadedLinks.push(existingUrl);
+            }
+
+            // Tiến hành tuần tự upload từng file tạm lên Google Drive qua Vercel
+            for (let file of tempFilesList) {
+                try {
+                    let base64String = await toBase64(file);
+                    const response = await fetch(`${API_URL}?action=upload_drive`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            fileName: `Asset_${Date.now()}_${file.name}`,
+                            fileData: base64String,
+                            mimeType: file.type
+                        })
+                    });
+                    const result = await response.json();
+                    if (result.success) {
+                        uploadedLinks.push(result.url);
+                    }
+                } catch (err) {}
+            }
+
+            const finalImageUrl = uploadedLinks.join(',');
 
             const payload = {
                 id: editingId || ma_tai_san,
@@ -435,7 +500,7 @@
                 can_bo_su_dung: encryptData(rawCanBo),
                 phong_ban_quan_ly: encryptData(rawPhong),
                 so_serial: encryptData(rawSerial),
-                hinh_anh: encryptData(uploadedImageLink)
+                hinh_anh: encryptData(finalImageUrl)
             };
 
             try {
@@ -446,7 +511,7 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu tài sản kèm ảnh Google Drive thành công.', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã lưu tài sản và đẩy ảnh lên Google Drive thành công.', timer: 1500, showConfirmButton: false });
                     resetForm();
                     refreshData();
                 } else {
@@ -455,6 +520,15 @@
             } catch (err) {
                 Swal.fire('Lỗi', 'Không thể kết nối máy chủ!', 'error');
             }
+        }
+
+        function toBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = error => reject(error);
+            });
         }
 
         function editAsset(id, ma_tai_san, ten_tai_san, phong_ban_quan_ly, can_bo_su_dung, nguyen_gia, so_serial, hinh_anh) {
@@ -466,14 +540,24 @@
             document.getElementById('nguyen_gia').value = nguyen_gia;
             document.getElementById('so_serial').value = so_serial;
             
-            uploadedImageLink = hinh_anh;
             document.getElementById('hinh_anh_url').value = hinh_anh;
-            const preview = document.getElementById('imgPreview');
+            tempFilesList = []; // Xóa danh sách tạm
+            renderTempPreviews();
+
+            // Hiển thị preview ảnh cũ nếu có
+            const container = document.getElementById('tempPreviewContainer');
+            container.innerHTML = '';
             if (hinh_anh) {
-                preview.src = hinh_anh;
-                preview.classList.remove('d-none');
-            } else {
-                preview.classList.add('d-none');
+                let urls = hinh_anh.split(',');
+                urls.forEach(u => {
+                    let trimUrl = u.trim();
+                    if (trimUrl) {
+                        const div = document.createElement('div');
+                        div.className = 'temp-img-container';
+                        div.innerHTML = `<img src="${trimUrl}" alt="Old Img">`;
+                        container.appendChild(div);
+                    }
+                });
             }
 
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -481,8 +565,10 @@
 
         function resetForm() {
             document.getElementById('assetForm').reset();
-            document.getElementById('imgPreview').classList.add('d-none');
-            uploadedImageLink = '';
+            document.getElementById('tempPreviewContainer').innerHTML = '';
+            tempFilesList = [];
+            uploadedImageLinks = [];
+            document.getElementById('hinh_anh_url').value = '';
             editingId = null;
         }
 
