@@ -133,15 +133,15 @@
                 <form id="assetForm" onsubmit="saveAsset(event)" class="mb-4 pb-3 border-bottom">
                     <div class="row g-3">
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Mã Tài Sản:</label>
+                            <label class="form-label fw-semibold small">Mã Tài Sản <span class="text-danger">*</span>:</label>
                             <input type="text" id="ma_tai_san" class="form-control form-control-sm" placeholder="VD: CC00000144981" required>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Tên Tài Sản:</label>
+                            <label class="form-label fw-semibold small">Tên Tài Sản <span class="text-danger">*</span>:</label>
                             <input type="text" id="ten_tai_san" class="form-control form-control-sm" placeholder="VD: Switch CISCO" required>
                         </div>
                         <div class="col-md-3">
-                            <label class="form-label fw-semibold small">Phòng Ban Quản Lý:</label>
+                            <label class="form-label fw-semibold small">Phòng Ban Quản Lý <span class="text-danger">*</span>:</label>
                             <input type="text" id="phong_ban_quan_ly" class="form-control form-control-sm" placeholder="VD: 340 - TRUNG TÂM..." required>
                         </div>
                         <div class="col-md-3">
@@ -150,7 +150,7 @@
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold small">Nguyên Giá:</label>
-                            <input type="number" id="nguyen_gia" class="form-control form-control-sm" placeholder="0">
+                            <input type="number" id="nguyen_gia" class="form-control form-control-sm" min="0" placeholder="0">
                         </div>
                         <div class="col-md-3">
                             <label class="form-label fw-semibold small">Số Serial:</label>
@@ -317,7 +317,6 @@
                 return;
             }
 
-            // Nếu có ảnh tạm mới chọn, hiển thị nút "Xóa tất cả" ở trên cùng
             if (tempFilesList.length > 0) {
                 const headerDiv = document.createElement('div');
                 headerDiv.className = 'd-flex justify-content-between align-items-center mb-1';
@@ -345,7 +344,6 @@
                 });
             }
 
-            // Nếu đang sửa và có sẵn ảnh từ Drive (chưa chọn ảnh mới)
             if (tempFilesList.length === 0 && existingUrl) {
                 let urls = existingUrl.split(',').map(s => s.trim()).filter(Boolean);
                 urls.forEach((url, index) => {
@@ -364,7 +362,6 @@
             }
         }
 
-        // Xem riêng 1 ảnh tạm đang chọn
         function showSingleTempViewer(index) {
             const container = document.getElementById('viewerContainer');
             container.innerHTML = '';
@@ -383,23 +380,19 @@
             viewer.show();
         }
 
-        // Xóa 1 file trong danh sách tạm
         function removeTempFile(index) {
             tempFilesList.splice(index, 1);
             tempBase64List.splice(index, 1);
             renderImageDetailList();
         }
 
-        // Xóa tất cả ảnh tạm
         function clearAllTempImages() {
             tempFilesList = [];
             tempBase64List = [];
-            // Reset luôn giá trị input file để có thể chọn lại chính file đó nếu muốn
             document.getElementById('imageFiles').value = '';
             renderImageDetailList();
         }
 
-        // --- TÍCH HỢP VIEWER.JS XEM ẢNH TỪ GOOGLE DRIVE ---
         function showViewer(urlsString) {
             const container = document.getElementById('viewerContainer');
             container.innerHTML = ''; 
@@ -549,6 +542,31 @@
 
         let editingId = null;
 
+        // --- HÀM KIỂM TRA LỖI DỮ LIỆU ĐƠN LẺ (VALIDATION) ---
+        function validateAssetData(maTS, tenTS, phongBan, nguyenGia) {
+            if (!maTS) {
+                Swal.fire('Lỗi dữ liệu', 'Mã tài sản không được để trống!', 'warning');
+                document.getElementById('ma_tai_san').focus();
+                return false;
+            }
+            if (!tenTS) {
+                Swal.fire('Lỗi dữ liệu', 'Tên tài sản không được để trống!', 'warning');
+                document.getElementById('ten_tai_san').focus();
+                return false;
+            }
+            if (!phongBan) {
+                Swal.fire('Lỗi dữ liệu', 'Phòng ban quản lý không được để trống!', 'warning');
+                document.getElementById('phong_ban_quan_ly').focus();
+                return false;
+            }
+            if (nguyenGia !== '' && (isNaN(nguyenGia) || Number(nguyenGia) < 0)) {
+                Swal.fire('Lỗi dữ liệu', 'Nguyên giá phải là một số hợp lệ và lớn hơn hoặc bằng 0!', 'warning');
+                document.getElementById('nguyen_gia').focus();
+                return false;
+            }
+            return true;
+        }
+
         // 4. KHI BẤM LƯU: GỬI TẤT CẢ ẢNH TẠM LÊN GOOGLE DRIVE
         async function saveAsset(e) {
             e.preventDefault();
@@ -556,8 +574,13 @@
             const rawTen = document.getElementById('ten_tai_san').value.trim();
             const rawPhong = document.getElementById('phong_ban_quan_ly').value.trim();
             const rawCanBo = document.getElementById('can_bo_su_dung').value.trim();
-            const rawNguyenGia = document.getElementById('nguyen_gia').value || 0;
+            const rawNguyenGia = document.getElementById('nguyen_gia').value;
             const rawSerial = document.getElementById('so_serial').value.trim();
+
+            // Thực hiện kiểm tra lỗi kiểu dữ liệu trước khi lưu
+            if (!validateAssetData(ma_tai_san, rawTen, rawPhong, rawNguyenGia)) {
+                return;
+            }
 
             Swal.fire({
                 title: 'Đang đẩy ảnh lên Google Drive & lưu dữ liệu...',
@@ -592,6 +615,7 @@
             }
 
             const finalImageUrl = uploadedLinks.join(',');
+            const finalGia = rawNguyenGia === '' ? 0 : Number(rawNguyenGia);
 
             const payload = {
                 id: editingId || ma_tai_san,
@@ -599,9 +623,9 @@
                 don_vi: encryptData("00745 - ĐB SÔNG CỬU LONG"),
                 ten_tai_san: encryptData(rawTen),
                 nhom_tai_san: encryptData("403010301 - Quản lý tài sản"),
-                nguyen_gia: encryptData(rawNguyenGia),
+                nguyen_gia: encryptData(finalGia),
                 hao_mon_luy_ke: encryptData(0),
-                gia_tri_con_lai: encryptData(rawNguyenGia),
+                gia_tri_con_lai: encryptData(finalGia),
                 ngay_dua_vao_sd: encryptData(new Date().toISOString().split('T')[0]),
                 trang_thai_sd: encryptData("Đang sử dụng"),
                 bo_so: encryptData("BIDV_CCLD"),
@@ -778,7 +802,7 @@
         );
         html5QrcodeScanner.render(onScanSuccess, (err) => {});
 
-        // --- TẢI MẪU & IMPORT EXCEL ---
+        // --- TẢI MẪU & IMPORT EXCEL CÓ KIỂM TRA LỖI TỪNG DÒNG ---
         function downloadTemplate(e) {
             e.preventDefault();
             const templateData = [
@@ -819,46 +843,68 @@
 
                     if (rows.length === 0) {
                         Swal.fire('Cảnh báo', 'File dữ liệu không có dòng nào!', 'warning');
+                        document.getElementById('excelFile').value = '';
                         return;
                     }
 
                     Swal.fire({
-                        title: 'Đang mã hóa & đồng bộ dữ liệu...',
-                        text: `Đang xử lý ${rows.length} tài sản từ file Excel. Vui lòng chờ...`,
+                        title: 'Đang kiểm tra lỗi & đồng bộ dữ liệu...',
+                        text: `Đang quét ${rows.length} dòng từ file Excel. Vui lòng chờ...`,
                         allowOutsideClick: false,
                         didOpen: () => { Swal.showLoading(); }
                     });
 
                     let successCount = 0;
                     let failCount = 0;
+                    let errorDetails = [];
 
-                    for (let row of rows) {
+                    for (let i = 0; i < rows.length; i++) {
+                        let row = rows[i];
+                        let rowIndex = i + 2; // Dòng thực tế trên Excel (tính cả header)
+
                         const ma_tai_san = String(row['ma_tai_san'] || row['Mã Tài Sản'] || '').trim();
                         const rawTen = String(row['ten_tai_san'] || row['Tên Tài Sản'] || '').trim();
                         const rawPhong = String(row['phong_ban_quan_ly'] || row['Phòng Ban Quản Lý'] || '').trim();
                         const rawCanBo = String(row['can_bo_su_dung'] || row['Cán Bộ Sử Dụng'] || '').trim();
+                        const rawNguyenGia = row['nguyen_gia'] !== undefined ? row['nguyen_gia'] : row['Nguyên Giá'];
                         const rawImg = String(row['hinh_anh'] || '').trim();
-                        
-                        if (!ma_tai_san || !rawTen) {
+
+                        // --- KIỂM TRA LỖI TỪNG DÒNG (VALIDATION) ---
+                        let rowErrors = [];
+                        if (!ma_tai_san) rowErrors.push('Thiếu mã tài sản');
+                        if (!rawTen) rowErrors.push('Thiếu tên tài sản');
+                        if (!rawPhong) rowErrors.push('Thiếu phòng ban');
+
+                        let parsedGia = 0;
+                        if (rawNguyenGia !== undefined && rawNguyenGia !== '') {
+                            if (isNaN(rawNguyenGia) || Number(rawNguyenGia) < 0) {
+                                rowErrors.push('Nguyên giá không hợp lệ');
+                            } else {
+                                parsedGia = Number(rawNguyenGia);
+                            }
+                        }
+
+                        if (rowErrors.length > 0) {
                             failCount++;
+                            errorDetails.push(`Dòng ${rowIndex} (${ma_tai_san || 'Không mã'}): ${rowErrors.join(', ')}`);
                             continue;
                         }
 
                         const payload = {
                             id: ma_tai_san,
                             ma_tai_san: encryptData(ma_tai_san),
-                            don_vi: encryptData(row['don_vi'] || ''),
+                            don_vi: encryptData(row['don_vi'] || row['Đơn Vị'] || ''),
                             ten_tai_san: encryptData(rawTen),
-                            nhom_tai_san: encryptData(row['nhom_tai_san'] || ''),
-                            nguyen_gia: encryptData(row['nguyen_gia'] || 0),
+                            nhom_tai_san: encryptData(row['nhom_tai_san'] || row['Nhóm Tài Sản'] || ''),
+                            nguyen_gia: encryptData(parsedGia),
                             hao_mon_luy_ke: encryptData(row['hao_mon_luy_ke'] || 0),
-                            gia_tri_con_lai: encryptData(row['gia_tri_con_lai'] || 0),
+                            gia_tri_con_lai: encryptData(parsedGia),
                             ngay_dua_vao_sd: encryptData(row['ngay_dua_vao_sd'] || ''),
                             trang_thai_sd: encryptData(row['trang_thai_sd'] || 'Đang sử dụng'),
                             bo_so: encryptData(row['bo_so'] || ''),
                             can_bo_su_dung: encryptData(rawCanBo),
                             phong_ban_quan_ly: encryptData(rawPhong),
-                            so_serial: encryptData(String(row['so_serial'] || '')),
+                            so_serial: encryptData(String(row['so_serial'] || row['Số Serial'] || '')),
                             hinh_anh: encryptData(rawImg)
                         };
 
@@ -869,21 +915,37 @@
                                 body: JSON.stringify(payload)
                             });
                             const result = await response.json();
-                            if (result.success) { successCount++; } else { failCount++; }
-                        } catch (err) { failCount++; }
+                            if (result.success) { 
+                                successCount++; 
+                            } else { 
+                                failCount++; 
+                                errorDetails.push(`Dòng ${rowIndex}: Lỗi máy chủ - ${result.error}`);
+                            }
+                        } catch (err) { 
+                            failCount++; 
+                            errorDetails.push(`Dòng ${rowIndex}: Không thể kết nối máy chủ`);
+                        }
                     }
 
                     document.getElementById('excelFile').value = '';
                     refreshData();
 
+                    // Hiển thị báo cáo kết quả chi tiết
+                    let htmlMsg = `Thành công: <b>${successCount}</b> tài sản.<br>`;
+                    if (failCount > 0) {
+                        htmlMsg += `<span class="text-danger">Thất bại/Lỗi: <b>${failCount}</b> dòng</span><br>`;
+                        htmlMsg += `<div class="mt-2 text-start small border p-2 bg-light" style="max-height: 120px; overflow-y: auto;">` + errorDetails.join('<br>') + `</div>`;
+                    }
+
                     Swal.fire({
-                        icon: 'success',
-                        title: 'Hoàn tất nhập dữ liệu hàng loạt!',
-                        html: `Thành công: <b>${successCount}</b> tài sản đã mã hóa bảo mật.<br>${failCount > 0 ? `<span class="text-danger">Thất bại: ${failCount} dòng</span>` : ''}`
+                        icon: failCount === 0 ? 'success' : 'warning',
+                        title: 'Hoàn tất kiểm tra & nhập lô!',
+                        html: htmlMsg,
+                        width: '500px'
                     });
 
                 } catch (error) {
-                    Swal.fire('Lỗi', 'Không thể đọc file cấu trúc này!', 'error');
+                    Swal.fire('Lỗi', 'Không thể đọc cấu trúc file Excel này!', 'error');
                     document.getElementById('excelFile').value = '';
                 }
             };
