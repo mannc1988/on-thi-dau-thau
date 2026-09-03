@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Bảo Mật AES)</title>
+    <title>Hệ Thống Kiểm Kê Tài Sản QR Pro (Bảo Mật AES & OneDrive)</title>
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <!-- FontAwesome Icons -->
@@ -19,7 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net/1.13.6/jquery.dataTables.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/datatables.net-bs5/1.13.6/dataTables.bootstrap5.min.js"></script>
     
-    <!-- Crypto-JS dùng để mã hóa AES phía Client trước khi gửi lên Aiven MySQL -->
+    <!-- Crypto-JS dùng để mã hóa AES phía Client -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
     <!-- Thư viện SheetJS để đọc file Excel (.xlsx, .xls) -->
@@ -44,12 +44,6 @@
             padding: 10px;
             border-bottom: 2px solid #e2e8f0;
             white-space: nowrap;
-            position: relative;
-        }
-        table.dataTable thead th.sorting, 
-        table.dataTable thead th.sorting_asc, 
-        table.dataTable thead th.sorting_desc {
-            padding-right: 25px !important;
         }
     </style>
 </head>
@@ -58,14 +52,14 @@
     <div class="container-fluid px-4">
         <!-- Header -->
         <div class="text-center mb-4">
-            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN QR (AES ENCRYPTED)</h2>
-            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối theo danh mục tài sản mới</p>
+            <h2 class="fw-bold text-primary"><i class="fa-solid fa-boxes-stacked me-2"></i>QUẢN LÝ & KIỂM KÊ TÀI SẢN QR (AES + ONEDRIVE)</h2>
+            <p class="text-muted">Hệ thống bảo mật dữ liệu đầu cuối & lưu trữ ảnh qua OneDrive</p>
         </div>
 
         <!-- PHẦN 1: QUẢN LÝ DANH MỤC TÀI SẢN -->
         <div class="card shadow-sm">
             <div class="card-header bg-success text-white d-flex justify-content-between align-items-center py-3">
-                <h5 class="mb-0"><i class="fa-solid fa-laptop me-2"></i> 1. Quản Lý Danh Mục Tài Sản (Bảo Mật AES)</h5>
+                <h5 class="mb-0"><i class="fa-solid fa-laptop me-2"></i> 1. Quản Lý Danh Mục Tài Sản</h5>
                 <div>
                     <label for="excelFile" class="btn btn-light btn-sm text-success fw-bold mb-0 cursor-pointer shadow-sm">
                         <i class="fa-solid fa-file-excel me-1"></i> Import Excel Mới
@@ -77,7 +71,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <!-- Form thêm/sửa tài sản nhanh -->
+                <!-- Form thêm/sửa tài sản -->
                 <form id="assetForm" onsubmit="saveAsset(event)" class="mb-4 pb-3 border-bottom">
                     <div class="row g-3">
                         <div class="col-md-3">
@@ -104,9 +98,16 @@
                             <label class="form-label fw-semibold small">Số Serial:</label>
                             <input type="text" id="so_serial" class="form-control form-control-sm" placeholder="Serial máy">
                         </div>
-                        <div class="col-md-6 text-end d-flex align-items-end justify-content-end">
+                        <div class="col-md-3">
+                            <label class="form-label fw-semibold small">Link Ảnh OneDrive:</label>
+                            <input type="text" id="onedrive_link" class="form-control form-control-sm" placeholder="Dán link chia sẻ OneDrive" oninput="previewOneDriveImage(this.value)">
+                            <div class="mt-1 text-center">
+                                <img id="imgPreview" src="" alt="" class="img-thumbnail d-none" style="max-height: 50px;">
+                            </div>
+                        </div>
+                        <div class="col-md-3 text-end d-flex align-items-end justify-content-end">
                             <button type="button" class="btn btn-secondary btn-sm px-3 me-2" onclick="resetForm()"><i class="fa-solid fa-rotate-left me-1"></i> Làm mới</button>
-                            <button type="submit" class="btn btn-success btn-sm px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu & Mã Hóa AES</button>
+                            <button type="submit" class="btn btn-success btn-sm px-4"><i class="fa-solid fa-floppy-disk me-1"></i> Lưu & Mã Hóa</button>
                         </div>
                     </div>
                 </form>
@@ -116,6 +117,7 @@
                         <thead class="table-light">
                             <tr>
                                 <th>STT</th>
+                                <th>Ảnh</th>
                                 <th>Mã Tài Sản</th>
                                 <th>Tên Tài Sản (Giải Mã)</th>
                                 <th>Nhóm Tài Sản</th>
@@ -151,7 +153,7 @@
                                 <input type="text" id="txtNguoiKK" class="form-control border-primary-subtle" value="Nguyễn Cao Mẫn">
                             </div>
                             <div class="alert alert-info py-2 small mb-0">
-                                <i class="fa-solid fa-circle-info me-1"></i> Dữ liệu quét mã QR sẽ tự động đối soát và mã hóa AES lịch sử.
+                                <i class="fa-solid fa-circle-info me-1"></i> Dữ liệu quét mã QR sẽ tự động đối soát và mã hóa lịch sử.
                             </div>
                         </div>
                     </div>
@@ -197,7 +199,6 @@
     <!-- Bootstrap 5 & SweetAlert2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <!-- Công cụ Eruda -->
     <script src="https://cdn.jsdelivr.net/npm/eruda"></script>
     <script>eruda.init();</script>
 
@@ -210,7 +211,7 @@
         let isScanning = true;
         let assetsTable, historyTable;
 
-        // Mã hóa & Giải mã AES chuẩn
+        // Mã hóa & Giải mã AES
         function encryptData(plainText) {
             if (plainText === undefined || plainText === null || plainText === '') return '';
             return CryptoJS.AES.encrypt(plainText.toString(), SECRET_KEY).toString();
@@ -225,6 +226,40 @@
             } catch (e) {
                 return cipherText; 
             }
+        }
+
+        // Chuyển đổi link OneDrive sang link ảnh trực tiếp
+        function convertOneDriveLink(shareLink) {
+            if (!shareLink) return '';
+            let cleanLink = shareLink.trim();
+            try {
+                if (cleanLink.includes('1drv.ms') || cleanLink.includes('onedrive.live.com')) {
+                    return cleanLink.includes('?') ? cleanLink + '&download=1' : cleanLink + '?download=1';
+                }
+            } catch (e) {}
+            return cleanLink;
+        }
+
+        function previewOneDriveImage(link) {
+            const directUrl = convertOneDriveLink(link);
+            const preview = document.getElementById('imgPreview');
+            if (directUrl) {
+                preview.src = directUrl;
+                preview.classList.remove('d-none');
+                preview.onerror = function() { preview.classList.add('d-none'); };
+            } else {
+                preview.classList.add('d-none');
+            }
+        }
+
+        function showFullImage(base64Str) {
+            Swal.fire({
+                imageUrl: base64Str,
+                imageAlt: 'Hình ảnh tài sản',
+                showCloseButton: true,
+                showConfirmButton: false,
+                width: 'auto'
+            });
         }
 
         function playBeep() {
@@ -243,7 +278,6 @@
         }
 
         $(document).ready(function() {
-            // DataTables Assets (Server-side)
             assetsTable = $('#assetsTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -253,6 +287,15 @@
                 },
                 columns: [
                     { data: null, render: (data, type, row, meta) => meta.settings._iDisplayStart + meta.row + 1 },
+                    { 
+                        data: 'hinh_anh', 
+                        className: 'text-center',
+                        render: data => {
+                            let imgUrl = decryptData(data);
+                            if (!imgUrl) return '<span class="text-muted small">-</span>';
+                            return `<img src="${imgUrl}" alt="Img" class="img-thumbnail" style="width: 40px; height: 40px; object-fit: cover; cursor: pointer;" onclick="showFullImage('${imgUrl}')" onerror="this.onerror=null; this.src='https://via.placeholder.com/40?text=Lỗi';">`;
+                        }
+                    },
                     { data: 'ma_tai_san', render: data => `<span class="badge bg-secondary">${decryptData(data)}</span>` },
                     { data: 'ten_tai_san', render: data => `<span class="fw-semibold text-dark">${decryptData(data)}</span>` },
                     { data: 'nhom_tai_san', render: data => `<small class="text-muted">${decryptData(data)}</small>` },
@@ -264,7 +307,7 @@
                         data: 'id', 
                         className: 'text-center',
                         render: (data, type, row) => `
-                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${decryptData(row.ma_tai_san)}', '${decryptData(row.ten_tai_san)}', '${decryptData(row.phong_ban_quan_ly)}', '${decryptData(row.can_bo_su_dung)}', '${decryptData(row.nguyen_gia)}', '${decryptData(row.so_serial)}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
+                            <button class="btn btn-warning btn-sm text-white me-1" onclick="editAsset('${row.id}', '${decryptData(row.ma_tai_san)}', '${decryptData(row.ten_tai_san)}', '${decryptData(row.phong_ban_quan_ly)}', '${decryptData(row.can_bo_su_dung)}', '${decryptData(row.nguyen_gia)}', '${decryptData(row.so_serial)}', '${decryptData(row.hinh_anh)}')" title="Sửa"><i class="fa-solid fa-pen"></i></button>
                             <button class="btn btn-danger btn-sm" onclick="deleteAsset('${row.id}')" title="Xóa"><i class="fa-solid fa-trash"></i></button>
                         `
                     }
@@ -279,7 +322,6 @@
                 }
             });
 
-            // DataTables History
             historyTable = $('#historyTable').DataTable({
                 serverSide: true,
                 processing: true,
@@ -350,8 +392,10 @@
             const rawCanBo = document.getElementById('can_bo_su_dung').value.trim();
             const rawNguyenGia = document.getElementById('nguyen_gia').value || 0;
             const rawSerial = document.getElementById('so_serial').value.trim();
+            
+            const rawOneDriveLink = document.getElementById('onedrive_link').value.trim();
+            const directImgUrl = convertOneDriveLink(rawOneDriveLink);
 
-            // MÃ HÓA 100% CÁC CỘT (NGOẠI TRỪ ID ĐỊNH DANH)
             const payload = {
                 id: editingId || ma_tai_san,
                 ma_tai_san: encryptData(ma_tai_san),
@@ -366,7 +410,8 @@
                 bo_so: encryptData("BIDV_CCLD"),
                 can_bo_su_dung: encryptData(rawCanBo),
                 phong_ban_quan_ly: encryptData(rawPhong),
-                so_serial: encryptData(rawSerial)
+                so_serial: encryptData(rawSerial),
+                hinh_anh: encryptData(directImgUrl)
             };
 
             try {
@@ -377,7 +422,7 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa toàn bộ dữ liệu lưu vào Aiven MySQL.', timer: 1500, showConfirmButton: false });
+                    Swal.fire({ icon: 'success', title: 'Thành công!', text: 'Đã mã hóa và lưu tài sản kèm ảnh OneDrive.', timer: 1500, showConfirmButton: false });
                     resetForm();
                     refreshData();
                 } else {
@@ -388,7 +433,7 @@
             }
         }
 
-        function editAsset(id, ma_tai_san, ten_tai_san, phong_ban_quan_ly, can_bo_su_dung, nguyen_gia, so_serial) {
+        function editAsset(id, ma_tai_san, ten_tai_san, phong_ban_quan_ly, can_bo_su_dung, nguyen_gia, so_serial, hinh_anh) {
             editingId = id;
             document.getElementById('ma_tai_san').value = ma_tai_san;
             document.getElementById('ten_tai_san').value = ten_tai_san;
@@ -396,11 +441,14 @@
             document.getElementById('can_bo_su_dung').value = can_bo_su_dung;
             document.getElementById('nguyen_gia').value = nguyen_gia;
             document.getElementById('so_serial').value = so_serial;
+            document.getElementById('onedrive_link').value = hinh_anh;
+            previewOneDriveImage(hinh_anh);
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
         function resetForm() {
             document.getElementById('assetForm').reset();
+            document.getElementById('imgPreview').classList.add('d-none');
             editingId = null;
         }
 
@@ -464,7 +512,7 @@
             }
         }
 
-        // Quét QR Code đối soát theo mã tài sản
+        // Quét QR Code
         async function onScanSuccess(decodedText) {
             if (!isScanning) return;
             isScanning = false;
@@ -479,7 +527,7 @@
 
             const tsId = asset ? (asset.ma_tai_san || asset.id) : scannedCode;
             const tsName = encryptData(rawTsName);
-            const ghiChu = encryptData('Quét QR hệ thống bảo mật');
+            const ghiChu = encryptData('Quét QR hệ thống');
 
             const resultDiv = document.getElementById('scan-result');
             resultDiv.className = 'mt-3 fw-bold fs-6 p-2 bg-warning-subtle text-warning border border-warning rounded';
@@ -519,7 +567,7 @@
         );
         html5QrcodeScanner.render(onScanSuccess, (err) => {});
 
-        // --- TẢI MẪU & IMPORT EXCEL VỚI MÃ HÓA TOÀN BỘ CỘT ---
+        // --- TẢI MẪU & IMPORT EXCEL ---
         function downloadTemplate(e) {
             e.preventDefault();
             const templateData = [
@@ -536,13 +584,14 @@
                     "bo_so": "BIDV_CCLD", 
                     "can_bo_su_dung": "Lê Duy Phúc", 
                     "phong_ban_quan_ly": "340 - TRUNG TÂM XỬ LÝ NỢ", 
-                    "so_serial": "4CE514BGHZ" 
+                    "so_serial": "4CE514BGHZ",
+                    "hinh_anh": "https://1drv.ms/i/s!... (Link OneDrive)"
                 }
             ];
             const ws = XLSX.utils.json_to_sheet(templateData);
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "DanhSachTaiSan");
-            XLSX.writeFile(wb, "Template_KiemKe_TaiSan_BaoMat.xlsx");
+            XLSX.writeFile(wb, "Template_KiemKe_OneDrive.xlsx");
         }
 
         async function importExcelData(event) {
@@ -563,7 +612,7 @@
                     }
 
                     Swal.fire({
-                        title: 'Đang mã hóa 100% dữ liệu...',
+                        title: 'Đang mã hóa & đồng bộ dữ liệu...',
                         text: `Đang xử lý ${rows.length} tài sản từ file Excel. Vui lòng chờ...`,
                         allowOutsideClick: false,
                         didOpen: () => { Swal.showLoading(); }
@@ -573,24 +622,24 @@
                     let failCount = 0;
 
                     for (let row of rows) {
-                        const ma_tai_san = String(row['ma_tai_san'] || row['Mã Tài Sản'] || row['ma_ts'] || '').trim();
+                        const ma_tai_san = String(row['ma_tai_san'] || row['Mã Tài Sản'] || '').trim();
                         const rawTen = String(row['ten_tai_san'] || row['Tên Tài Sản'] || '').trim();
                         const rawPhong = String(row['phong_ban_quan_ly'] || row['Phòng Ban Quản Lý'] || '').trim();
                         const rawCanBo = String(row['can_bo_su_dung'] || row['Cán Bộ Sử Dụng'] || '').trim();
+                        const rawImg = String(row['hinh_anh'] || row['Link Ảnh'] || '').trim();
                         
                         if (!ma_tai_san || !rawTen) {
                             failCount++;
                             continue;
                         }
 
-                        // MÃ HÓA TOÀN BỘ CÁC CỘT TRƯỚC KHI ĐẨY LÊN AIVEN MYSQL
                         const payload = {
                             id: ma_tai_san,
                             ma_tai_san: encryptData(ma_tai_san),
-                            don_vi: encryptData(row['don_vi'] || row['DonVi'] || ''),
+                            don_vi: encryptData(row['don_vi'] || ''),
                             ten_tai_san: encryptData(rawTen),
-                            nhom_tai_san: encryptData(row['nhom_tai_san'] || row['NhomTaiSan'] || ''),
-                            nguyen_gia: encryptData(row['nguyen_gia'] || row['NguyenGia'] || 0),
+                            nhom_tai_san: encryptData(row['nhom_tai_san'] || ''),
+                            nguyen_gia: encryptData(row['nguyen_gia'] || 0),
                             hao_mon_luy_ke: encryptData(row['hao_mon_luy_ke'] || 0),
                             gia_tri_con_lai: encryptData(row['gia_tri_con_lai'] || 0),
                             ngay_dua_vao_sd: encryptData(row['ngay_dua_vao_sd'] || ''),
@@ -598,7 +647,8 @@
                             bo_so: encryptData(row['bo_so'] || ''),
                             can_bo_su_dung: encryptData(rawCanBo),
                             phong_ban_quan_ly: encryptData(rawPhong),
-                            so_serial: encryptData(String(row['so_serial'] || row['SoSerial'] || ''))
+                            so_serial: encryptData(String(row['so_serial'] || '')),
+                            hinh_anh: encryptData(convertOneDriveLink(rawImg))
                         };
 
                         try {
@@ -608,14 +658,8 @@
                                 body: JSON.stringify(payload)
                             });
                             const result = await response.json();
-                            if (result.success) {
-                                successCount++;
-                            } else {
-                                failCount++;
-                            }
-                        } catch (err) {
-                            failCount++;
-                        }
+                            if (result.success) { successCount++; } else { failCount++; }
+                        } catch (err) { failCount++; }
                     }
 
                     document.getElementById('excelFile').value = '';
@@ -624,11 +668,11 @@
                     Swal.fire({
                         icon: 'success',
                         title: 'Hoàn tất nhập dữ liệu hàng loạt!',
-                        html: `Thành công: <b>${successCount}</b> tài sản đã được mã hóa bảo mật toàn bộ các cột.<br>${failCount > 0 ? `<span class="text-danger">Thất bại/Bỏ qua: ${failCount} dòng</span>` : ''}`
+                        html: `Thành công: <b>${successCount}</b> tài sản đã mã hóa bảo mật.<br>${failCount > 0 ? `<span class="text-danger">Thất bại: ${failCount} dòng</span>` : ''}`
                     });
 
                 } catch (error) {
-                    Swal.fire('Lỗi', 'Không thể đọc file cấu trúc này. Vui lòng kiểm tra lại định dạng!', 'error');
+                    Swal.fire('Lỗi', 'Không thể đọc file cấu trúc này!', 'error');
                     document.getElementById('excelFile').value = '';
                 }
             };
